@@ -1,6 +1,6 @@
 import { BaseRepository } from '@domain/repositories/base-repository.interface'
 
-import { DynamoDBDocumentClient, PutCommand, QueryCommand, QueryCommandOutput } from '@aws-sdk/lib-dynamodb'
+import { DynamoDBDocumentClient, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { inject } from 'tsyringe'
 import { LoggerService } from '@shared/logger.service'

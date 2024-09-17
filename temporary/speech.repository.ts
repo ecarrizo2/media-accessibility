@@ -2,8 +2,6 @@ import { inject, injectable } from 'tsyringe'
 import { DynamoDBDocumentClient, PutCommand, QueryCommand, QueryCommandOutput } from '@aws-sdk/lib-dynamodb'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { Resource } from 'sst'
-import { ImageEntity } from '../src/domain/entities/image/image.entity'
-import { LoggerService } from '../src/utils/logger.service'
 import crypto from 'crypto'
 import { SpeechEntity } from './speech.entity'
 
