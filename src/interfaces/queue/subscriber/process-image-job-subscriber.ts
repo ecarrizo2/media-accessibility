@@ -12,7 +12,7 @@ import { LoggerService } from '@shared/logger.service'
  * @param {AWSLambda.SQSEvent} event - The SQS event to be processed.
  * @returns {Promise<AWSLambda.SQSBatchResponse>} A promise that resolves when event is processed, indicating if the event failed or not.
  */
-export const handler = async (event: AWSLambda.SQSEvent) => {
+export const handle = async (event: AWSLambda.SQSEvent) => {
   const record = event.Records[0]
   initializeQueueContainer(record)
   const logger = container.resolve(LoggerService)

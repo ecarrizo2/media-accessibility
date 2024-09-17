@@ -1,27 +1,31 @@
 /* tslint:disable */
 /* eslint-disable */
-import "sst"
-declare module "sst" {
+import 'sst'
+declare module 'sst' {
   export interface Resource {
     Api: {
-      type: "sst.aws.ApiGatewayV2"
+      type: 'sst.aws.ApiGatewayV2'
       url: string
     }
-    ImageMetadataDynamo: {
+    ImageDynamo: {
       name: string
-      type: "sst.aws.Dynamo"
+      type: 'sst.aws.Dynamo'
+    }
+    JobDynamo: {
+      name: string
+      type: 'sst.aws.Dynamo'
     }
     OpenaiApiKey: {
-      type: "sst.sst.Secret"
+      type: 'sst.sst.Secret'
       value: string
     }
-    SpeechBucket: {
-      name: string
-      type: "sst.aws.Bucket"
+    ProcessImageDeadLetterQueue: {
+      type: 'sst.aws.Queue'
+      url: string
     }
-    SpeechDynamo: {
-      name: string
-      type: "sst.aws.Dynamo"
+    ProcessImageQueue: {
+      type: 'sst.aws.Queue'
+      url: string
     }
   }
 }

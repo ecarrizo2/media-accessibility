@@ -5,6 +5,7 @@ import { ImageAnalyserData } from '@domain/value-objects/image/image-analyser-da
 import { ImageAnalysisResult } from '@domain/value-objects/image/image-analysis-result.vo'
 import { LoggerService } from '@shared/logger.service'
 import { ChatCompletion } from 'openai/resources'
+import { ImageAnalyserService } from '@domain/services/image/image-analyser.interface'
 
 //@ts-ignore
 const apiKey = Resource.OpenaiApiKey.value
@@ -13,7 +14,7 @@ const openai = new OpenAI({
 })
 
 @injectable()
-export class ImageAnalyserService {
+export class OpenAIImageAnalyserService implements ImageAnalyserService {
   constructor(@inject(LoggerService) private readonly logger: LoggerService) {}
 
   async analyseImage(imageData: ImageAnalyserData): Promise<ImageAnalysisResult> {

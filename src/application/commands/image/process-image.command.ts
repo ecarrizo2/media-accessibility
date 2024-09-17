@@ -9,13 +9,9 @@ export class ProcessImageCommand {
     readonly url: string,
     readonly prompt: string,
     readonly createSpeech: boolean
-  ) {  }
+  ) {}
 
   public static from(props: ProcessImageCommandProps) {
-    return new ProcessImageCommand(
-      props.url,
-      props.prompt,
-      props.createSpeech ?? false
-    )
+    return new ProcessImageCommand(props.url, props.prompt, props.createSpeech ?? false)
   }
 }

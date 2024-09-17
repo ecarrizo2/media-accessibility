@@ -1,4 +1,4 @@
-import { JobType } from '@domain/enums/job.enum'
+import { JobType } from '@domain/enums/job/job.enum'
 
 export interface CreateJobCommand<InputType> {
   type: JobType

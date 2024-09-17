@@ -1,11 +1,13 @@
-export interface ProcessImageJobRecord extends AWSLambda.SQSRecord {
-  body: {
-    traceId: string
-    jobId: string,
-    command: {
-      url: string
-      prompt: string
-      createSpeech?: boolean
-    }
-  }
+import { ProcessImageCommandProps } from '@application/commands/image/process-image.command'
+
+export interface BaseSQSRecordBody {
+  traceId?: string
+}
+
+export interface JobSQSRecordBody extends BaseSQSRecordBody {
+  jobId: string
+}
+
+export interface ProcessImageJobRecordData extends JobSQSRecordBody {
+  command: ProcessImageCommandProps
 }

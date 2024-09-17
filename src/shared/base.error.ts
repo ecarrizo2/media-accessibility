@@ -1,4 +1,4 @@
-export class BaseException extends Error {
+export class BaseError extends Error {
   nonReprocessable: boolean = true
 
   constructor(message: string) {

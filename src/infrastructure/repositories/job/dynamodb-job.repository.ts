@@ -1,11 +1,18 @@
 import { Resource } from 'sst'
 import { BaseDynamodbRepository } from '@infrastructure/repositories/base-dynamodb.repository'
-import { JobEntity } from '@domain/entities/job.entity'
-import { JobStatus, JobType } from '@domain/enums/job.enum'
+import { JobEntity } from '@domain/entities/job/job.entity'
+import { JobStatus, JobType } from '@domain/enums/job/job.enum'
+import { inject, injectable } from 'tsyringe'
+import { LoggerService } from '@shared/logger.service'
 
+@injectable()
 export class DynamodbJobRepository extends BaseDynamodbRepository<JobEntity> {
   //@ts-ignore
   protected readonly tableName = Resource.JobDynamo.name
+
+  constructor(@inject(LoggerService) logger: LoggerService) {
+    super(logger)
+  }
 
   protected toEntity(item: any): JobEntity {
     return new JobEntity({
@@ -16,7 +23,7 @@ export class DynamodbJobRepository extends BaseDynamodbRepository<JobEntity> {
       input: JSON.parse(item.input),
       errors: JSON.parse(item.errors),
       createdAt: item.createdAt,
-      updatedAt: item.updatedAt
+      updatedAt: item.updatedAt,
     })
   }
 
@@ -24,12 +31,12 @@ export class DynamodbJobRepository extends BaseDynamodbRepository<JobEntity> {
     return {
       id: entity.id,
       type: entity.type,
-      status: entity.status,
+      status: entity.status as string,
       attempts: entity.attempts,
       input: JSON.stringify(entity.input),
       errors: JSON.stringify(entity.errors),
       createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt
+      updatedAt: entity.updatedAt,
     }
   }
 }

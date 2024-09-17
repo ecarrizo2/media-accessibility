@@ -1,6 +1,6 @@
-import { BaseException } from '@shared/base.exception'
+import { BaseError } from '@shared/base.error'
 
-export class JobNotFoundException extends BaseException {
+export class JobNotFoundError extends BaseError {
   nonReprocessable = true
 
   constructor() {

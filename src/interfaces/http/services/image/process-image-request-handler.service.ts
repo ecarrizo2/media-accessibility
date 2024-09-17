@@ -15,9 +15,8 @@ const sqs = new SQSClient({})
 export class ProcessImageRequestHandlerService {
   constructor(
     @inject(LoggerService) private readonly logger: LoggerService,
-    @inject(CreateJobCommandHandler) private readonly createJobHandler: CreateJobCommandHandler,
-  ) {
-  }
+    @inject(CreateJobCommandHandler) private readonly createJobHandler: CreateJobCommandHandler
+  ) {}
 
   async scheduleImageProcessingJob(processImageRequestInput: ProcessImageRequestInput): Promise<JobEntity> {
     const job = await this.createJob(processImageRequestInput)
@@ -47,7 +46,6 @@ export class ProcessImageRequestHandlerService {
     return job
   }
 
-
   /**
    * Creates a new image processing job.
    *
@@ -55,10 +53,7 @@ export class ProcessImageRequestHandlerService {
    * @param {ProcessImageRequestInput} processImageRequestInput - The input for the image processing job.
    * @returns {Promise<void>}
    */
-  private async sendJobToQueue(
-    job: JobEntity,
-    processImageRequestInput: ProcessImageRequestInput,
-  ): Promise<void> {
+  private async sendJobToQueue(job: JobEntity, processImageRequestInput: ProcessImageRequestInput): Promise<void> {
     const logger = container.resolve(LoggerService)
     logger.info('Sending Job processing request to the queue')
 
@@ -74,7 +69,7 @@ export class ProcessImageRequestHandlerService {
             createSpeech: processImageRequestInput.createSpeech,
           },
         }),
-      }),
+      })
     )
   }
 }
