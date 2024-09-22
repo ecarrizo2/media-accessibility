@@ -2,15 +2,14 @@ import { BaseRepository } from '@domain/repositories/base-repository.interface'
 
 import { DynamoDBDocumentClient, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { inject } from 'tsyringe'
-import { LoggerService } from '@shared/logger.service'
 import { BaseEntity } from '@domain/entities/base.entity'
+import { Logger } from '@shared/logger/logger.interface'
 
 export abstract class BaseDynamodbRepository<EntityType> implements BaseRepository<EntityType> {
   protected abstract tableName: string
   protected client = DynamoDBDocumentClient.from(new DynamoDBClient({}))
 
-  constructor(@inject(LoggerService) protected readonly logger: LoggerService) {}
+  constructor(protected readonly logger: Logger) {}
 
   protected abstract toEntity(item: any): EntityType
 
@@ -41,7 +40,9 @@ export abstract class BaseDynamodbRepository<EntityType> implements BaseReposito
   }
 
   async save(entity: EntityType & BaseEntity): Promise<void> {
+    entity.validateState()
     entity.updatedAt = new Date().toISOString()
+
     const existingEntity = await this.findById(entity.id)
     const commandInstructions: any = {
       TableName: this.tableName,

@@ -5,6 +5,7 @@ import { ImageAnalysisResult } from '@domain/value-objects/image/image-analysis-
  * Interface for the Image Analyser Service.
  */
 export interface ImageAnalyserService {
+
   /**
    * Analyzes the given image data and returns the analysis result.
    * @param {ImageAnalyserData} imageData - The data of the image to be analyzed.

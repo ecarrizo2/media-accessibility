@@ -24,6 +24,8 @@ export class ProcessImageRequestInput {
   }
 
   public static from(input: ProcessImageRequestInputParams) {
-    return new ProcessImageRequestInput(ProcessImageInputSchema.parse(input))
+    return new ProcessImageRequestInput(
+      ProcessImageInputSchema.parse(input)
+    )
   }
 }

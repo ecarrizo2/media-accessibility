@@ -1,7 +1,7 @@
 import 'reflect-metadata'
 import { container } from 'tsyringe'
 import { z } from 'zod'
-import { LoggerService } from '@shared/logger.service'
+import { LoggerService } from '@shared/logger/logger.service'
 import { initializeRequestContainer } from '@interfaces/shared/container-initialization.helper'
 import { getRequestInput } from '@interfaces/shared/aws-http-api-gateway-event.helper'
 import { ProcessImageRequestInput } from '@domain/value-objects/image/process-image-request-input.vo'
@@ -37,7 +37,9 @@ export async function handle(event: AWSLambda.APIGatewayEvent): Promise<AWSLambd
 
   logger.info('Process Image Request Handler started')
   const input = getValidatedRequestInputValueObject(event)
-  const job = await requestErrorHandlerWrapperService.wrap(processImageRequestService.scheduleImageProcessingJob(input))
+  const job = await requestErrorHandlerWrapperService.wrap(
+    processImageRequestService.scheduleImageProcessingJob(input)
+  )
 
   logger.info('Process Image Request Handler ended successfully.')
 

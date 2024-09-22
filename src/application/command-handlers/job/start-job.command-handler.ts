@@ -3,12 +3,12 @@ import { DynamodbJobRepository } from '@infrastructure/repositories/job/dynamodb
 import { JobRepository } from '@domain/repositories/job/job-repository.interface'
 import { StartJobCommand } from '@application/commands/job/start-job.command'
 import { JobCannotBeStartedError } from '@domain/errors/job/job-cannot-be-started.error'
-import { BaseJobCommandHandler } from '@application/command-handlers/job/base-job.command-handler'
 
 @injectable()
-export class StartJobCommandHandler extends BaseJobCommandHandler {
-  constructor(@inject(DynamodbJobRepository) jobRepository: JobRepository) {
-    super(jobRepository)
+export class StartJobCommandHandler {
+  constructor(
+    @inject(DynamodbJobRepository) private readonly jobRepository: JobRepository,
+  ) {
   }
 
   /**
@@ -20,7 +20,7 @@ export class StartJobCommandHandler extends BaseJobCommandHandler {
    * @throws {JobCannotBeStartedError} - If the job cannot be started due to its current status.
    */
   async handle(command: StartJobCommand): Promise<void> {
-    const job = await this.getJobFromDatabase(command.jobId)
+    const { job } = command
     if (!job.canStart()) {
       throw new JobCannotBeStartedError(job.status)
     }

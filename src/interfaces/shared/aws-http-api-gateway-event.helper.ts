@@ -1,5 +1,5 @@
 import { container } from 'tsyringe'
-import { LoggerService } from '@shared/logger.service'
+import { LoggerService } from '@shared/logger/logger.service'
 import { RequestParserService } from '@interfaces/http/services/shared/request-validator.service'
 import { ZodTypeAny } from 'zod'
 

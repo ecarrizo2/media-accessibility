@@ -8,6 +8,7 @@ import { LoggerService } from '../src/utils/logger.service'
 import { SpeechRepository } from './speech.repository'
 import crypto from 'crypto'
 import { SpeechEntity } from './speech.entity'
+import { Logger } from '../src/shared/logger/logger.interface'
 
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
@@ -19,7 +20,7 @@ const s3Client = new S3Client({})
 export class TextToSpeechService {
   constructor(
     @inject(SpeechRepository) private readonly speechRepository: SpeechRepository,
-    @inject(LoggerService) private readonly logger: LoggerService
+    @inject(LoggerService) private readonly logger: Logger
   ) {}
 
   async processText(text: string): Promise<SpeechEntity> {

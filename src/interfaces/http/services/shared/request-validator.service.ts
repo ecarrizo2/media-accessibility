@@ -1,10 +1,11 @@
 import { z, ZodTypeAny } from 'zod'
 import { inject, injectable } from 'tsyringe'
-import { LoggerService } from '@shared/logger.service'
+import { LoggerService } from '@shared/logger/logger.service'
+import { Logger } from '@shared/logger/logger.interface'
 
 @injectable()
 export class RequestParserService<ValueObjectType> {
-  constructor(@inject(LoggerService) private readonly logger: LoggerService) {}
+  constructor(@inject(LoggerService) private readonly logger: Logger) {}
 
   private sendBadRequestResponse(error: unknown) {
     const isZodError = error instanceof z.ZodError

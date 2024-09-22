@@ -1,6 +1,6 @@
 import { RequestErrorHandlerWrapperService } from './request-error-handler-wrapper-service'
 import { createMock } from '@golevelup/ts-jest'
-import { LoggerService } from '@shared/logger.service'
+import { LoggerService } from '@shared/logger/logger.service'
 
 describe('ActionWrapperService', () => {
   describe('execute', () => {

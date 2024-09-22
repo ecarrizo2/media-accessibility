@@ -3,14 +3,14 @@ import { BaseDynamodbRepository } from '@infrastructure/repositories/base-dynamo
 import { JobEntity } from '@domain/entities/job/job.entity'
 import { JobStatus, JobType } from '@domain/enums/job/job.enum'
 import { inject, injectable } from 'tsyringe'
-import { LoggerService } from '@shared/logger.service'
+import { LoggerService } from '@shared/logger/logger.service'
+import { Logger } from '@shared/logger/logger.interface'
 
 @injectable()
 export class DynamodbJobRepository extends BaseDynamodbRepository<JobEntity> {
-  //@ts-ignore
   protected readonly tableName = Resource.JobDynamo.name
 
-  constructor(@inject(LoggerService) logger: LoggerService) {
+  constructor(@inject(LoggerService) logger: Logger) {
     super(logger)
   }
 
