@@ -11,10 +11,7 @@ export class CreateJobCommand implements CreateJobCommandProps {
     readonly input: unknown
   ) {}
 
-  public static from(props: CreateJobCommandProps) {
-    return new CreateJobCommand(
-      props.type,
-      props.input
-    )
+  static from(props: CreateJobCommandProps) {
+    return new CreateJobCommand(props.type, props.input)
   }
 }

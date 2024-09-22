@@ -1,31 +1,46 @@
 import { z } from 'zod'
 
-export interface ProcessImageRequestInputParams {
+/**
+ * Interface representing the parameters for processing an image request.
+ */
+export interface ProcessImageRequestInputProps {
   url: string
   prompt: string
   createSpeech?: boolean
 }
 
+/**
+ * Zod schema for validating the ProcessImageRequestInputParams.
+ */
 const ProcessImageInputSchema = z.object({
   url: z.string().url(),
   prompt: z.string(),
   createSpeech: z.boolean().optional(),
 })
 
+/**
+ * Class representing the input for processing an image request.
+ */
 export class ProcessImageRequestInput {
-  readonly url: string
-  readonly prompt: string
-  readonly createSpeech: boolean
-
-  private constructor(input: ProcessImageRequestInputParams) {
-    this.url = input.url
-    this.prompt = input.prompt
-    this.createSpeech = input.createSpeech ?? false
+  private constructor(
+    readonly url: string,
+    readonly prompt: string,
+    readonly createSpeech: boolean,
+  ) {
   }
 
-  public static from(input: ProcessImageRequestInputParams) {
+  /**
+   * Static method to factory a new ProcessImageRequestInput instance from the given input parameters.
+   *
+   * @param {ProcessImageRequestInputProps} input - The input parameters for processing an image request.
+   * @returns {ProcessImageRequestInput} - The created ProcessImageRequestInput instance.
+   */
+  static from(input: ProcessImageRequestInputProps) {
+    const parsed = ProcessImageInputSchema.parse(input)
     return new ProcessImageRequestInput(
-      ProcessImageInputSchema.parse(input)
+      parsed.url,
+      parsed.prompt,
+      parsed.createSpeech ?? false,
     )
   }
 }

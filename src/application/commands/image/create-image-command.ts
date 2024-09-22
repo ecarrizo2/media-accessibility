@@ -13,11 +13,7 @@ export class CreateImageCommand {
     readonly imageAnalysisResult: ImageAnalysisResult
   ) {}
 
-  public static from(props: CreateImageCommandProps) {
-    return new CreateImageCommand(
-      props.url,
-      props.prompt,
-      props.imageAnalysisResult
-    )
+  static from(props: CreateImageCommandProps) {
+    return new CreateImageCommand(props.url, props.prompt, props.imageAnalysisResult)
   }
 }

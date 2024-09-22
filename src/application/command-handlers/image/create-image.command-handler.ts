@@ -7,10 +7,7 @@ import { CreateImageCommand } from '@application/commands/image/create-image-com
 
 @injectable()
 export class CreateImageCommandHandler {
-  constructor(
-    @inject(DynamodbImageRepository) private readonly imageRepository: ImageRepository,
-  ) {
-  }
+  constructor(@inject(DynamodbImageRepository) private readonly imageRepository: ImageRepository) {}
 
   /**
    * Handles the creation of an image.

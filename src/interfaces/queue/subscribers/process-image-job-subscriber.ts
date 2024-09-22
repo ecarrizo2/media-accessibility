@@ -4,6 +4,7 @@ import { initializeQueueContainer } from '@interfaces/shared/container-initializ
 import { BaseError } from '@shared/errors/base.error'
 import { ProcessImageJobService } from '@interfaces/queue/services/process-image-job.service'
 import { LoggerService } from '@shared/logger/logger.service'
+import { ProcessImageJobRecordData } from '@interfaces/queue/sqs-event.interface'
 
 /**
  * Handle events of the Process Image Queue, this Queue and its handler is used to process SQS messages
@@ -12,12 +13,12 @@ import { LoggerService } from '@shared/logger/logger.service'
  * @param {AWSLambda.SQSEvent} event - The SQS event to be processed.
  * @returns {Promise<AWSLambda.SQSBatchResponse>} A promise that resolves when event is processed, indicating if the event failed or not.
  */
-export const handle = async (event: AWSLambda.SQSEvent) => {
+export const handle = async (event: AWSLambda.SQSEvent): Promise<AWSLambda.SQSBatchResponse> => {
   const record = event.Records[0]
   initializeQueueContainer(record)
   const logger = container.resolve(LoggerService)
   const processImageJobService = container.resolve(ProcessImageJobService)
-  const body = JSON.parse(record.body)
+  const body = JSON.parse(record.body) as ProcessImageJobRecordData
 
   try {
     await processImageJobService.performJobProcessing(body)

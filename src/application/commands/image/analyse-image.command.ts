@@ -6,13 +6,10 @@ export interface AnalyseImageCommandProps {
 export class AnalyseImageCommand {
   private constructor(
     readonly url: string,
-    readonly prompt: string,
+    readonly prompt: string
   ) {}
 
-  public static from(props: AnalyseImageCommandProps) {
-    return new AnalyseImageCommand(
-      props.url,
-      props.prompt,
-    )
+  static from(props: AnalyseImageCommandProps) {
+    return new AnalyseImageCommand(props.url, props.prompt)
   }
 }

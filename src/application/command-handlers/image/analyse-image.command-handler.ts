@@ -3,14 +3,11 @@ import { ImageAnalyserService } from '@domain/services/image/image-analyser.inte
 import { OpenAIImageAnalyserService } from '@infrastructure/services/image/openai-image-analyser.service'
 import { AnalyseImageCommand } from '@application/commands/image/analyse-image.command'
 import { ImageAnalysisResult } from '@domain/value-objects/image/image-analysis-result.vo'
-import { ImageAnalyserData } from '@domain/value-objects/image/image-analyser-data.vo'
+import { ImageAnalyserInput } from '@domain/value-objects/image/image-analyser-input.vo'
 
 @injectable()
 export class AnalyseImageCommandHandler {
-  constructor(
-    @inject(OpenAIImageAnalyserService) private readonly imageAnalyserService: ImageAnalyserService,
-  ) {
-  }
+  constructor(@inject(OpenAIImageAnalyserService) private readonly imageAnalyserService: ImageAnalyserService) {}
 
   /**
    * Handles the analysis of an image.
@@ -19,7 +16,7 @@ export class AnalyseImageCommandHandler {
    * @returns {Promise<any>} - The result of the image analysis.
    */
   async handle(command: AnalyseImageCommand): Promise<ImageAnalysisResult> {
-    const imageAnalysisData = ImageAnalyserData.from({
+    const imageAnalysisData = ImageAnalyserInput.from({
       url: command.url,
       prompt: command.prompt,
     })

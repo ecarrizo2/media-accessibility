@@ -5,13 +5,9 @@ export interface CompleteJobCommandProps {
 }
 
 export class CompleteJobCommand implements CompleteJobCommandProps {
-  private constructor(
-    readonly job: JobEntity
-  ) {}
+  private constructor(readonly job: JobEntity) {}
 
-  public static from(props: CompleteJobCommandProps) {
-    return new CompleteJobCommand(
-      props.job
-    )
+  static from(props: CompleteJobCommandProps) {
+    return new CompleteJobCommand(props.job)
   }
 }

@@ -5,10 +5,7 @@ import { StartJobCommand } from '@application/commands/job/start-job.command'
 
 @injectable()
 export class CompleteJobCommandHandler {
-  constructor(
-    @inject(DynamodbJobRepository) private readonly jobRepository: JobRepository,
-  ) {
-  }
+  constructor(@inject(DynamodbJobRepository) private readonly jobRepository: JobRepository) {}
 
   async handle(command: StartJobCommand): Promise<void> {
     const { job } = command

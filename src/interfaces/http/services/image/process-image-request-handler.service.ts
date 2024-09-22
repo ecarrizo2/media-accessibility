@@ -4,20 +4,29 @@ import { JobEntity } from '@domain/entities/job/job.entity'
 import { LoggerService } from '@shared/logger/logger.service'
 import { JobType } from '@domain/enums/job/job.enum'
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs'
-import { JobService } from '@application/services/job/job.service'
+import { JobFacadeService } from '@application/services/job/job-facade.service'
 import { Logger } from '@shared/logger/logger.interface'
 import { Resource } from 'sst'
 
 const processImageQueueUrl = Resource.ProcessImageQueue.url
 const sqs = new SQSClient({})
 
+/**
+ * Service to handle image processing requests.
+ */
 @injectable()
 export class ProcessImageRequestHandlerService {
   constructor(
     @inject(LoggerService) private readonly logger: Logger,
-    @inject(JobService) private readonly jobService: JobService
+    @inject(JobFacadeService) private readonly jobService: JobFacadeService
   ) {}
 
+  /**
+   * Schedules a new image processing job.
+   *
+   * @param {ProcessImageRequestInput} processImageRequestInput - The input for the image processing job.
+   * @returns {Promise<JobEntity>} - The created job.
+   */
   async scheduleImageProcessingJob(processImageRequestInput: ProcessImageRequestInput): Promise<JobEntity> {
     const job = await this.createJob(processImageRequestInput)
 
@@ -30,15 +39,12 @@ export class ProcessImageRequestHandlerService {
    * Creates a new image processing job.
    *
    * @param {ProcessImageRequestInput} processImageRequestInput - The input for the image processing job.
-   * @returns {Promise<any>} - The created job.
+   * @returns {Promise<JobEntity>} - The created job.
    */
   private async createJob(processImageRequestInput: ProcessImageRequestInput): Promise<JobEntity> {
     this.logger.info('Creating a new job for the image processing request')
 
-    const job = await this.jobService.create(
-      JobType.ImageProcessing,
-      processImageRequestInput
-    )
+    const job = await this.jobService.create(JobType.ImageProcessing, processImageRequestInput)
 
     this.logger.debug('Job has been created', job)
 
@@ -46,9 +52,9 @@ export class ProcessImageRequestHandlerService {
   }
 
   /**
-   * Creates a new image processing job.
+   * Sends the created job to the SQS queue.
    *
-   * @param {JobEntity} job - Job which will be scheduled in the queue
+   * @param {JobEntity} job - The job to be scheduled in the queue.
    * @param {ProcessImageRequestInput} processImageRequestInput - The input for the image processing job.
    * @returns {Promise<void>}
    */

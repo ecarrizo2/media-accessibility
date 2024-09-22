@@ -6,14 +6,27 @@ import { inject, injectable } from 'tsyringe'
 import { LoggerService } from '@shared/logger/logger.service'
 import { Logger } from '@shared/logger/logger.interface'
 
+/**
+ * Repository class for managing Job entities in DynamoDB.
+ * Extends the BaseDynamodbRepository to provide specific implementations for JobEntity.
+ */
 @injectable()
 export class DynamodbJobRepository extends BaseDynamodbRepository<JobEntity> {
+  /**
+   * The name of the DynamoDB table.
+   */
   protected readonly tableName = Resource.JobDynamo.name
 
   constructor(@inject(LoggerService) logger: Logger) {
     super(logger)
   }
 
+  /**
+   * Converts a DynamoDB item to a JobEntity.
+   *
+   * @param {any} item - The DynamoDB item.
+   * @returns {JobEntity} - The JobEntity.
+   */
   protected toEntity(item: any): JobEntity {
     return new JobEntity({
       id: item.id as string,
@@ -27,6 +40,12 @@ export class DynamodbJobRepository extends BaseDynamodbRepository<JobEntity> {
     })
   }
 
+  /**
+   * Converts a JobEntity to a DynamoDB item.
+   *
+   * @param {JobEntity} entity - The JobEntity.
+   * @returns {any} - The DynamoDB item.
+   */
   protected toItem(entity: JobEntity): any {
     return {
       id: entity.id,

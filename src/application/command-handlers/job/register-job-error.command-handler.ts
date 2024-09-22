@@ -7,10 +7,7 @@ import { JobErrorCannotBeRegisteredError } from '@domain/errors/job/job-error-ca
 
 @injectable()
 export class RegisterJobErrorCommandHandler {
-  constructor(
-    @inject(DynamodbJobRepository) private readonly jobRepository: JobRepository,
-  ) {
-  }
+  constructor(@inject(DynamodbJobRepository) private readonly jobRepository: JobRepository) {}
 
   async handle(command: RegisterJobErrorCommand): Promise<void> {
     const { job } = command

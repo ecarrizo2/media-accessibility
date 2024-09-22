@@ -3,13 +3,9 @@ export interface GetJobByIdQueryProps {
 }
 
 export class GetJobByIdQuery {
-  private constructor(
-    readonly jobId: string
-  ) {}
+  private constructor(readonly jobId: string) {}
 
-  public static from(props: GetJobByIdQueryProps) {
-    return new GetJobByIdQuery(
-      props.jobId
-    )
+  static from(props: GetJobByIdQueryProps) {
+    return new GetJobByIdQuery(props.jobId)
   }
 }

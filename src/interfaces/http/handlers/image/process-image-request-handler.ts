@@ -37,9 +37,7 @@ export async function handle(event: AWSLambda.APIGatewayEvent): Promise<AWSLambd
 
   logger.info('Process Image Request Handler started')
   const input = getValidatedRequestInputValueObject(event)
-  const job = await requestErrorHandlerWrapperService.wrap(
-    processImageRequestService.scheduleImageProcessingJob(input)
-  )
+  const job = await requestErrorHandlerWrapperService.wrap(processImageRequestService.scheduleImageProcessingJob(input))
 
   logger.info('Process Image Request Handler ended successfully.')
 

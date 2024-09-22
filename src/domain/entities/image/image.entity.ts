@@ -1,17 +1,38 @@
 import { BaseEntity } from '@domain/entities/base.entity'
 import { z } from 'zod'
 
+/**
+ * Interface representing the properties of an image.
+ */
 export interface ImageProps {
+  /** The unique identifier of the image. */
   id: string
+
+  /** The URL of the image. */
   url: string
+
+  /** The prompt used to analyse the image. */
   prompt: string
+
+  /** The analysis text of the image. */
   analysisText: string
+
+  /** The vendor that provided the analysis. */
   analysisVendor: string
+
+  /** The raw result of the analysis. */
   analysisResultRaw: unknown
+
+  /** The date and time when the image was created. */
   createdAt: string
+
+  /** The date and time when the image was last updated (optional). */
   updatedAt?: string
 }
 
+/**
+ * Zod schema for validating ImageProps.
+ */
 const ImagePropsSchema = z.object({
   id: z.string(),
   url: z.string().url(),
@@ -23,6 +44,10 @@ const ImagePropsSchema = z.object({
   updatedAt: z.string().optional(),
 })
 
+/**
+ * Class representing an image entity.
+ * Implements the ImageProps and BaseEntity interfaces.
+ */
 export class ImageEntity implements ImageProps, BaseEntity {
   readonly id: string
   readonly url: string
@@ -33,6 +58,11 @@ export class ImageEntity implements ImageProps, BaseEntity {
   readonly createdAt: string
   readonly updatedAt?: string
 
+  /**
+   * Creates an instance of ImageEntity.
+   *
+   * @param {ImageProps} props - The properties of the image.
+   */
   constructor(props: ImageProps) {
     this.validateInitialization(props)
     this.id = props.id
@@ -45,10 +75,21 @@ export class ImageEntity implements ImageProps, BaseEntity {
     this.updatedAt = props.updatedAt
   }
 
+  /**
+   * Validates the initialization properties of the image.
+   *
+   * @param {ImageProps} props - The properties to validate.
+   * @private
+   */
   private validateInitialization(props: ImageProps) {
     ImagePropsSchema.parse(props)
   }
 
+  /**
+   * Validates the current state of the image.
+   *
+   * @throws {Error} If the state is invalid.
+   */
   validateState() {
     ImagePropsSchema.parse(this)
   }

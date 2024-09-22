@@ -10,7 +10,7 @@ import { ZodTypeAny } from 'zod'
  * @returns {object} The parsed body of the event.
  */
 export const getEventBody = (event: AWSLambda.APIGatewayEvent) => {
-  return JSON.parse(event.body || '{}')
+  return JSON.parse(event.body || '{}') as unknown
 }
 
 /**
@@ -46,7 +46,7 @@ export const getEventHeaderByKey = (event: AWSLambda.APIGatewayEvent, key: strin
 export const getRequestInput = <ValueObjectType>(
   event: AWSLambda.APIGatewayEvent,
   schema: ZodTypeAny,
-  valueObjectClass: { from: (input: any) => ValueObjectType }
+  valueObjectClass: { from: (input: unknown) => ValueObjectType }
 ): ValueObjectType => {
   const logger = container.resolve(LoggerService)
   const requestParser = container.resolve(RequestParserService<ValueObjectType>)

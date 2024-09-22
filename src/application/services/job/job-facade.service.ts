@@ -14,22 +14,22 @@ import { GetJobByIdQueryHandler } from '@application/query-handlers/job/get-job-
 import { GetJobByIdQuery } from '@application/queries/job/get-job-by-id.query'
 import { JobNotFoundError } from '@domain/errors/job/job-not-found.error'
 import { JobEntity } from '@domain/entities/job/job.entity'
+import { JobFacade } from '@application/services/job/job-facade.interface'
 
 /**
  * Service responsible for handling job-related operations.
  * This service coordinates the execution of commands related to job lifecycle events.
  */
 @injectable()
-export class JobService {
+export class JobFacadeService implements JobFacade {
   constructor(
     @inject(CreateJobCommandHandler) private readonly createJobCommandHandler: CreateJobCommandHandler,
     @inject(StartJobCommandHandler) private readonly startJobCommandHandler: StartJobCommandHandler,
     @inject(CompleteJobCommandHandler) private readonly completeJobHandler: CompleteJobCommandHandler,
     @inject(RegisterJobErrorCommandHandler) private readonly registerJobErrorHandler: RegisterJobErrorCommandHandler,
     @inject(GetJobByIdQueryHandler) private readonly getJobByIdQueryHandler: GetJobByIdQueryHandler,
-    @inject(LoggerService) private readonly logger: Logger,
-  ) {
-  }
+    @inject(LoggerService) private readonly logger: Logger
+  ) {}
 
   /**
    * Creates a new job by executing the CreateJobCommand.
@@ -38,12 +38,10 @@ export class JobService {
    * @param {unknown} input - The input data for the job.
    * @returns {Promise<JobEntity>} A promise that resolves when the job has been created.
    */
-  async create(
-    type: JobType,
-    input: unknown,
-  ): Promise<JobEntity> {
+  async create(type: JobType, input: unknown): Promise<JobEntity> {
     const command = CreateJobCommand.from({ type, input })
     this.logger.debug('About to execute Create Job command', command)
+
     return this.createJobCommandHandler.handle(command)
   }
 

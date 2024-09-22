@@ -11,10 +11,7 @@ export class RegisterJobErrorCommand implements RegisterJobErrorCommandProps {
     readonly error: Error | unknown
   ) {}
 
-  public static from(props: RegisterJobErrorCommandProps) {
-    return new RegisterJobErrorCommand(
-      props.job,
-      props.error
-    )
+  static from(props: RegisterJobErrorCommandProps) {
+    return new RegisterJobErrorCommand(props.job, props.error)
   }
 }
