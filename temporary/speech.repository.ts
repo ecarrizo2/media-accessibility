@@ -4,12 +4,14 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { Resource } from 'sst'
 import crypto from 'crypto'
 import { SpeechEntity } from './speech.entity'
+import { Logger } from '../src/shared/logger/logger.interface'
+import { LoggerService } from '../src/shared/logger/logger.service'
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}))
 
 @injectable()
 export class SpeechRepository {
-  constructor(@inject(LoggerService) private readonly logger: LoggerService) {}
+  constructor(@inject(LoggerService) private readonly logger: Logger) {}
 
   async getSpeech(text: string): Promise<SpeechEntity | null> {
     this.logger.debug('getSpeech()')

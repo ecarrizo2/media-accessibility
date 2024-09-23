@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe'
-import { LoggerService } from '@shared/logger.service'
+import { LoggerService } from '@shared/logger/logger.service'
 
 @injectable()
 export class RequestErrorHandlerWrapperService {

@@ -2,16 +2,16 @@ import { inject, injectable } from 'tsyringe'
 import { DynamodbJobRepository } from '@infrastructure/repositories/job/dynamodb-job.repository'
 import { JobRepository } from '@domain/repositories/job/job-repository.interface'
 import { StartJobCommand } from '@application/commands/job/start-job.command'
-import { BaseJobCommandHandler } from '@application/command-handlers/job/base-job.command-handler'
 
 @injectable()
-export class CompleteJobCommandHandler extends BaseJobCommandHandler {
-  constructor(@inject(DynamodbJobRepository) jobRepository: JobRepository) {
-    super(jobRepository)
+export class CompleteJobCommandHandler {
+  constructor(
+    @inject(DynamodbJobRepository) private readonly jobRepository: JobRepository,
+  ) {
   }
 
   async handle(command: StartJobCommand): Promise<void> {
-    const job = await this.getJobFromDatabase(command.jobId)
+    const { job } = command
     job.complete()
     await this.jobRepository.save(job)
   }

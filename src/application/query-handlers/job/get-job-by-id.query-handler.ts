@@ -8,7 +8,7 @@ import { DynamodbJobRepository } from '@infrastructure/repositories/job/dynamodb
 export class GetJobByIdQueryHandler {
   constructor(@inject(DynamodbJobRepository) private readonly jobRepository: JobRepository) {}
 
-  async handle(query: GetJobByIdQuery): Promise<JobEntity | undefined> {
+  async execute(query: GetJobByIdQuery): Promise<JobEntity | undefined> {
     return this.jobRepository.findById(query.jobId)
   }
 }

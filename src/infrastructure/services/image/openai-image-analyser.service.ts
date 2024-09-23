@@ -3,11 +3,11 @@ import OpenAI from 'openai'
 import { Resource } from 'sst'
 import { ImageAnalyserData } from '@domain/value-objects/image/image-analyser-data.vo'
 import { ImageAnalysisResult } from '@domain/value-objects/image/image-analysis-result.vo'
-import { LoggerService } from '@shared/logger.service'
+import { LoggerService } from '@shared/logger/logger.service'
 import { ChatCompletion } from 'openai/resources'
 import { ImageAnalyserService } from '@domain/services/image/image-analyser.interface'
+import { Logger } from '@shared/logger/logger.interface'
 
-//@ts-ignore
 const apiKey = Resource.OpenaiApiKey.value
 const openai = new OpenAI({
   apiKey,
@@ -15,7 +15,7 @@ const openai = new OpenAI({
 
 @injectable()
 export class OpenAIImageAnalyserService implements ImageAnalyserService {
-  constructor(@inject(LoggerService) private readonly logger: LoggerService) {}
+  constructor(@inject(LoggerService) private readonly logger: Logger) {}
 
   async analyseImage(imageData: ImageAnalyserData): Promise<ImageAnalysisResult> {
     this.logger.debug('getAnalyzedImageResult()')

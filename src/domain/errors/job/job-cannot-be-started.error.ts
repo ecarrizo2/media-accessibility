@@ -1,4 +1,4 @@
-import { BaseError } from '@shared/base.error'
+import { BaseError } from '@shared/errors/base.error'
 import { JobStatus } from '@domain/enums/job/job.enum'
 
 export class JobCannotBeStartedError extends BaseError {

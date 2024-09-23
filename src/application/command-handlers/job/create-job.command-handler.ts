@@ -13,10 +13,10 @@ export class CreateJobCommandHandler {
   /**
    * Handle the CreateJob Command by creating a new Job Entity and Saving it to the Database.
    *
-   * @param {CreateJobCommand<unknown>} command - Create Job Commands instance
+   * @param {CreateJobCommand} command - Create Job Commands instance
    * @returns {Promise<JobEntity>} - The created job entity
    */
-  async handle(command: CreateJobCommand<unknown>): Promise<JobEntity> {
+  async handle(command: CreateJobCommand): Promise<JobEntity> {
     const jobEntity = new JobEntity({
       id: v4(),
       type: command.type,

@@ -1,16 +1,17 @@
 import { inject, injectable } from 'tsyringe'
 import { ProcessImageJobRecordData } from '@interfaces/queue/sqs-event.interface'
-import { LoggerService } from '@shared/logger.service'
-import { ProcessImageCommand } from '@application/commands/image/process-image.command'
-import { ProcessImageCommandHandler } from '@application/command-handlers/image/process-image.command-handler'
+import { LoggerService } from '@shared/logger/logger.service'
 import { JobService } from '@application/services/job/job.service'
+import { ProcessImageRequestInput } from '@domain/value-objects/image/process-image-request-input.vo'
+import { ImageProcessorService } from '@application/services/image/image-processor.service'
+import { Logger } from '@shared/logger/logger.interface'
 
 @injectable()
 export class ProcessImageJobService {
   constructor(
     @inject(JobService) private readonly jobService: JobService,
-    @inject(ProcessImageCommandHandler) private readonly processImageCommandHandler: ProcessImageCommandHandler,
-    @inject(LoggerService) private readonly logger: LoggerService
+    @inject(ImageProcessorService) private readonly imageProcessorService: ImageProcessorService,
+    @inject(LoggerService) private readonly logger: Logger
   ) {}
 
   /**
@@ -42,9 +43,9 @@ export class ProcessImageJobService {
    * @returns {Promise<void>} A promise that resolves when the image is processed.
    */
   private async processImage(processImageData: ProcessImageJobRecordData): Promise<void> {
-    const command = ProcessImageCommand.from(processImageData.command)
-    this.logger.debug('About to execute process image command', command)
+    const processImageInput = ProcessImageRequestInput.from(processImageData.input)
+    this.logger.debug('About to execute process image flow', processImageInput)
 
-    await this.processImageCommandHandler.handle(command)
+    await this.imageProcessorService.processImage(processImageInput)
   }
 }

@@ -1,3 +1,5 @@
+import { Logger } from '@shared/logger/logger.interface'
+
 type Log = {
   level: string
   message: string
@@ -6,7 +8,7 @@ type Log = {
   data?: any
 }
 
-export class LoggerService {
+export class LoggerService implements Logger {
   private logLevel: string
   private traceId: string = ''
   private awsRequestId: string = ''

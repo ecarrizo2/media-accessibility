@@ -1,4 +1,4 @@
-import { ProcessImageCommandProps } from '@application/commands/image/process-image.command'
+import { ProcessImageRequestInput } from '@domain/value-objects/image/process-image-request-input.vo'
 
 export interface BaseSQSRecordBody {
   traceId?: string
@@ -9,5 +9,5 @@ export interface JobSQSRecordBody extends BaseSQSRecordBody {
 }
 
 export interface ProcessImageJobRecordData extends JobSQSRecordBody {
-  command: ProcessImageCommandProps
+  input: ProcessImageRequestInput
 }

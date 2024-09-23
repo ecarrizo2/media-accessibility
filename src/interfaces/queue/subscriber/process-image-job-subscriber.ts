@@ -1,9 +1,9 @@
 import 'reflect-metadata'
 import { container } from 'tsyringe'
 import { initializeQueueContainer } from '@interfaces/shared/container-initialization.helper'
-import { BaseError } from '@shared/base.error'
+import { BaseError } from '@shared/errors/base.error'
 import { ProcessImageJobService } from '@interfaces/queue/services/process-image-job.service'
-import { LoggerService } from '@shared/logger.service'
+import { LoggerService } from '@shared/logger/logger.service'
 
 /**
  * Handle events of the Process Image Queue, this Queue and its handler is used to process SQS messages

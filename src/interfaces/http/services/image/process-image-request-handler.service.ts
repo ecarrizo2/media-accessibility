@@ -1,21 +1,21 @@
 import { container, inject, injectable } from 'tsyringe'
 import { ProcessImageRequestInput } from '@domain/value-objects/image/process-image-request-input.vo'
 import { JobEntity } from '@domain/entities/job/job.entity'
-import { LoggerService } from '@shared/logger.service'
-import { CreateJobCommandHandler } from '@application/command-handlers/job/create-job.command-handler'
-import { CreateJobCommand } from '@application/commands/job/create-job.command'
+import { LoggerService } from '@shared/logger/logger.service'
 import { JobType } from '@domain/enums/job/job.enum'
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs'
+import { JobService } from '@application/services/job/job.service'
+import { Logger } from '@shared/logger/logger.interface'
+import { Resource } from 'sst'
 
-//@ts-ignore
 const processImageQueueUrl = Resource.ProcessImageQueue.url
 const sqs = new SQSClient({})
 
 @injectable()
 export class ProcessImageRequestHandlerService {
   constructor(
-    @inject(LoggerService) private readonly logger: LoggerService,
-    @inject(CreateJobCommandHandler) private readonly createJobHandler: CreateJobCommandHandler
+    @inject(LoggerService) private readonly logger: Logger,
+    @inject(JobService) private readonly jobService: JobService
   ) {}
 
   async scheduleImageProcessingJob(processImageRequestInput: ProcessImageRequestInput): Promise<JobEntity> {
@@ -35,12 +35,11 @@ export class ProcessImageRequestHandlerService {
   private async createJob(processImageRequestInput: ProcessImageRequestInput): Promise<JobEntity> {
     this.logger.info('Creating a new job for the image processing request')
 
-    const command: CreateJobCommand<ProcessImageRequestInput> = {
-      type: JobType.ImageProcessing,
-      input: processImageRequestInput,
-    }
+    const job = await this.jobService.create(
+      JobType.ImageProcessing,
+      processImageRequestInput
+    )
 
-    const job = await this.createJobHandler.handle(command)
     this.logger.debug('Job has been created', job)
 
     return job
@@ -63,7 +62,7 @@ export class ProcessImageRequestHandlerService {
         MessageBody: JSON.stringify({
           traceId: logger.getTraceId(),
           jobId: job.id,
-          command: {
+          input: {
             url: processImageRequestInput.url,
             prompt: processImageRequestInput.prompt,
             createSpeech: processImageRequestInput.createSpeech,

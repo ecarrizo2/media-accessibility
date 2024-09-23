@@ -1,6 +1,6 @@
 import { container } from 'tsyringe'
 import { getEventHeaderByKey } from '@interfaces/shared/aws-http-api-gateway-event.helper'
-import { LoggerService } from '@shared/logger.service'
+import { LoggerService } from '@shared/logger/logger.service'
 import { v4 } from 'uuid'
 
 export const initializeRequestContainer = (event: AWSLambda.APIGatewayEvent) => {
