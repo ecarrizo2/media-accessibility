@@ -1,22 +1,30 @@
 import { z } from 'zod'
 
 interface ImageAnalysisResultProps {
-  description: string
+  text: string
+  vendor: string
+  raw: string
 }
 
 const ImageAnalysisResultSchema = z.object({
-  description: z.string().min(1),
+  text: z.string().min(1),
+  vendor: z.string().min(1),
+  raw: z.string().min(1),
 })
 
 export class ImageAnalysisResult {
-  readonly description: string
+  readonly text: string
+  readonly vendor: string
+  readonly raw: string
 
-  private constructor(description: string) {
-    this.description = description
+  private constructor(props: ImageAnalysisResultProps) {
+    this.text = props.text
+    this.vendor = props.vendor
+    this.raw = props.raw
   }
 
-  public static from(data: ImageAnalysisResultProps): ImageAnalysisResult {
-    ImageAnalysisResultSchema.parse(data)
-    return new ImageAnalysisResult(data.description)
+  public static from(props: ImageAnalysisResultProps): ImageAnalysisResult {
+    const parsed = ImageAnalysisResultSchema.parse(props)
+    return new ImageAnalysisResult(parsed)
   }
 }

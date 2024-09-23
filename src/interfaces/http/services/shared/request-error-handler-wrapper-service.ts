@@ -24,9 +24,7 @@ export class RequestErrorHandlerWrapperService {
     }
   }
 
-  async wrap<ReturnType>(
-    action: Promise<ReturnType> | ReturnType,
-  ): Promise<ReturnType> {
+  async wrap<ReturnType>(action: Promise<ReturnType> | ReturnType): Promise<ReturnType> {
     try {
       return await action
     } catch (error) {

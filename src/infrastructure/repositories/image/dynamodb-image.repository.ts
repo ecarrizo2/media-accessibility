@@ -1,26 +1,42 @@
-import { ImageEntity } from '@domain/entities/image.entity'
+import { ImageEntity } from '@domain/entities/image/image.entity'
 import { Resource } from 'sst'
 import { BaseDynamodbRepository } from '@infrastructure/repositories/base-dynamodb.repository'
+import { inject, injectable } from 'tsyringe'
+import { ImageRepository } from '@domain/repositories/image/image-repository.interface'
+import { LoggerService } from '@shared/logger.service'
 
-export class DynamodbImageRepository extends BaseDynamodbRepository<ImageEntity> {
+@injectable()
+export class DynamodbImageRepository extends BaseDynamodbRepository<ImageEntity> implements ImageRepository {
   //@ts-ignore
-  protected readonly tableName = Resource.ImageMetadataDynamo.name
+  protected readonly tableName = Resource.ImageDynamo.name
+
+  constructor(@inject(LoggerService) logger: LoggerService) {
+    super(logger)
+  }
 
   protected toEntity(item: any): ImageEntity {
     return new ImageEntity({
+      id: item.id,
       url: item.imageUrl,
-      description: item.description,
+      prompt: item.prompt,
+      analysisText: item.analysisText,
+      analysisVendor: item.analysisVendor,
+      analysisResultRaw: JSON.parse(item.analysisResultRaw),
     })
   }
 
   protected toItem(entity: ImageEntity): any {
     return {
-      url: entity.url,
-      description: entity.description,
+      id: entity.id,
+      imageUrl: entity.url,
+      prompt: entity.prompt,
+      analysisText: entity.analysisText,
+      analysisVendor: entity.analysisVendor,
+      analysisResultRaw: JSON.stringify(entity.analysisResultRaw),
     }
   }
 
-  async getByUrl(url: string): Promise<ImageEntity | null> {
+  async findByUrl(url: string): Promise<ImageEntity | null> {
     const queryCommandParams = {
       TableName: this.tableName,
       IndexName: 'ImageUrlIndex',

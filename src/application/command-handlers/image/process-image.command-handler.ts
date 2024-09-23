@@ -1,17 +1,17 @@
 import { inject, injectable } from 'tsyringe'
-import { ImageAnalyserData } from '@domain/value-objects/image-analyser-data.vo'
-import { ImageAnalyserService } from '@domain/services/image-analyser.service'
-import { DynamodbImageRepository } from '@infrastructure/repositories/dynamodb-image.repository'
-import { ImageRepository } from '@domain/repositories/image-repository.interface'
-import { ImageEntity } from '@domain/entities/image.entity'
-import { ProcessImageCommand } from '@application/commands/process-image.command'
+import { ImageAnalyserData } from '@domain/value-objects/image/image-analyser-data.vo'
+import { ImageAnalyserService } from '@infrastructure/services/image/openai-image-analyser.service'
+import { DynamodbImageRepository } from '@infrastructure/repositories/image/dynamodb-image.repository'
+import { ImageRepository } from '@domain/repositories/image/image-repository.interface'
+import { ImageEntity } from '@domain/entities/image/image.entity'
+import { ProcessImageCommand } from '@application/commands/image/process-image.command'
+import { v4 } from 'uuid'
 
 @injectable()
 export class ProcessImageCommandHandler {
   constructor(
     @inject(ImageAnalyserService) private readonly imageAnalyserService: ImageAnalyserService,
     @inject(DynamodbImageRepository) private readonly imageRepository: ImageRepository
-    // @inject(TextToSpeechService) private readonly textToSpeechService: TextToSpeechService
   ) {}
 
   async handle(command: ProcessImageCommand): Promise<ImageEntity> {
@@ -21,16 +21,19 @@ export class ProcessImageCommandHandler {
     }
 
     const imageAnalysisData = ImageAnalyserData.from({
-      imageUrl: command.url,
+      url: command.url,
       prompt: command.prompt,
     })
 
     const imageAnalysisResult = await this.imageAnalyserService.analyseImage(imageAnalysisData)
 
     const newImage = new ImageEntity({
-      // id:
+      id: v4(),
       url: command.url,
-      description: imageAnalysisResult.description,
+      prompt: command.prompt,
+      analysisText: imageAnalysisResult.text,
+      analysisVendor: imageAnalysisResult.vendor,
+      analysisResultRaw: imageAnalysisResult.raw,
     })
 
     await this.imageRepository.save(newImage)

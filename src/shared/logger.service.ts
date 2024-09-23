@@ -19,6 +19,10 @@ export class LoggerService {
     this.traceId = traceId
   }
 
+  getTraceId() {
+    return this.traceId
+  }
+
   setAwsRequestId(awsRequestId: string) {
     this.awsRequestId = awsRequestId
   }
@@ -41,7 +45,14 @@ export class LoggerService {
       }
     }
 
-    const formattedData = data ? JSON.stringify(data, null, 2) : null
+    // Handle errors more gracefully
+    if (data && data instanceof Error) {
+      data = {
+        message: data.message,
+        stack: data.stack,
+      }
+    }
+
     const toLog: Log = {
       level: level.toUpperCase(),
       message: message,
@@ -55,17 +66,17 @@ export class LoggerService {
       toLog.traceId = this.traceId
     }
 
-    if (formattedData) {
-      toLog.data = formattedData
+    if (data) {
+      toLog.data = data
     }
 
-    return JSON.stringify(formattedData, null, 2)
+    return JSON.stringify(toLog, null, 2)
   }
 
   private logMessage(level: string, consoleMethod: (...args: any[]) => void, ...args: any[]): void {
-    if (this.shouldLog(level)) {
-      consoleMethod(this.formatMessage(level, ...args))
-    }
+    // if (this.shouldLog(level)) {
+    consoleMethod(this.formatMessage(level, ...args))
+    // }
   }
 
   log(...args: any[]): void {

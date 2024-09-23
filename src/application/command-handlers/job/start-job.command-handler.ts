@@ -1,46 +1,31 @@
 import { inject, injectable } from 'tsyringe'
-import { DynamodbJobRepository } from '@infrastructure/repositories/dynamodb-job.repository'
-import { JobRepository } from '@domain/repositories/job-repository.interface'
-import { StartJobCommand } from '@application/commands/start-job.command'
-import { JobStatus } from '@domain/enums/job.enum'
-import { JobEntity } from '@domain/entities/job.entity'
+import { DynamodbJobRepository } from '@infrastructure/repositories/job/dynamodb-job.repository'
+import { JobRepository } from '@domain/repositories/job/job-repository.interface'
+import { StartJobCommand } from '@application/commands/job/start-job.command'
+import { JobCannotBeStartedError } from '@domain/errors/job/job-cannot-be-started.error'
+import { BaseJobCommandHandler } from '@application/command-handlers/job/base-job.command-handler'
 
 @injectable()
-export class StartJobCommandHandler {
-  constructor(
-    @inject(DynamodbJobRepository) private readonly jobRepository: JobRepository,
-  ) {
+export class StartJobCommandHandler extends BaseJobCommandHandler {
+  constructor(@inject(DynamodbJobRepository) jobRepository: JobRepository) {
+    super(jobRepository)
   }
 
+  /**
+   * Handles the StartJobCommand by retrieving the job from the database,
+   * checking if it can be started, and then starting the job.
+   *
+   * @param {StartJobCommand} command - The command containing the job ID to start.
+   * @returns {Promise<void>} - A promise that resolves when the job has been started and saved.
+   * @throws {JobCannotBeStartedError} - If the job cannot be started due to its current status.
+   */
   async handle(command: StartJobCommand): Promise<void> {
-    // Get the Job from database
     const job = await this.getJobFromDatabase(command.jobId)
-    if (!job) {
-      throw new Error('Job does not exists') // Todo: Make this a Custom Exception.
+    if (!job.canStart()) {
+      throw new JobCannotBeStartedError(job.status)
     }
 
-    this.checkJobCanBeStarted(job)
-
-    return this.startJob(job)
-  }
-
-  private async getJobFromDatabase(jobId: string): Promise<JobEntity | undefined> {
-    return this.jobRepository.findById(jobId)
-  }
-
-  private checkJobCanBeStarted(job: JobEntity) {
-    if (job.status === JobStatus.Pending || job.status === JobStatus.Failed) {
-      return true
-    }
-
-    throw new Error('Job cannot be started.') // Todo: Make this a Custom Exception.
-  }
-
-  private async startJob(job: JobEntity): Promise<void> {
-    job.status = JobStatus.InProgress
-    job.attempts++
-    job.updatedAt =
-
-    return this.jobRepository.save(job)
+    job.start()
+    await this.jobRepository.save(job)
   }
 }

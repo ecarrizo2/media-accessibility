@@ -4,30 +4,64 @@ const environment = {
   LOG_LEVEL: 'debug',
 }
 
-const getImageMetadataDynamo = () => {
-  return new sst.aws.Dynamo('ImageMetadataDynamo', {
+const getImageDynamo = () => {
+  return new sst.aws.Dynamo('ImageDynamo', {
     fields: {
       id: 'string',
       imageUrl: 'string',
     },
-    primaryIndex: { hashKey: 'id', rangeKey: 'imageUrl' },
+    primaryIndex: { hashKey: 'id' },
     globalIndexes: {
-      ImageUrlIndex: { hashKey: 'imageUrl', rangeKey: 'id' },
+      ImageUrlIndex: { hashKey: 'imageUrl' },
     },
   })
 }
 
-const getSpeechDynamo = () => {
-  return new sst.aws.Dynamo('SpeechDynamo', {
+const getJobDynamo = () => {
+  return new sst.aws.Dynamo('JobDynamo', {
     fields: {
       id: 'string',
-      textHash: 'string',
     },
-    primaryIndex: { hashKey: 'id', rangeKey: 'textHash' },
-    globalIndexes: {
-      TextHashIndex: { hashKey: 'textHash', rangeKey: 'id' },
+    primaryIndex: { hashKey: 'id' },
+  })
+}
+
+// const getSpeechDynamo = () => {
+//   return new sst.aws.Dynamo('SpeechDynamo', {
+//     fields: {
+//       id: 'string',
+//       textHash: 'string',
+//     },
+//     primaryIndex: { hashKey: 'id', },
+//     globalIndexes: {
+//       TextHashIndex: { hashKey: 'textHash', rangeKey: 'id' },
+//     },
+//   })
+// }
+
+const getProcessImageJobQueue = (...args: any[]) => {
+  const deadLetterQueue = new sst.aws.Queue('ProcessImageDeadLetterQueue')
+  const queue = new sst.aws.Queue('ProcessImageQueue', {
+    dlq: {
+      queue: deadLetterQueue.arn,
+      retry: 5,
     },
   })
+
+  queue.subscribe(
+    {
+      handler: 'src/interfaces/queue/subscriber/process-image-job-subscriber.handle',
+      link: [...args],
+    },
+    {
+      batch: {
+        partialResponses: true,
+        size: 1,
+      },
+    }
+  )
+
+  return queue
 }
 
 export default $config({
@@ -38,23 +72,19 @@ export default $config({
       home: 'aws',
     }
   },
+
   async run() {
-    const imageMetadataDynamo = getImageMetadataDynamo()
-    const speechDynamo = getSpeechDynamo()
     const openaiApiKey = new sst.Secret('OpenaiApiKey')
-    const bucket = new sst.aws.Bucket('SpeechBucket', {
-      public: true,
-    })
+    const imageDynamo = getImageDynamo()
+    const jobDynamo = getJobDynamo()
+
+    const processImageQueue = getProcessImageJobQueue(openaiApiKey, jobDynamo, imageDynamo)
 
     const api = new sst.aws.ApiGatewayV2('Api')
     api.route('POST /process-image', {
-      handler: 'src/application/handlers/process-image.handler',
-      link: [imageMetadataDynamo, speechDynamo, bucket, openaiApiKey],
+      handler: 'src/interfaces/http/handlers/process-image-request-handler.handle',
+      link: [jobDynamo, processImageQueue],
       environment,
-    })
-
-    api.route('POST /process-text', {
-      handler: 'src/application/handlers/process-text.handler',
     })
   },
 })

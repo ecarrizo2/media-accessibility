@@ -4,10 +4,10 @@ const { v4: uuidv4 } = require('uuid')
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { Resource } from 'sst'
 import OpenAI from 'openai'
-import { LoggerService } from '@utils/logger.service'
-import { SpeechRepository } from '@domain/repositories/speech.repository'
+import { LoggerService } from '../src/utils/logger.service'
+import { SpeechRepository } from './speech.repository'
 import crypto from 'crypto'
-import { SpeechEntity } from '@domain/entities/speech.entity'
+import { SpeechEntity } from './speech.entity'
 
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,

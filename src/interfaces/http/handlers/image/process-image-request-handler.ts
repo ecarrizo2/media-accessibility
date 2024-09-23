@@ -1,12 +1,12 @@
 import 'reflect-metadata'
 import { container } from 'tsyringe'
 import { z } from 'zod'
-import { LoggerService } from '@shared//logger.service'
+import { LoggerService } from '@shared/logger.service'
 import { initializeRequestContainer } from '@interfaces/shared/container-initialization.helper'
 import { getRequestInput } from '@interfaces/shared/aws-http-api-gateway-event.helper'
 import { ProcessImageRequestInput } from '@domain/value-objects/image/process-image-request-input.vo'
-import { RequestErrorHandlerWrapperService } from '@interfaces/services/request-error-handler-wrapper-service'
-import { ProcessImageRequestHandlerService } from '@interfaces/http/services/process-image-request-handler.service'
+import { RequestErrorHandlerWrapperService } from '@interfaces/http/services/shared/request-error-handler-wrapper-service'
+import { ProcessImageRequestHandlerService } from '@interfaces/http/services/image/process-image-request-handler.service'
 
 const ProcessImageInputSchema = z.object({
   url: z.string().url(),
@@ -19,12 +19,8 @@ const ProcessImageInputSchema = z.object({
  *
  * @param {AWSLambda.APIGatewayEvent} event - The API Gateway event.
  */
-const getValidatedRequestInputValueObject = (event: AWSLambda.APIGatewayEvent ) => {
-  return getRequestInput<ProcessImageRequestInput>(
-    event,
-    ProcessImageInputSchema,
-    ProcessImageRequestInput
-  )
+const getValidatedRequestInputValueObject = (event: AWSLambda.APIGatewayEvent) => {
+  return getRequestInput<ProcessImageRequestInput>(event, ProcessImageInputSchema, ProcessImageRequestInput)
 }
 
 /**
@@ -41,9 +37,7 @@ export async function handle(event: AWSLambda.APIGatewayEvent): Promise<AWSLambd
 
   logger.info('Process Image Request Handler started')
   const input = getValidatedRequestInputValueObject(event)
-  const job = await requestErrorHandlerWrapperService.wrap(
-    processImageRequestService.scheduleImageProcessingJob(input),
-  )
+  const job = await requestErrorHandlerWrapperService.wrap(processImageRequestService.scheduleImageProcessingJob(input))
 
   logger.info('Process Image Request Handler ended successfully.')
 

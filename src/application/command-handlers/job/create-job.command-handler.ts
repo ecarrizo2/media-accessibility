@@ -1,17 +1,14 @@
 import { inject, injectable } from 'tsyringe'
 import { v4 } from 'uuid'
-import { DynamodbJobRepository } from '@infrastructure/repositories/dynamodb-job.repository'
-import { JobRepository } from '@domain/repositories/job-repository.interface'
-import { CreateJobCommand } from '@application/commands/create-job.command'
-import { JobEntity } from '@domain/entities/job.entity'
-import { JobStatus } from '@domain/enums/job.enum'
+import { DynamodbJobRepository } from '@infrastructure/repositories/job/dynamodb-job.repository'
+import { JobRepository } from '@domain/repositories/job/job-repository.interface'
+import { CreateJobCommand } from '@application/commands/job/create-job.command'
+import { JobEntity } from '@domain/entities/job/job.entity'
+import { JobStatus } from '@domain/enums/job/job.enum'
 
 @injectable()
 export class CreateJobCommandHandler {
-  constructor(
-    @inject(DynamodbJobRepository) private readonly jobRepository: JobRepository,
-  ) {
-  }
+  constructor(@inject(DynamodbJobRepository) private readonly jobRepository: JobRepository) {}
 
   /**
    * Handle the CreateJob Command by creating a new Job Entity and Saving it to the Database.
