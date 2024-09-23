@@ -74,9 +74,9 @@ export class LoggerService {
   }
 
   private logMessage(level: string, consoleMethod: (...args: any[]) => void, ...args: any[]): void {
-    // if (this.shouldLog(level)) {
-    consoleMethod(this.formatMessage(level, ...args))
-    // }
+    if (this.shouldLog(level)) {
+      consoleMethod(this.formatMessage(level, ...args))
+    }
   }
 
   log(...args: any[]): void {
