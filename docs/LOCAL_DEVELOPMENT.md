@@ -57,18 +57,18 @@ Ensure you have the following installed on your machine
 
 ## Project Structure
 
-Refer to the [Project Structure](docs/project-structure.md) documentation for an overview of the project's directory layout and organization.
+Refer to the [Project Structure](./PROJECT_STRUCTURE.md) documentation for an overview of the project's directory layout and organization.
 
 ## Git Hooks
 
-Refer to the [Git Hooks Documentation](docs/git-hooks.md) for information on the Git hooks used in this project.
+Refer to the [Git Hooks Documentation](GIT_HOOKS.md) for information on the Git hooks used in this project.
 
 ## Commit Message Guidelines
 
-Follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for commit messages.
+Follow the [Conventional Commits](CONVENTIONAL_COMMITS.md) specification for commit messages.
 
 ## Additional Resources
 
-- [SST Documentation](https://docs.sst.dev/)
+- [SST Documentation](https://sst.dev/docs/)
 - [AWS CLI Documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
 ```
