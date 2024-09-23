@@ -1,6 +1,7 @@
 # Conventional Commits
 
 This project follows the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
+Conventional Commits are also used to auto-create the Semantic Versioning of the project.
 
 ## Commit Message Guidelines
 

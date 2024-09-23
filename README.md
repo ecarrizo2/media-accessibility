@@ -1,4 +1,6 @@
 # media-accessibility
+[![Maintainability](https://api.codeclimate.com/v1/badges/ed55f20fe3ffd64832af/maintainability)](https://codeclimate.com/github/ecarrizo2/media-accessibility/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ed55f20fe3ffd64832af/test_coverage)](https://codeclimate.com/github/ecarrizo2/media-accessibility/test_coverage)
 
 Work In Progress.
 
@@ -10,7 +12,7 @@ This projects is a POC for several tools:
 
 - Using SST/Ion for Infrastructure as a code and Resource management such as API and Queues Routing, SSL, DNS, etc
 - Using TSyringe for Dependency Injection without having to use a framework like NestJS
-- Using Github Actions for CI/CD
+- Using GitHub Actions for CI/CD
 
 This project in particular solves a problem for some of my other side projects
 which is to provide a way to analyse images and create speech from these analysed images description,
@@ -24,9 +26,10 @@ The idea is to be solely used for my own projects and not for commercial purpose
 
 If you are looking to review/develop/fork this project, please refer to the following documentation:
 
-- [Running the project locally]()
-- [Project Structure](docs/project-structure.md)
-- [Git Hooks Documentation](docs/git-hooks.md)
-- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- [Running the project locally](docs/LOCAL_DEVELOPMENT)
+- [Project Structure](docs/PROJECT_STRUCTURE)
+- [Git Hooks Documentation](docs/GIT_HOOKS)
+- [Conventional Commits](docs/CONVENTIONAL_COMMITS)
+- [Code of Conduct](CODE_OF_CONDUCT.)
 - PR Verification Checklist
-- [Code of Conduct](docs/code-of-conduct.md)
+- CI/CD
