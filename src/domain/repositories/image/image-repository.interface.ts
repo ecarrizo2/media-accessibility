@@ -12,5 +12,5 @@ export interface ImageRepository extends BaseRepository<ImageEntity> {
    * @param {string} url - The URL of the image.
    * @returns {Promise<ImageEntity | null>} - A promise that resolves to the image or null if not
    */
-  findByUrl(url: string): Promise<ImageEntity | null>
+  findByUrl(url: string): Promise<ImageEntity | undefined>
 }

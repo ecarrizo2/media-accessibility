@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "scripts": {
     "prepare": "cp -r git-hooks/* .git/hooks/",
-    "format": "prettier --write .",
+    "prettier": "prettier --write .",
+    "prettier:check": "prettier --check .",
     "test": "jest",
+    "test:cov": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"

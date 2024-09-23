@@ -5,7 +5,7 @@ import { BaseEntity } from '@domain/entities/base.entity'
 /**
  * Interface representing an error that occurred during a job.
  */
-interface JobError {
+export interface JobError {
   /** The error message. */
   message: string
 

@@ -28,16 +28,16 @@ export class DynamodbImageRepository extends BaseDynamodbRepository<ImageEntity>
    * @param {any} item - The DynamoDB item.
    * @returns {ImageEntity} - The ImageEntity.
    */
-  protected toEntity(item: any): ImageEntity {
+  protected toEntity(item: Record<string, unknown>): ImageEntity {
     return new ImageEntity({
-      id: item.id,
-      url: item.imageUrl,
-      prompt: item.prompt,
-      analysisText: item.analysisText,
-      analysisVendor: item.analysisVendor,
-      analysisResultRaw: JSON.parse(item.analysisResultRaw),
-      createdAt: item.createdAt,
-      updatedAt: item.updatedAt,
+      id: item.id as string,
+      url: item.imageUrl as string,
+      prompt: item.prompt as string,
+      analysisText: item.analysisText as string,
+      analysisVendor: item.analysisVendor as string,
+      analysisResultRaw: JSON.parse(item.analysisResultRaw as string),
+      createdAt: item.createdAt as string,
+      updatedAt: item.updatedAt as string,
     })
   }
 
@@ -47,7 +47,7 @@ export class DynamodbImageRepository extends BaseDynamodbRepository<ImageEntity>
    * @param {ImageEntity} entity - The ImageEntity.
    * @returns {any} - The DynamoDB item.
    */
-  protected toItem(entity: ImageEntity): any {
+  protected toItem(entity: ImageEntity): Record<string, unknown> {
     return {
       id: entity.id,
       imageUrl: entity.url,
@@ -66,7 +66,7 @@ export class DynamodbImageRepository extends BaseDynamodbRepository<ImageEntity>
    * @param {string} url - The URL of the image.
    * @returns {Promise<ImageEntity | null>} - The ImageEntity or null if not found.
    */
-  async findByUrl(url: string): Promise<ImageEntity | null> {
+  async findByUrl(url: string): Promise<ImageEntity | undefined> {
     const queryCommandParams: QueryCommandInput = {
       TableName: this.tableName,
       IndexName: 'ImageUrlIndex',

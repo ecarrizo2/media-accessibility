@@ -37,7 +37,7 @@ export abstract class BaseDynamodbRepository<EntityType> implements BaseReposito
    * @param {any} item - The DynamoDB item.
    * @returns {EntityType} - The entity.
    */
-  protected abstract toEntity(item: any): EntityType
+  protected abstract toEntity(item: Record<string, unknown>): EntityType
 
   /**
    * Converts an entity to a DynamoDB item.
@@ -46,7 +46,7 @@ export abstract class BaseDynamodbRepository<EntityType> implements BaseReposito
    * @param {EntityType} entity - The entity.
    * @returns {any} - The DynamoDB item.
    */
-  protected abstract toItem(entity: EntityType): any
+  protected abstract toItem(entity: EntityType): Record<string, unknown>
 
   /**
    * Runs a query on the DynamoDB table.
@@ -54,7 +54,7 @@ export abstract class BaseDynamodbRepository<EntityType> implements BaseReposito
    * @param {any} queryCommandParams - The parameters for the query command.
    * @returns {Promise<any>} - The result of the query.
    */
-  protected async runQuery(queryCommandParams: QueryCommandInput): Promise<any> {
+  protected async runQuery(queryCommandParams: QueryCommandInput): Promise<EntityType | undefined> {
     this.logger.debug('Running query', queryCommandParams)
     const queryResult = await this.client.send(new QueryCommand(queryCommandParams))
     const value = queryResult?.Items?.length ? queryResult?.Items[0] : null

@@ -3,8 +3,6 @@ name: 'PR Verification'
 on:
   pull_request:
     branches:
-      - qa
-      - production
       - main
   workflow_dispatch:
 
