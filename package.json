@@ -2,6 +2,7 @@
   "name": "media-accessibility-ia-converter",
   "version": "1.0.0",
   "scripts": {
+    "prepare": "cp -r git-hooks/* .git/hooks/",
     "format": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watch",

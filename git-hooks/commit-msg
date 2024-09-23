@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Regex pattern for conventional commits
+pattern="^(feat|fix|docs|style|refactor|perf|test|chore|build|ci|revert|merge)(\(.+\))?!?: .{1,50}"
+
+commit_message=$(cat "$1")
+
+if ! echo "$commit_message" | grep -Eq "$pattern"; then
+  echo "Error: Commit message does not follow Conventional Commits format."
+  echo "Please use the format: <type>(<scope>)?: <description>"
+  echo "Example: feat(parser): add ability to parse arrays"
+  exit 1
+fi
