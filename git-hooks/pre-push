@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Run ESLint on all files and disallow pushing if there are errors
+echo "Running ESLint..."
+npx lint
+
+if [ $? -ne 0 ]; then
+  echo "ESLint found errors. Aborting push."
+  exit 1
+fi

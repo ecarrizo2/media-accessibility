@@ -18,41 +18,15 @@ the goal is to be using the generated data to add accessibility features to my o
 
 The idea is to be solely used for my own projects and not for commercial purposes.
 
-## Project Structure
 
-### `src/domain`
 
-Contains the core business logic and domain entities.
+## For Reviewers and Developers
 
-- `entities`: Defines the domain entities.
-- `enums`: Contains enumerations used across the domain.
-- `errors`: Custom error classes for domain-specific exceptions.
-- `repositories`: Interfaces for data access layers.
-- `services`: ...
+If you are looking to review/develop/fork this project, please refer to the following documentation:
 
-### `src/application`
-
-Contains the application layer, which includes command and query handlers and other application services.
-
-- `command-handlers`: Handlers for commands.
-- `commands`: Command definition.
-- `query-handlers`: Handlers for queries.'
-- `queries`: Query definition.
-- `services`: Application services that are not part of the domain
-
-### `src/infrastructure`
-
-Contains the infrastructure layer, which includes implementations of repositories and other external services.
-
-- `repositories`: Concrete implementations of the domain repository interfaces.
-- `services`: Other type of Services such as Integration with third party services.
-
-### `src/interfaces`
-
-Contains the interface adapters, such as API Request Handlers and Event Subscriber Handlers.
-
-### `src/shared`
-
-Contains shared services that can be used across the codebase.
-
-## Flow Charts
+- [Running the project locally]()
+- [Project Structure](docs/project-structure.md)
+- [Git Hooks Documentation](docs/git-hooks.md)
+- [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- PR Verification Checklist
+- [Code of Conduct](docs/code-of-conduct.md)
