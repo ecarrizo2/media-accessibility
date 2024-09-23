@@ -12,7 +12,7 @@ This projects is a POC for several tools:
 
 - Using SST/Ion for Infrastructure as a code and Resource management such as API and Queues Routing, SSL, DNS, etc
 - Using TSyringe for Dependency Injection without having to use a framework like NestJS
-- Using GitHub Actions for CI/CD
+- Using GitHub Actions for CI/CD 
 
 This project in particular solves a problem for some of my other side projects
 which is to provide a way to analyse images and create speech from these analysed images description,
