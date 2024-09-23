@@ -1,5 +1,6 @@
 module.exports = {
   root: true,
+  files: ["**/*.ts", "**/*.js"],
   env: {
     node: true,
   },

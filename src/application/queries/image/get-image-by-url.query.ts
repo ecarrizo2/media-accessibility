@@ -3,13 +3,9 @@ export interface getImageByUrlQueryProps {
 }
 
 export class GetImageByUrlQuery {
-  private constructor(
-    readonly url: string
-  ) {}
+  private constructor(readonly url: string) {}
 
-  public static from(props: getImageByUrlQueryProps) {
-    return new GetImageByUrlQuery(
-      props.url
-    )
+  static from(props: getImageByUrlQueryProps) {
+    return new GetImageByUrlQuery(props.url)
   }
 }

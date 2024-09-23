@@ -50,7 +50,7 @@ const getProcessImageJobQueue = (...args: any[]) => {
 
   queue.subscribe(
     {
-      handler: 'src/interfaces/queue/subscriber/process-image-job-subscriber.handle',
+      handler: 'src/interfaces/queue/subscribers/process-image-job-subscriber.handle',
       link: [...args],
     },
     {
@@ -82,7 +82,7 @@ export default $config({
 
     const api = new sst.aws.ApiGatewayV2('Api')
     api.route('POST /process-image', {
-      handler: 'src/interfaces/http/handlers/process-image-request-handler.handle',
+      handler: 'src/interfaces/http/handlers/image/process-image-request-handler.handle',
       link: [jobDynamo, processImageQueue],
       environment,
     })

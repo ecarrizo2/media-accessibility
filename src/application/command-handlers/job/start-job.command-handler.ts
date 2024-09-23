@@ -6,10 +6,7 @@ import { JobCannotBeStartedError } from '@domain/errors/job/job-cannot-be-starte
 
 @injectable()
 export class StartJobCommandHandler {
-  constructor(
-    @inject(DynamodbJobRepository) private readonly jobRepository: JobRepository,
-  ) {
-  }
+  constructor(@inject(DynamodbJobRepository) private readonly jobRepository: JobRepository) {}
 
   /**
    * Handles the StartJobCommand by retrieving the job from the database,

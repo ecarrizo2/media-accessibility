@@ -1,16 +1,18 @@
 import { inject, injectable } from 'tsyringe'
 import { ProcessImageJobRecordData } from '@interfaces/queue/sqs-event.interface'
 import { LoggerService } from '@shared/logger/logger.service'
-import { JobService } from '@application/services/job/job.service'
+import { JobFacadeService } from '@application/services/job/job-facade.service'
 import { ProcessImageRequestInput } from '@domain/value-objects/image/process-image-request-input.vo'
 import { ImageProcessorService } from '@application/services/image/image-processor.service'
 import { Logger } from '@shared/logger/logger.interface'
+import { ImageProcessor } from '@application/services/image/image-processor.interface'
+import { JobFacade } from '@application/services/job/job-facade.interface'
 
 @injectable()
 export class ProcessImageJobService {
   constructor(
-    @inject(JobService) private readonly jobService: JobService,
-    @inject(ImageProcessorService) private readonly imageProcessorService: ImageProcessorService,
+    @inject(JobFacadeService) private readonly jobService: JobFacade,
+    @inject(ImageProcessorService) private readonly imageProcessorService: ImageProcessor,
     @inject(LoggerService) private readonly logger: Logger
   ) {}
 

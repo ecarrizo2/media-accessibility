@@ -5,13 +5,9 @@ export interface StartJobCommandProps {
 }
 
 export class StartJobCommand implements StartJobCommandProps {
-  private constructor(
-    readonly job: JobEntity,
-  ) {}
+  private constructor(readonly job: JobEntity) {}
 
-  public static from(props: StartJobCommandProps) {
-    return new StartJobCommand(
-      props.job,
-    )
+  static from(props: StartJobCommandProps) {
+    return new StartJobCommand(props.job)
   }
 }

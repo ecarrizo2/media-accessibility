@@ -8,19 +8,19 @@ import { ImageAnalysisResult } from '@domain/value-objects/image/image-analysis-
 import { CreateImageCommand } from '@application/commands/image/create-image-command'
 import { CreateImageCommandHandler } from '@application/command-handlers/image/create-image.command-handler'
 import { ImageEntity } from '@domain/entities/image/image.entity'
+import { ImageProcessor } from '@application/services/image/image-processor.interface'
 
 /**
  * Service responsible for processing images.
  * This service coordinates the execution of commands and queries related to image processing.
  */
 @injectable()
-export class ImageProcessorService {
-
+export class ImageProcessorService implements ImageProcessor {
   constructor(
     @inject(GetImageByUrlQueryHandler) private readonly getImageByUrlQueryHandler: GetImageByUrlQueryHandler,
     @inject(AnalyseImageCommandHandler) private readonly analyzeImageCommandHandler: AnalyseImageCommandHandler,
-    @inject(CreateImageCommandHandler) private readonly createImageCommandHandler: CreateImageCommandHandler,
-  ) { }
+    @inject(CreateImageCommandHandler) private readonly createImageCommandHandler: CreateImageCommandHandler
+  ) {}
 
   /**
    * Processes an image based on the provided input.
@@ -71,7 +71,7 @@ export class ImageProcessorService {
   private async analyseImage(input: ProcessImageRequestInput): Promise<ImageAnalysisResult> {
     const command = AnalyseImageCommand.from({
       url: input.url,
-      prompt: input.prompt
+      prompt: input.prompt,
     })
 
     return this.analyzeImageCommandHandler.handle(command)
@@ -91,7 +91,7 @@ export class ImageProcessorService {
     const command = CreateImageCommand.from({
       url: input.url,
       prompt: input.prompt,
-      imageAnalysisResult
+      imageAnalysisResult,
     })
 
     return this.createImageCommandHandler.handle(command)
