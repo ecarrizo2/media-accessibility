@@ -2,7 +2,7 @@
 
 # Run ESLint on all files and disallow pushing if there are errors
 echo "Running ESLint..."
-npx lint
+npm run lint
 
 if [ $? -ne 0 ]; then
   echo "ESLint found errors. Aborting push."

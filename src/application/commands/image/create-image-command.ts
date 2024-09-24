@@ -1,6 +1,6 @@
 import { ImageAnalysisResult } from '@domain/value-objects/image/image-analysis-result.vo'
 
-interface CreateImageCommandProps {
+export interface CreateImageCommandProps {
   url: string
   prompt: string
   imageAnalysisResult: ImageAnalysisResult

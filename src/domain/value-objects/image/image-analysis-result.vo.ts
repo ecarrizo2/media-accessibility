@@ -3,7 +3,7 @@ import { z } from 'zod'
 /**
  * Interface representing the properties of an image analysis result.
  */
-interface ImageAnalysisResultProps {
+export interface ImageAnalysisResultProps {
   text: string
   vendor: string
   raw: string
@@ -36,10 +36,6 @@ export class ImageAnalysisResult {
    */
   static from(props: ImageAnalysisResultProps): ImageAnalysisResult {
     const parsed = ImageAnalysisResultSchema.parse(props)
-    return new ImageAnalysisResult(
-      parsed.text,
-      parsed.vendor,
-      parsed.raw
-    )
+    return new ImageAnalysisResult(parsed.text, parsed.vendor, parsed.raw)
   }
 }

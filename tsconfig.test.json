@@ -1,18 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "module": "CommonJS",
-    "lib": ["ES2020"],
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "Node",
-    "experimentalDecorators": true,
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
     "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "allowJs": true,
+    "incremental": true,
     "paths": {
       "@domain/*": ["src/domain/*"],
       "@infrastructure/*": ["src/infrastructure/*"],
@@ -23,5 +22,5 @@
     }
   },
   "include": ["src/**/*", "sst-env.d.ts"],
-  "exclude": ["node_modules", "dist", "src/**/*.spec.ts"]
+  "exclude": ["node_modules", "dist"]
 }
