@@ -19,7 +19,6 @@ export enum JobStatus {
  * Enum representing the type of job.
  */
 export enum JobType {
-
   /** The job is for processing an image. */
   ImageProcessing = 'process-image',
 }

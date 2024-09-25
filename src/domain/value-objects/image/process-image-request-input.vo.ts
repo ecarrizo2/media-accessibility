@@ -25,9 +25,8 @@ export class ProcessImageRequestInput {
   private constructor(
     readonly url: string,
     readonly prompt: string,
-    readonly createSpeech: boolean,
-  ) {
-  }
+    readonly createSpeech: boolean
+  ) {}
 
   /**
    * Static method to factory a new ProcessImageRequestInput instance from the given input parameters.
@@ -37,10 +36,6 @@ export class ProcessImageRequestInput {
    */
   static from(input: ProcessImageRequestInputProps) {
     const parsed = ProcessImageInputSchema.parse(input)
-    return new ProcessImageRequestInput(
-      parsed.url,
-      parsed.prompt,
-      parsed.createSpeech ?? false,
-    )
+    return new ProcessImageRequestInput(parsed.url, parsed.prompt, parsed.createSpeech ?? false)
   }
 }

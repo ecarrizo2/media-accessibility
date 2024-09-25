@@ -23,8 +23,7 @@ export class ImageAnalyserInput {
   private constructor(
     readonly url: string,
     readonly prompt: string
-  ) {
-  }
+  ) {}
 
   /**
    * Static method to factory a new ImageAnalyserInput instance from the given data.
@@ -34,9 +33,6 @@ export class ImageAnalyserInput {
    */
   static from(data: ImageAnalyserInputProps): ImageAnalyserInput {
     const parsed = ImageAnalyserInputSchema.parse(data)
-    return new ImageAnalyserInput(
-      parsed.url,
-      parsed.prompt
-    )
+    return new ImageAnalyserInput(parsed.url, parsed.prompt)
   }
 }

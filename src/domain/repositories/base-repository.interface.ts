@@ -10,7 +10,7 @@ export interface BaseRepository<EntityType> {
    * @param {string} id - The ID of the entity.
    * @returns {Promise<EntityType | undefined>} - A promise that resolves to the entity or undefined if not found.
    */
-  findById(id: string): Promise<EntityType | undefined>
+  findById(id: string): Promise<EntityType | null>
 
   /**
    * Saves an entity.
