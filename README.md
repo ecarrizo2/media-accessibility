@@ -29,6 +29,6 @@ If you are looking to review/develop/fork this project, please refer to the foll
 - [Project Structure](docs/PROJECT_STRUCTURE)
 - [Git Hooks Documentation](docs/GIT_HOOKS)
 - [Conventional Commits](docs/CONVENTIONAL_COMMITS)
-- [Code of Conduct](CODE_OF_CONDUCT.)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
 - PR Verification Checklist
 - CI/CD
