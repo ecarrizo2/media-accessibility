@@ -132,7 +132,7 @@ export class LoggerService implements Logger {
    * @param {unknown[]} args - The arguments to extract the message and data from.
    * @returns {{ message: string, data: unknown }} An object containing the extracted message and data.
    */
-  private extractMessageAndData(args: unknown[]): { message: string, data: unknown } {
+  private extractMessageAndData(args: unknown[]): { message: string; data: unknown } {
     let message = ''
     let data = null
 

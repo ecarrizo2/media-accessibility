@@ -9,7 +9,6 @@ import { LoggerService } from '@shared/logger/logger.service'
 export class RequestErrorHandlerWrapperService {
   constructor(@inject(LoggerService) private readonly logger: LoggerService) {}
 
-
   /**
    * Wraps the provided action in a try-catch block to handle any errors that occur.
    *
