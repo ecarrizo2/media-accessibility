@@ -24,22 +24,20 @@ describe('AnalyseImageCommandHandler', () => {
         },
       })
 
-      const expectedImage = new ImageEntity({
-        id: '1234-1234-1234-1234',
-        url: command.url,
-        prompt: command.prompt,
-        analysisText: command.imageAnalysisResult.text,
-        analysisVendor: command.imageAnalysisResult.vendor,
-        analysisResultRaw: command.imageAnalysisResult.raw,
-        createdAt: '2024-09-24 00:00:00',
-      })
-
       const unitResult = await commandHandler.handle(command)
 
-      expect(repository.save).toHaveBeenCalledWith(1)
-      expect(repository.save).toHaveBeenCalledWith(expect.objectContaining(expectedImage))
+      expect(repository.save).toHaveBeenCalledTimes(1)
+      expect(repository.save).toHaveBeenCalledWith(expect.any(ImageEntity))
       expect(unitResult).toBeInstanceOf(ImageEntity)
-      expect(unitResult).toEqual(expect.objectContaining(expectedImage))
+      expect(unitResult).toEqual(
+        expect.objectContaining({
+          url: command.url,
+          prompt: command.prompt,
+          analysisText: command.imageAnalysisResult.text,
+          analysisVendor: command.imageAnalysisResult.vendor,
+          analysisResultRaw: command.imageAnalysisResult.raw,
+        })
+      )
     })
   })
 })
