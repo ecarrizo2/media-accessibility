@@ -14,18 +14,15 @@ describe('AnalyseImageCommandHandler', () => {
 
   describe('WHEN handling the command', () => {
     it('THEN it should invoke the image analyser and return the result', async () => {
-      // Arrange
       const imageAnalysisResult = createImageAnalysisResultMock()
       imageAnalyserService.analyseImage.mockResolvedValue(imageAnalysisResult)
+
       const command = AnalyseImageCommand.from({
         url: 'http://localhost:8080',
         prompt: 'Describe this image in 5 words',
       })
 
-      // Act
       const unitResult = await commandHandler.handle(command)
-
-      // Assert
       expect(unitResult).toEqual(imageAnalysisResult)
     })
   })
