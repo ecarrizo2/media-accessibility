@@ -10,11 +10,10 @@ messages will also be used to automatically created the software version.
 **Location**: `git-hooks/commit-msg`
 
 **functionality**:
+
 - Reads the commit message.
 - Validates it against a regex pattern.
 - If invalid, prints an error and aborts the commit.
-
-
 
 ## 2. `pre-commit` Hook
 
@@ -22,7 +21,8 @@ messages will also be used to automatically created the software version.
 
 **Location**: `git-hooks/pre-commit`
 
-**functionality**: 
+**functionality**:
+
 - Runs Prettier on staged .js and .ts files.
 - Adds formatted files back to the commit.
 - Runs ESLint with --fix on staged files.
@@ -31,12 +31,13 @@ messages will also be used to automatically created the software version.
 
 ## 3. `pre-push` Hook
 
-**Purpose**:  (Optional) Runs ESLint on all files and disallows pushing if there are errors, it also run the
+**Purpose**: (Optional) Runs ESLint on all files and disallows pushing if there are errors, it also run the
 codebase test, making sure that your pushed changes will pass in the PR Pipelines.
 
 **Location**: `git-hooks/pre-push`
 
 **functionality**:
+
 - Runs ESLint on all files in the ./src directory.
 - If ESLint finds errors, the push is aborted.
 - Runs the test suite

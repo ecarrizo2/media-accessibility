@@ -6,9 +6,7 @@ import { ImageRepository } from '@domain/repositories/image/image-repository.int
 
 @injectable()
 export class GetImageByUrlQueryHandler {
-  constructor(
-    @inject(DynamodbImageRepository) private readonly repository: ImageRepository) {
-  }
+  constructor(@inject(DynamodbImageRepository) private readonly repository: ImageRepository) {}
 
   async execute(query: GetImageByUrlQuery): Promise<ImageEntity | null> {
     return this.repository.findByUrl(query.url)

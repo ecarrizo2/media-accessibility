@@ -9,16 +9,15 @@ import { DynamodbJobRepository } from '@infrastructure/repositories/job/dynamodb
  */
 @injectable()
 export class GetJobByIdQueryHandler {
-
   constructor(@inject(DynamodbJobRepository) private readonly jobRepository: JobRepository) {}
 
   /**
    * Executes the query to retrieve a job by its ID.
    *
    * @param {GetJobByIdQuery} query - The query containing the job ID.
-   * @returns {Promise<JobEntity | undefined>} - A promise that resolves to the job entity or undefined if not found.
+   * @returns {Promise<JobEntity | null>} - A promise that resolves to the job entity or undefined if not found.
    */
-  async execute(query: GetJobByIdQuery): Promise<JobEntity | undefined> {
+  async execute(query: GetJobByIdQuery): Promise<JobEntity | null> {
     return this.jobRepository.findById(query.jobId)
   }
 }

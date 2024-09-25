@@ -19,7 +19,7 @@ Contains the application layer, which includes command and query handlers and ot
 - `query-handlers`: Handlers for queries.
 - `queries`: Query definitions.
 - `services`: Application services that are not part of the domain.
-- `value-objects`: Different value objects that represent different domain concepts also used as DTOs to pass information between services. 
+- `value-objects`: Different value objects that represent different domain concepts also used as DTOs to pass information between services.
 
 ### `src/infrastructure`
 
@@ -34,9 +34,8 @@ Contains the interface adapters, such as API request handlers and event subscrib
 
 - `http`: API request handlers.
 - `queue`: Event subscriber handlers.
-- `shared`: Any shared code for the different interfaces. 
+- `shared`: Any shared code for the different interfaces.
 
 ### `src/shared`
 
 Contains shared services and utilities that can be used across the codebase.
-
