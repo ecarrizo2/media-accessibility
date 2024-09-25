@@ -25,6 +25,7 @@ export class CreateJobCommandHandler {
       attempts: 0,
       errors: null,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     })
 
     await this.jobRepository.save(jobEntity)
