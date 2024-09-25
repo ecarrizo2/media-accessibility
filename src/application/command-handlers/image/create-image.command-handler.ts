@@ -24,6 +24,7 @@ export class CreateImageCommandHandler {
       analysisVendor: command.imageAnalysisResult.vendor,
       analysisResultRaw: command.imageAnalysisResult.raw,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     })
 
     await this.imageRepository.save(newImage)
