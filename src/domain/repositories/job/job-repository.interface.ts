@@ -1,4 +1,4 @@
-import { BaseRepository } from '@domain/repositories/base-repository.interface'
+import { BaseRepository } from '@domain/repositories/repository.interface'
 import { JobEntity } from '@domain/entities/job/job.entity'
 
 /**

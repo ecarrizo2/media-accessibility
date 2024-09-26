@@ -1,5 +1,5 @@
 import { ImageEntity } from '../../entities/image/image.entity'
-import { BaseRepository } from '@domain/repositories/base-repository.interface'
+import { BaseRepository } from '@domain/repositories/repository.interface'
 
 /**
  * Interface representing a repository for managing Image entities.
