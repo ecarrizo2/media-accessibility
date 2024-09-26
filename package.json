@@ -20,6 +20,8 @@
     "@aws-sdk/client-s3": "^3.637.0",
     "@aws-sdk/client-sqs": "^3.637.0",
     "@aws-sdk/lib-dynamodb": "^3.637.0",
+    "class-transformer": "^0.5.1",
+    "class-validate": "^0.0.1",
     "crypto": "^1.0.1",
     "openai": "^4.56.0",
     "reflect-metadata": "^0.2.2",
