@@ -16,7 +16,7 @@ export class ResponseHandlerService implements RequestHandler {
       return this.successResponse(promiseResult)
     } catch (error) {
       if (error instanceof BadRequestError) {
-        this.logger.debug('Bad request error', error)
+        this.logger.warn('Bad request error', error)
         return this.badRequestResponse(error)
       }
 
