@@ -13,6 +13,8 @@ import { QueryCommandInput } from '@aws-sdk/lib-dynamodb/dist-types/commands/Que
  */
 @injectable()
 export class DynamodbImageRepository extends BaseDynamodbRepository<ImageEntity> implements ImageRepository {
+  entityClass = ImageEntity
+
   /**
    * The name of the DynamoDB table.
    */
@@ -23,56 +25,21 @@ export class DynamodbImageRepository extends BaseDynamodbRepository<ImageEntity>
   }
 
   /**
-   * Converts a DynamoDB item to an ImageEntity.
-   *
-   * @param {any} item - The DynamoDB item.
-   * @returns {ImageEntity} - The ImageEntity.
-   */
-  protected toEntity(item: Record<string, unknown>): ImageEntity {
-    return new ImageEntity({
-      id: item.id as string,
-      url: item.imageUrl as string,
-      prompt: item.prompt as string,
-      analysisText: item.analysisText as string,
-      analysisVendor: item.analysisVendor as string,
-      analysisResultRaw: JSON.parse(item.analysisResultRaw as string),
-      createdAt: item.createdAt as string,
-      updatedAt: item.updatedAt as string,
-    })
-  }
-
-  /**
-   * Converts an ImageEntity to a DynamoDB item.
-   *
-   * @param {ImageEntity} entity - The ImageEntity.
-   * @returns {any} - The DynamoDB item.
-   */
-  protected toItem(entity: ImageEntity): Record<string, unknown> {
-    return {
-      id: entity.id,
-      imageUrl: entity.url,
-      prompt: entity.prompt,
-      analysisText: entity.analysisText,
-      analysisVendor: entity.analysisVendor,
-      analysisResultRaw: JSON.stringify(entity.analysisResultRaw),
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    }
-  }
-
-  /**
    * Finds an ImageEntity by its URL.
    *
    * @param {string} url - The URL of the image.
    * @returns {Promise<ImageEntity | null>} - The ImageEntity or null if not found.
    */
-  async findByUrl(url: string): Promise<ImageEntity | undefined> {
+  async findByUrl(url: string): Promise<ImageEntity | null> {
     const queryCommandParams: QueryCommandInput = {
       TableName: this.tableName,
       IndexName: 'ImageUrlIndex',
-      KeyConditionExpression: 'imageUrl = :imageUrl',
+      KeyConditionExpression: '#url = :url',
+      ExpressionAttributeNames: {
+        '#url': 'url',
+      },
       ExpressionAttributeValues: {
-        ':imageUrl': url,
+        ':url': url,
       },
       Limit: 1,
     }

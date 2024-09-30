@@ -8,11 +8,11 @@ const getImageDynamo = () => {
   return new sst.aws.Dynamo('ImageDynamo', {
     fields: {
       id: 'string',
-      imageUrl: 'string',
+      url: 'string',
     },
     primaryIndex: { hashKey: 'id' },
     globalIndexes: {
-      ImageUrlIndex: { hashKey: 'imageUrl' },
+      ImageUrlIndex: { hashKey: 'url' },
     },
   })
 }
@@ -25,19 +25,6 @@ const getJobDynamo = () => {
     primaryIndex: { hashKey: 'id' },
   })
 }
-
-// const getSpeechDynamo = () => {
-//   return new sst.aws.Dynamo('SpeechDynamo', {
-//     fields: {
-//       id: 'string',
-//       textHash: 'string',
-//     },
-//     primaryIndex: { hashKey: 'id', },
-//     globalIndexes: {
-//       TextHashIndex: { hashKey: 'textHash', rangeKey: 'id' },
-//     },
-//   })
-// }
 
 const getProcessImageJobQueue = (...args: any[]) => {
   const deadLetterQueue = new sst.aws.Queue('ProcessImageDeadLetterQueue')
@@ -81,9 +68,15 @@ export default $config({
     const processImageQueue = getProcessImageJobQueue(openaiApiKey, jobDynamo, imageDynamo)
 
     const api = new sst.aws.ApiGatewayV2('Api')
-    api.route('POST /process-image', {
-      handler: 'src/interfaces/http/handlers/image/process-image-request-handler.handle',
+    api.route('POST /process-image-async', {
+      handler: 'src/interfaces/http/handlers/image/process-image-request-async-handler.handle',
       link: [jobDynamo, processImageQueue],
+      environment,
+    })
+
+    api.route('POST /process-image-sync', {
+      handler: 'src/interfaces/http/handlers/image/process-image-request-sync-handler.handle',
+      link: [jobDynamo, processImageQueue, openaiApiKey, imageDynamo],
       environment,
     })
   },

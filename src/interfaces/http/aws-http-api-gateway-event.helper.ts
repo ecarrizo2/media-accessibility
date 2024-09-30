@@ -13,7 +13,7 @@ import { BadRequestError } from '@interfaces/http/errors/bad-request.error'
 export const getEventBody = (event: AWSLambda.APIGatewayEvent) => {
   try {
     return JSON.parse(event.body || '{}') as unknown
-  } catch(error: unknown) {
+  } catch (error: unknown) {
     if (error instanceof SyntaxError) {
       throw new BadRequestError('Invalid JSON Syntax')
     }
@@ -56,14 +56,9 @@ export const getValidatedRequestInputValueObject = async <ValueObjectClass, Valu
   valueObjectClass: ClassConstructor<ValueObjectClass>
 ): Promise<ValueObjectClass> => {
   const logger = container.resolve(LoggerService)
-  const requestParser = container.resolve(
-    RequestParserService<ValueObjectClass, ValueObjectType>
-  )
+  const requestParser = container.resolve(RequestParserService<ValueObjectClass, ValueObjectType>)
 
-  const inputValueObject = await requestParser.parse(
-    getEventBody(event) as ValueObjectType,
-    valueObjectClass
-  )
+  const inputValueObject = await requestParser.parse(getEventBody(event) as ValueObjectType, valueObjectClass)
 
   logger.debug('Input has been validated, value object initialized', inputValueObject)
 

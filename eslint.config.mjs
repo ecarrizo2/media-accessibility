@@ -75,6 +75,7 @@ export default [
     },
 
     rules: {
+      'no-console': 'error',
       '@typescript-eslint/consistent-indexed-object-style': 'error',
       'no-dupe-class-members': 'off',
       '@typescript-eslint/no-dupe-class-members': 'error',
@@ -86,10 +87,6 @@ export default [
       '@typescript-eslint/no-unused-expressions': 'error',
       'default-param-last': 'off',
       '@typescript-eslint/default-param-last': 'error',
-
-      // 'import/no-duplicates': ['error', {
-      //   'prefer-inline': true,
-      // }],
 
       'no-shadow': 'off',
       '@typescript-eslint/no-shadow': 'error',
@@ -115,7 +112,6 @@ export default [
       '@typescript-eslint/consistent-type-definitions': 'off',
       '@typescript-eslint/prefer-ts-expect-error': 'off',
       '@typescript-eslint/unified-signatures': 'off',
-      'no-console': 'off',
     },
   },
   {
@@ -138,6 +134,12 @@ export default [
     ],
     rules: {
       '@typescript-eslint/only-throw-error': 'off',
+    },
+  },
+  {
+    files: ['src/shared/logger/logger.service.ts'],
+    rules: {
+      'no-console': 'off',
     },
   },
 ]

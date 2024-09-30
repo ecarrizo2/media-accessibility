@@ -2,11 +2,11 @@ import { inject, injectable } from 'tsyringe'
 import { ProcessImageJobRecordData } from '@interfaces/queue/sqs-event.interface'
 import { LoggerService } from '@shared/logger/logger.service'
 import { JobFacadeService } from '@application/services/job/job-facade.service'
-import { ProcessImageRequestInput } from '@domain/value-objects/image/process-image-request-input.vo'
 import { ImageProcessorService } from '@application/services/image/image-processor.service'
 import { Logger } from '@shared/logger/logger.interface'
-import { ImageProcessor } from '@application/services/image/image-processor.interface'
-import { JobFacade } from '@application/services/job/job-facade.interface'
+import { ImageProcessor } from '@application/types/image/image-processor.interface'
+import { JobFacade } from '@application/types/job/job-facade.interface'
+import { ProcessImageRequestInputDto } from '@domain/value-objects/image/process-image-request-input.vo'
 
 @injectable()
 export class ProcessImageJobService {
@@ -45,7 +45,7 @@ export class ProcessImageJobService {
    * @returns {Promise<void>} A promise that resolves when the image is processed.
    */
   private async processImage(processImageData: ProcessImageJobRecordData): Promise<void> {
-    const processImageInput = ProcessImageRequestInput.from(processImageData.input)
+    const processImageInput = await ProcessImageRequestInputDto.from(processImageData.input)
     this.logger.debug('About to execute process image flow', processImageInput)
 
     await this.imageProcessorService.processImage(processImageInput)
