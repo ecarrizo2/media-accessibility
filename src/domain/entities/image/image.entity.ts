@@ -4,7 +4,6 @@ import { Transform } from 'class-transformer'
 
 /**
  * Interface representing an Image and its Analysis Metadata.
- * TBD: naming?
  */
 export interface Image {
   /** The unique identifier of the image. */
