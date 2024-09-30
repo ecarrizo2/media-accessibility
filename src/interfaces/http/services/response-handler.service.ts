@@ -1,3 +1,4 @@
+import { APIGatewayProxyResult } from 'aws-lambda'
 import { RequestHandler } from '@interfaces/http/types/request-handler.interface'
 import { Logger } from '@shared/logger/logger.interface'
 import { LoggerService } from '@shared/logger/logger.service'
@@ -60,7 +61,7 @@ export class ResponseHandlerService implements RequestHandler {
     return this.toAPIGatewayProxyResult(response)
   }
 
-  private toAPIGatewayProxyResult(response: Response): AWSLambda.APIGatewayProxyResult {
+  private toAPIGatewayProxyResult(response: Response): APIGatewayProxyResult {
     return {
       statusCode: response.status,
       body: JSON.stringify(response.body),
