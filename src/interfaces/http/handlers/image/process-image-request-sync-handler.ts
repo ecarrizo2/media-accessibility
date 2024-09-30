@@ -7,14 +7,15 @@ import { ImageProcessorService } from '@application/services/image/image-process
 import { initializeRequestContainer } from '@interfaces/shared/container-initialization.helper'
 import { ResponseHandlerService } from '@interfaces/http/services/response-handler.service'
 import { instanceToPlain } from 'class-transformer'
+import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda'
 
 /**
  * The main handler function for processing image requests.
  *
- * @param {AWSLambda.APIGatewayEvent} event - The API Gateway event.
- * @returns {Promise<AWSLambda.APIGatewayProxyResult>} - The API Gateway proxy result.
+ * @param {APIGatewayEvent} event - The API Gateway event.
+ * @returns {Promise<APIGatewayProxyResult>} - The API Gateway proxy result.
  */
-const handleProcessImageRequest = async (event: AWSLambda.APIGatewayEvent) => {
+const handleProcessImageSyncRequest = async (event: APIGatewayEvent) => {
   const logger = container.resolve(LoggerService)
   const processImageRequestService = container.resolve(ImageProcessorService)
 
@@ -25,8 +26,8 @@ const handleProcessImageRequest = async (event: AWSLambda.APIGatewayEvent) => {
   return instanceToPlain(image)
 }
 
-export async function handle(event: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIGatewayProxyResult> {
+export async function handle(event: APIGatewayEvent): Promise<APIGatewayProxyResult> {
   initializeRequestContainer(event)
   const responseHandler = container.resolve(ResponseHandlerService)
-  return await responseHandler.handle(handleProcessImageRequest(event))
+  return await responseHandler.handle(handleProcessImageSyncRequest(event))
 }
