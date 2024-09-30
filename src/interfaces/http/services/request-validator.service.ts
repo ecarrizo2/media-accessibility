@@ -68,7 +68,7 @@ export class RequestParserService<ValueObjectClass, ObjectType> {
    */
   private throwBadRequestResponse(error: unknown) {
     const isArray = Array.isArray(error)
-    const isValidationError = isArray && error[0] instanceof ValidationError
+    const isValidationError = isArray && error.length > 0 && error[0] instanceof ValidationError
 
     if (!isValidationError) {
       throw error
