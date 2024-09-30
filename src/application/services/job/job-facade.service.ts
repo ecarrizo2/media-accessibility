@@ -14,7 +14,7 @@ import { GetJobByIdQueryHandler } from '@application/query-handlers/job/get-job-
 import { GetJobByIdQuery } from '@application/queries/job/get-job-by-id.query'
 import { JobNotFoundError } from '@domain/errors/job/job-not-found.error'
 import { JobEntity } from '@domain/entities/job/job.entity'
-import { JobFacade } from '@application/services/job/job-facade.interface'
+import { JobFacade } from '@application/types/job/job-facade.interface'
 
 /**
  * Service responsible for handling job-related operations.

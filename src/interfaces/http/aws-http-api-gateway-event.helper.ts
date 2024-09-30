@@ -1,7 +1,8 @@
 import { container } from 'tsyringe'
 import { LoggerService } from '@shared/logger/logger.service'
-import { RequestParserService } from '@interfaces/http/services/shared/request-validator.service'
-import { ZodTypeAny } from 'zod'
+import { RequestParserService } from '@interfaces/http/services/request-validator.service'
+import { ClassConstructor } from 'class-transformer'
+import { BadRequestError } from '@interfaces/http/errors/bad-request.error'
 
 /**
  * Parses the body of an API Gateway event.
@@ -10,7 +11,15 @@ import { ZodTypeAny } from 'zod'
  * @returns {object} The parsed body of the event.
  */
 export const getEventBody = (event: AWSLambda.APIGatewayEvent) => {
-  return JSON.parse(event.body || '{}') as unknown
+  try {
+    return JSON.parse(event.body || '{}') as unknown
+  } catch (error: unknown) {
+    if (error instanceof SyntaxError) {
+      throw new BadRequestError('Invalid JSON Syntax')
+    }
+
+    throw error
+  }
 }
 
 /**
@@ -39,18 +48,17 @@ export const getEventHeaderByKey = (event: AWSLambda.APIGatewayEvent, key: strin
  * Extracts and validates the request input from the API Gateway event.
  *
  * @param {AWSLambda.APIGatewayEvent} event - The API Gateway event.
- * @param {ZodTypeAny} schema - The schema to validate the request input against.
  * @param valueObjectClass - The class of the value object to initialize with the validated input.
- * @returns {ProcessImageRequestInput} The validated request input.
+ * @returns Promise<ValueObjectClass> - A Promise that resolve with a DTO/Value Object for the request input.
  */
-export const getRequestInput = <ValueObjectType>(
+export const getValidatedRequestInputValueObject = async <ValueObjectClass, ValueObjectType>(
   event: AWSLambda.APIGatewayEvent,
-  schema: ZodTypeAny,
-  valueObjectClass: { from: (input: unknown) => ValueObjectType }
-): ValueObjectType => {
+  valueObjectClass: ClassConstructor<ValueObjectClass>
+): Promise<ValueObjectClass> => {
   const logger = container.resolve(LoggerService)
-  const requestParser = container.resolve(RequestParserService<ValueObjectType>)
-  const inputValueObject = requestParser.parse(getEventBody(event), schema, valueObjectClass)
+  const requestParser = container.resolve(RequestParserService<ValueObjectClass, ValueObjectType>)
+
+  const inputValueObject = await requestParser.parse(getEventBody(event) as ValueObjectType, valueObjectClass)
 
   logger.debug('Input has been validated, value object initialized', inputValueObject)
 

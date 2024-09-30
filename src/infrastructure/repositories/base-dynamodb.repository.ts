@@ -1,10 +1,11 @@
-import { BaseRepository } from '@domain/repositories/base-repository.interface'
 import { DynamoDBDocumentClient, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { BaseEntity } from '@domain/entities/base.entity'
 import { Logger } from '@shared/logger/logger.interface'
 import { PutCommandInput } from '@aws-sdk/lib-dynamodb/dist-types/commands/PutCommand'
 import { QueryCommandInput } from '@aws-sdk/lib-dynamodb/dist-types/commands/QueryCommand'
+import { EntityTransformableRepository } from '@domain/repositories/base.repository'
+import { Repository } from '@domain/repositories/repository.interface'
 
 /**
  * Abstract base class for DynamoDB repositories.
@@ -12,7 +13,10 @@ import { QueryCommandInput } from '@aws-sdk/lib-dynamodb/dist-types/commands/Que
  *
  * @template EntityType - The type of the entity.
  */
-export abstract class BaseDynamodbRepository<EntityType> implements BaseRepository<EntityType> {
+export abstract class BaseDynamodbRepository<EntityType>
+  extends EntityTransformableRepository<EntityType>
+  implements Repository<EntityType>
+{
   /**
    * The name of the DynamoDB table.
    * Must be defined in the derived class.
@@ -28,25 +32,9 @@ export abstract class BaseDynamodbRepository<EntityType> implements BaseReposito
    * Constructs a new BaseDynamodbRepository instance.
    * @param {Logger} logger - The logger service to use for logging.
    */
-  protected constructor(protected readonly logger: Logger) {}
-
-  /**
-   * Converts a DynamoDB item to an entity.
-   * Must be implemented in the derived class.
-   *
-   * @param {any} item - The DynamoDB item.
-   * @returns {EntityType} - The entity.
-   */
-  protected abstract toEntity(item: Record<string, unknown>): EntityType
-
-  /**
-   * Converts an entity to a DynamoDB item.
-   * Must be implemented in the derived class.
-   *
-   * @param {EntityType} entity - The entity.
-   * @returns {any} - The DynamoDB item.
-   */
-  protected abstract toItem(entity: EntityType): Record<string, unknown>
+  protected constructor(protected readonly logger: Logger) {
+    super()
+  }
 
   /**
    * Runs a query on the DynamoDB table.
@@ -54,12 +42,12 @@ export abstract class BaseDynamodbRepository<EntityType> implements BaseReposito
    * @param {any} queryCommandParams - The parameters for the query command.
    * @returns {Promise<any>} - The result of the query.
    */
-  protected async runQuery(queryCommandParams: QueryCommandInput): Promise<EntityType | undefined> {
+  protected async runQuery(queryCommandParams: QueryCommandInput): Promise<EntityType | null> {
     this.logger.debug('Running query', queryCommandParams)
     const queryResult = await this.client.send(new QueryCommand(queryCommandParams))
     const value = queryResult?.Items?.length ? queryResult?.Items[0] : null
     if (!value) {
-      return undefined
+      return null
     }
 
     return this.toEntity(value)
@@ -71,7 +59,7 @@ export abstract class BaseDynamodbRepository<EntityType> implements BaseReposito
    * @param {string} id - The ID of the entity.
    * @returns {Promise<EntityType | undefined>} - The entity or undefined if not found.
    */
-  async findById(id: string): Promise<EntityType | undefined> {
+  async findById(id: string): Promise<EntityType | null> {
     const queryCommandParams: QueryCommandInput = {
       TableName: this.tableName,
       KeyConditionExpression: 'id = :id',
@@ -91,7 +79,7 @@ export abstract class BaseDynamodbRepository<EntityType> implements BaseReposito
    * @returns {Promise<void>}
    */
   async save(entity: EntityType & BaseEntity): Promise<void> {
-    entity.validateState()
+    await entity.validateState()
     entity.updatedAt = new Date().toISOString()
 
     const existingEntity = await this.findById(entity.id)

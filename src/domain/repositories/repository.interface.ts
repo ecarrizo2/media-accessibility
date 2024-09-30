@@ -3,7 +3,7 @@
  *
  * @template EntityType - The type of the entity.
  */
-export interface BaseRepository<EntityType> {
+export interface Repository<EntityType> {
   /**
    * Finds an entity by its ID.
    *

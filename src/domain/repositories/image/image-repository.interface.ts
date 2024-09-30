@@ -1,11 +1,7 @@
 import { ImageEntity } from '../../entities/image/image.entity'
-import { BaseRepository } from '@domain/repositories/base-repository.interface'
+import { Repository } from '@domain/repositories/repository.interface'
 
-/**
- * Interface representing a repository for managing Image entities.
- * Extends the BaseRepository interface to provide specific implementations for ImageEntity.
- */
-export interface ImageRepository extends BaseRepository<ImageEntity> {
+export interface ImageRepository extends Repository<ImageEntity> {
   /**
    * Finds an image by its URL.
    *
