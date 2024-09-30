@@ -20,7 +20,7 @@ export class ResponseHandlerService implements RequestHandler {
         return this.badRequestResponse(error)
       }
 
-      this.logger.debug('Internal Error', error)
+      this.logger.error('Internal Error', error)
       return this.internalServerError()
     }
   }
