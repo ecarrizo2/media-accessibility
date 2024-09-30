@@ -137,11 +137,9 @@ export default [
     },
   },
   {
-    files: [
-      'src/shared/logger/logger.service.ts',
-    ],
+    files: ['src/shared/logger/logger.service.ts'],
     rules: {
       'no-console': 'off',
-    }
-  }
+    },
+  },
 ]
