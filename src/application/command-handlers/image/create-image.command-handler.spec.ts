@@ -3,13 +3,15 @@ import { CreateImageCommandHandler } from './create-image.command-handler'
 import { ImageRepository } from '@domain/repositories/image/image-repository.interface'
 import { createCreateImageCommandMock } from '../../../../test/mocks/create-image.command.mock'
 import { ImageEntity } from '@domain/entities/image/image.entity'
+import { Logger } from '@shared/logger/logger.interface'
 
 describe('AnalyseImageCommandHandler', () => {
   let commandHandler: CreateImageCommandHandler
   const repository = createMock<ImageRepository>()
+  const logger = createMock<Logger>()
 
   beforeEach(() => {
-    commandHandler = new CreateImageCommandHandler(repository)
+    commandHandler = new CreateImageCommandHandler(repository, logger)
   })
 
   describe('WHEN handling the command', () => {

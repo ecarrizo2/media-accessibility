@@ -1,10 +1,12 @@
 import { BaseEntity } from '@domain/entities/base.entity'
-import { z } from 'zod'
+import { IsDateString, IsObject, IsString, IsUrl, validateOrReject } from 'class-validator'
+import { Transform } from 'class-transformer'
 
 /**
- * Interface representing the properties of an image.
+ * Interface representing an Image and its Analysis Metadata.
+ * TBD: naming?
  */
-export interface ImageProps {
+export interface Image {
   /** The unique identifier of the image. */
   id: string
 
@@ -27,70 +29,46 @@ export interface ImageProps {
   createdAt: string
 
   /** The date and time when the image was last updated (optional). */
-  updatedAt?: string
+  updatedAt: string
 }
-
-/**
- * Zod schema for validating ImageProps.
- */
-const ImagePropsSchema = z.object({
-  id: z.string(),
-  url: z.string().url(),
-  prompt: z.string(),
-  analysisText: z.string(),
-  analysisVendor: z.string(),
-  analysisResultRaw: z.unknown(),
-  createdAt: z.string(),
-  updatedAt: z.string().optional(),
-})
 
 /**
  * Class representing an image entity.
  * Implements the ImageProps and BaseEntity interfaces.
  */
-export class ImageEntity implements ImageProps, BaseEntity {
-  readonly id: string
-  readonly url: string
-  readonly prompt: string
-  readonly analysisText: string
-  readonly analysisVendor: string
-  readonly analysisResultRaw: unknown
-  readonly createdAt: string
-  readonly updatedAt?: string
+export class ImageEntity implements Image, BaseEntity {
+  @IsString()
+  id!: string
 
-  /**
-   * Creates an instance of ImageEntity.
-   *
-   * @param {ImageProps} props - The properties of the image.
-   */
-  constructor(props: ImageProps) {
-    this.validateInitialization(props)
-    this.id = props.id
-    this.url = props.url
-    this.analysisText = props.analysisText
-    this.analysisResultRaw = props.analysisResultRaw
-    this.analysisVendor = props.analysisVendor
-    this.prompt = props.prompt
-    this.createdAt = props.createdAt
-    this.updatedAt = props.updatedAt
-  }
+  @IsUrl()
+  url!: string
 
-  /**
-   * Validates the initialization properties of the image.
-   *
-   * @param {ImageProps} props - The properties to validate.
-   * @private
-   */
-  private validateInitialization(props: ImageProps) {
-    ImagePropsSchema.parse(props)
-  }
+  @IsString()
+  prompt!: string
+
+  @IsString()
+  analysisText!: string
+
+  @IsString()
+  analysisVendor!: string
+
+  @IsObject()
+  @Transform(({ value }) => JSON.stringify(value), { toPlainOnly: true })
+  @Transform(({ value }) => JSON.parse(value as string) as unknown, { toClassOnly: true })
+  analysisResultRaw!: unknown
+
+  @IsDateString()
+  createdAt!: string
+
+  @IsDateString()
+  updatedAt!: string
 
   /**
    * Validates the current state of the image.
    *
    * @throws {Error} If the state is invalid.
    */
-  validateState() {
-    ImagePropsSchema.parse(this)
+  async validateState() {
+    return validateOrReject(this)
   }
 }

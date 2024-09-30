@@ -42,12 +42,12 @@ export abstract class BaseDynamodbRepository<EntityType>
    * @param {any} queryCommandParams - The parameters for the query command.
    * @returns {Promise<any>} - The result of the query.
    */
-  protected async runQuery(queryCommandParams: QueryCommandInput): Promise<EntityType | undefined> {
+  protected async runQuery(queryCommandParams: QueryCommandInput): Promise<EntityType | null> {
     this.logger.debug('Running query', queryCommandParams)
     const queryResult = await this.client.send(new QueryCommand(queryCommandParams))
     const value = queryResult?.Items?.length ? queryResult?.Items[0] : null
     if (!value) {
-      return undefined
+      return null
     }
 
     return this.toEntity(value)
@@ -59,7 +59,7 @@ export abstract class BaseDynamodbRepository<EntityType>
    * @param {string} id - The ID of the entity.
    * @returns {Promise<EntityType | undefined>} - The entity or undefined if not found.
    */
-  async findById(id: string): Promise<EntityType | undefined> {
+  async findById(id: string): Promise<EntityType | null> {
     const queryCommandParams: QueryCommandInput = {
       TableName: this.tableName,
       KeyConditionExpression: 'id = :id',
@@ -79,7 +79,7 @@ export abstract class BaseDynamodbRepository<EntityType>
    * @returns {Promise<void>}
    */
   async save(entity: EntityType & BaseEntity): Promise<void> {
-    entity.validateState()
+    await entity.validateState()
     entity.updatedAt = new Date().toISOString()
 
     const existingEntity = await this.findById(entity.id)

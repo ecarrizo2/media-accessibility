@@ -1,5 +1,5 @@
 import { container } from 'tsyringe'
-import { getEventHeaderByKey } from '@interfaces/shared/aws-http-api-gateway-event.helper'
+import { getEventHeaderByKey } from '@interfaces/http/aws-http-api-gateway-event.helper'
 import { LoggerService } from '@shared/logger/logger.service'
 import { v4 } from 'uuid'
 

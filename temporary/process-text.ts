@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import { container } from 'tsyringe'
 import { z } from 'zod'
 
-import { RequestValidatorService } from '../src/interfaces/http/services/shared/request-validator.service'
+import { RequestValidatorService } from '../src/interfaces/http/services/request-validator.service'
 import { RequestErrorHandlerWrapperService } from '../src/interfaces/http/services/shared/request-error-handler-wrapper-service'
 import { initializeContainer } from '../src/interfaces/shared/container-initialization.helper'
 import { getEventBody } from '../src/interfaces/shared/aws-event.helper'

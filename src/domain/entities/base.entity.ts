@@ -15,5 +15,5 @@ export interface BaseEntity {
    * Validates the state of the entity.
    * @throws {Error} If the state is invalid.
    */
-  validateState(): void
+  validateState(): Promise<void>
 }

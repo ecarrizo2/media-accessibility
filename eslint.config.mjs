@@ -140,4 +140,9 @@ export default [
       '@typescript-eslint/only-throw-error': 'off',
     },
   },
+  {
+    files: [
+      'src/**/*.command.ts', 'src/**/*.query.ts', 'src/**/*.vo.ts', 'src/**/*.dto.ts',
+    ]
+  }
 ]
