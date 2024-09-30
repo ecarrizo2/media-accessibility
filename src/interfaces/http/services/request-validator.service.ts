@@ -7,9 +7,9 @@ import { BadRequestError } from '@interfaces/http/errors/bad-request.error'
 
 /**
  * RequestParserService class provides methods to parse and validate request data
- * using Zod schemas and convert the validated data into value objects.
  *
  * @template ValueObjectType - The type of the value object to be returned.
+ * @template ObjectType - The type of data issued to initialize the ValueObject.
  */
 @injectable()
 export class RequestParserService<ValueObjectClass, ObjectType> {
