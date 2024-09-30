@@ -18,8 +18,8 @@ export class RequestParserService<ValueObjectClass, ObjectType> {
   /**
    * Parses and validates the provided data using the given schema and converts it into a value object.
    *
-   * @param {ObjectType} data - The Raw input provided by clients.
-   * @param {ClassConstructor<ValueObjectClass>} valueObjectClass - The value object class with a static from method for conversion.
+   * @param {unknown} data - The Raw input provided by clients.
+   * @param {ClassConstructor<unknown>} valueObjectClass - The value object class with a static from method for conversion.
    * @returns {any} The converted value object.
    */
   async parse(data: ObjectType, valueObjectClass: ClassConstructor<ValueObjectClass>): Promise<ValueObjectClass> {
@@ -33,13 +33,13 @@ export class RequestParserService<ValueObjectClass, ObjectType> {
    * Validates the provided data using the given schema.
    *
    * @throws Will throw an error if validation fails.
-   * @param valueObjectClass
    * @returns {Promise<void>} A promise that resolves if validation succeeds.
+   * @param valueObjectInstance
    */
-  private async validate(valueObjectClass: ValueObjectClass): Promise<void> {
+  private async validate(valueObjectInstance: ValueObjectClass): Promise<void> {
     try {
-      this.logger.debug('Validating request input', valueObjectClass)
-      await validateOrReject(valueObjectClass as object)
+      this.logger.debug('Validating request input', valueObjectInstance)
+      await validateOrReject(valueObjectInstance as object)
     } catch (error) {
       this.logger.error('Request Input DTO Validation failed', error)
       this.throwBadRequestResponse(error)
@@ -49,7 +49,7 @@ export class RequestParserService<ValueObjectClass, ObjectType> {
   /**
    * Converts the validated input into a value object using the provided value object class.
    *
-   * @param {ClassConstructor<ValueObjectClass>} valueObjectClass - The value object class with a static from method for conversion.
+   * @param {ClassConstructor<unknown>} valueObjectClass - The value object class with a static from method for conversion.
    * @param {object} data - The input to be used to be converted into a value object
    * @returns {ValueObjectType} The converted value object.
    */
