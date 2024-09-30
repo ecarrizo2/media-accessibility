@@ -32,12 +32,10 @@ export class ImageProcessorService implements ImageProcessor {
     const existingProcessedImage = await this.getExistingImage(input)
     const imageAlreadyExists = !!existingProcessedImage
     if (imageAlreadyExists) {
-      console.log(imageAlreadyExists)
       return existingProcessedImage
     }
 
-    return existingProcessedImage as unknown as ImageEntity
-    // return this.processAndCreateImage(input)
+    return this.processAndCreateImage(input)
   }
 
   /**
