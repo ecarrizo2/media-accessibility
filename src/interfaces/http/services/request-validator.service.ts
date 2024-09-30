@@ -49,8 +49,8 @@ export class RequestParserService<ValueObjectClass, ObjectType> {
   /**
    * Converts the validated input into a value object using the provided value object class.
    *
-   * @param {ClassConstructor<ValueObjectClass>} valueObjectClass - The input to convert.
-   * @param {object} data - The value object class with a static from method for conversion.
+   * @param {ClassConstructor<ValueObjectClass>} valueObjectClass - The value object class with a static from method for conversion.
+   * @param {object} data - The input to be used to be converted into a value object
    * @returns {ValueObjectType} The converted value object.
    */
   private convertToValueObject(

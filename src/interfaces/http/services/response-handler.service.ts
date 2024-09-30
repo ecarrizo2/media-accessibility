@@ -28,7 +28,7 @@ export class ResponseHandlerService implements RequestHandler {
   private successResponse = (body: unknown) => {
     return this.toAPIGatewayProxyResult({
       status: HttpStatusCode.OK,
-      body: JSON.stringify(body),
+      body: body,
     })
   }
 
