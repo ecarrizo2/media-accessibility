@@ -37,7 +37,7 @@ describe('AnalyseImageCommandHandler', () => {
           prompt: command.prompt,
           analysisText: command.imageAnalysisResult.text,
           analysisVendor: command.imageAnalysisResult.vendor,
-          analysisResultRaw: command.imageAnalysisResult.raw,
+          analysisResultRaw: JSON.parse(command.imageAnalysisResult.raw) as unknown,
         })
       )
     })

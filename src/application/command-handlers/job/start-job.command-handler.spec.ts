@@ -1,9 +1,10 @@
 import { createMock } from '@golevelup/ts-jest'
 import { JobRepository } from '@domain/repositories/job/job-repository.interface'
 import { StartJobCommandHandler } from '@application/command-handlers/job/start-job.command-handler'
-import { JobEntity } from '@domain/entities/job/job.entity'
 import { StartJobCommand } from '@application/commands/job/start-job.command'
 import { JobCannotBeStartedError } from '@domain/errors/job/job-cannot-be-started.error'
+import { createJobEntityMock } from '../../../../test/mocks/job.entity.mock'
+import { JobStatus } from '@domain/enums/job/job.enum'
 
 describe('StartJobCommandHandler', () => {
   let commandHandler: StartJobCommandHandler
@@ -16,23 +17,21 @@ describe('StartJobCommandHandler', () => {
   describe('WHEN handling the command', () => {
     describe('AND the job cannot be started', () => {
       it('THEN should throw an error', async () => {
-        const job = createMock<JobEntity>()
-        job.canStart.mockReturnValue(false)
-
+        const job = createJobEntityMock({ status: JobStatus.Completed })
         const command = StartJobCommand.from({ job })
+
         await expect(commandHandler.handle(command)).rejects.toThrow(JobCannotBeStartedError)
       })
     })
 
     describe('AND the job can be started', () => {
       it('THEN should start the job and save it', async () => {
-        const job = createMock<JobEntity>()
-        job.canStart.mockReturnValue(true)
-
+        const job = createJobEntityMock({ status: JobStatus.Pending })
+        const spy = jest.spyOn(job, 'start')
         const command = StartJobCommand.from({ job })
         await commandHandler.handle(command)
 
-        expect(job.start).toHaveBeenCalled()
+        expect(spy).toHaveBeenCalled()
         expect(jobRepository.save).toHaveBeenCalledWith(job)
       })
     })
