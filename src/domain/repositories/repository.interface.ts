@@ -19,6 +19,4 @@ export interface Repository<EntityType> {
    * @returns {Promise<void>} - A promise that resolves when the entity is saved.
    */
   save(entity: EntityType): Promise<void>
-
-
 }
