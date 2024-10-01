@@ -7,7 +7,7 @@ on:
 
 jobs:
   report:
-    name: Code Coverage Report
+    name: Code Climate Coverage Report.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
         run: |
           npm install
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > cc-test-reporter
-          chmod +x ./cc-test-reporter
-          ./cc-test-reporter before-build
+          chmod +x ./code-coverage-report
+          ./code-coverage-report before-build
           npm run test:cov
-          ./cc-test-reporter after-build -t lcov -r ${{ secrets.CODE_CLIMATE_API_KEY }} --exit-code 0
+          ./code-coverage-report after-build -t lcov -r ${{ secrets.CODE_CLIMATE_API_KEY }} --exit-code 0
