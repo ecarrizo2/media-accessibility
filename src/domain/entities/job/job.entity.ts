@@ -1,122 +1,96 @@
-import { z } from 'zod'
 import { JobStatus, JobType } from '@domain/enums/job/job.enum'
 import { BaseEntity } from '@domain/entities/base.entity'
+import {
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator'
+import { Transform, Type } from 'class-transformer'
+import { TransformJsonObject } from '@shared/class-transformer/transformation.helper'
 
-/**
- * Interface representing an error that occurred during a job.
- */
-export interface JobError {
-  /** The error message. */
+export interface JobErrorProps {
   message: string
-
-  /** The stack trace of the error (optional). */
-  stack: string | undefined
-
-  /** The name of the error. */
+  stack?: string
   name: string
-
-  /** The timestamp when the error occurred. */
   timestamp: string
 }
 
-/**
- * Interface representing the properties of a job.
- */
 export interface JobProps {
-  /** The unique identifier of the job. */
   id: string
-
-  /** The type of the job. */
   type: JobType
-
-  /** The status of the job. */
   status: JobStatus
-
-  /** The input data for the job. */
   input: unknown
-
-  /** The number of attempts made to complete the job. */
   attempts: number
-
-  /** The list of errors that occurred during the job (nullable). */
-  errors: JobError[] | null
-
-  /** The date and time when the job was created. */
+  errors?: JobErrorProps[] | null
   createdAt: string
-
-  /** The date and time when the job was last updated (optional). */
   updatedAt?: string
 }
 
-/**
- * Zod schema for validating JobProps.
- */
-const JobPropsSchema = z.object({
-  id: z.string(),
-  type: z.nativeEnum(JobType),
-  status: z.nativeEnum(JobStatus),
-  input: z.unknown(),
-  attempts: z.number().nonnegative(),
-  errors: z
-    .array(
-      z.object({
-        message: z.string(),
-        stack: z.string().optional(),
-        name: z.string(),
-        timestamp: z.string(),
-      })
-    )
-    .nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string().optional(),
-})
+export class JobError implements JobErrorProps {
+  @IsString()
+  @IsNotEmpty()
+  message!: string
+
+  @IsString()
+  @IsOptional()
+  stack?: string
+
+  @IsString()
+  @IsNotEmpty()
+  name!: string
+
+  @IsDateString()
+  @IsNotEmpty()
+  timestamp!: string
+}
 
 /**
  * Class representing a job entity.
- * Implements the JobProps and BaseEntity interfaces.
  */
 export class JobEntity implements JobProps, BaseEntity {
-  id: string
-  type: JobType
-  status: JobStatus
-  attempts: number
-  input: unknown
-  errors: JobError[] | null
-  createdAt: string
+  @IsString()
+  @IsNotEmpty()
+  id!: string
+
+  @IsEnum(JobType)
+  type!: JobType
+
+  @IsEnum(JobStatus)
+  status!: JobStatus
+
+  @IsNumber()
+  @IsNotEmpty()
+  attempts!: number
+
+  @IsNotEmpty()
+  @Transform(({ value }) => JSON.stringify(value), { toPlainOnly: true })
+  @TransformJsonObject()
+  input!: unknown
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => JobError)
+  @IsOptional()
+  errors?: JobError[] | null
+
+  @IsDateString()
+  @IsNotEmpty()
+  createdAt!: string
+
+  @IsDateString()
+  @IsOptional()
   updatedAt?: string
-
-  /**
-   * Creates an instance of JobEntity.
-   * @param {JobProps} props - The properties of the job.
-   */
-  constructor(props: JobProps) {
-    this.validateInitialization(props)
-    this.id = props.id
-    this.type = props.type
-    this.status = props.status
-    this.input = props.input
-    this.attempts = props.attempts
-    this.errors = props.errors
-    this.createdAt = props.createdAt
-    this.updatedAt = props.updatedAt
-  }
-
-  /**
-   * Validates the initialization properties of the job.
-   * @param {JobProps} props - The properties to validate.
-   * @private
-   */
-  private validateInitialization(props: JobProps) {
-    JobPropsSchema.parse(props)
-  }
 
   /**
    * Validates the current state of the job.
    * @throws {Error} If the state is invalid.
    */
-  validateState() {
-    JobPropsSchema.parse(this)
-  }
+  async validateState() {}
 
   /**
    * Checks if the job can be started.

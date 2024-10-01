@@ -1,0 +1,8 @@
+.prettierignore
+.gitignore
+.editorconfig
+.prettierrc
+package-lock.json
+package.json
+sst-env.d.ts
+tsconfig.json

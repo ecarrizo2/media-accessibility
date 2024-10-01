@@ -3,8 +3,9 @@ import { v4 } from 'uuid'
 import { DynamodbJobRepository } from '@infrastructure/repositories/job/dynamodb-job.repository'
 import { JobRepository } from '@domain/repositories/job/job-repository.interface'
 import { CreateJobCommand } from '@application/commands/job/create-job.command'
-import { JobEntity } from '@domain/entities/job/job.entity'
+import { JobEntity, JobProps } from '@domain/entities/job/job.entity'
 import { JobStatus } from '@domain/enums/job/job.enum'
+import { plainToInstance } from 'class-transformer'
 
 @injectable()
 export class CreateJobCommandHandler {
@@ -17,7 +18,7 @@ export class CreateJobCommandHandler {
    * @returns {Promise<JobEntity>} - The created job entity
    */
   async handle(command: CreateJobCommand): Promise<JobEntity> {
-    const jobEntity = new JobEntity({
+    const jobProps: JobProps = {
       id: v4(),
       type: command.type,
       status: JobStatus.Pending,
@@ -26,7 +27,9 @@ export class CreateJobCommandHandler {
       errors: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    })
+    }
+
+    const jobEntity = plainToInstance(JobEntity, jobProps)
 
     await this.jobRepository.save(jobEntity)
 
