@@ -33,7 +33,7 @@ module.exports = {
   testMatch: ['**/?(*.)+(spec|test).[tj]s?(x)'],
 
   // Collect coverage from all files except e2e tests
-  collectCoverageFrom: ['**/*.(t|j)s', '!**/*.e2e.spec.(t|j)s'],
+  collectCoverageFrom: ['src/**/*.(t|j)s', '!**/*.e2e.spec.(t|j)s', '!**/*.spec.(t|j)s'],
 
   // Output directory for coverage reports
   coverageDirectory: './coverage',
