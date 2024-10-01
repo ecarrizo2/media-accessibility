@@ -6,3 +6,6 @@ package-lock.json
 package.json
 sst-env.d.ts
 tsconfig.json
+/coverage/*
+/git-hooks/*
+
