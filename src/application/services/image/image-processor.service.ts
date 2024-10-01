@@ -69,7 +69,7 @@ export class ImageProcessorService implements ImageProcessor {
    * @returns {Promise<ImageAnalysisResult>} A promise that resolves with the analyzed image data.
    */
   private async analyseImage(input: ProcessImageRequestInputDto): Promise<ImageAnalysisResult> {
-    const command = AnalyseImageCommand.from({
+    const command = await AnalyseImageCommand.from({
       url: input.url,
       prompt: input.prompt,
     })
