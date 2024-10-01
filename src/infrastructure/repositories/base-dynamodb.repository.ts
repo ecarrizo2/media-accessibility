@@ -10,8 +10,6 @@ import { Repository } from '@domain/repositories/repository.interface'
 /**
  * Abstract base class for DynamoDB repositories.
  * Provides common methods for interacting with DynamoDB.
- *
- * @template EntityType - The type of the entity.
  */
 export abstract class BaseDynamodbRepository<EntityType>
   extends EntityTransformableRepository<EntityType>
@@ -23,25 +21,12 @@ export abstract class BaseDynamodbRepository<EntityType>
    */
   protected abstract tableName: string
 
-  /**
-   * The DynamoDB Document Client instance.
-   */
   protected client = DynamoDBDocumentClient.from(new DynamoDBClient({}))
 
-  /**
-   * Constructs a new BaseDynamodbRepository instance.
-   * @param {Logger} logger - The logger service to use for logging.
-   */
   protected constructor(protected readonly logger: Logger) {
     super()
   }
 
-  /**
-   * Runs a query on the DynamoDB table.
-   *
-   * @param {any} queryCommandParams - The parameters for the query command.
-   * @returns {Promise<any>} - The result of the query.
-   */
   protected async runQuery(queryCommandParams: QueryCommandInput): Promise<EntityType | null> {
     this.logger.debug('Running query', queryCommandParams)
     const queryResult = await this.client.send(new QueryCommand(queryCommandParams))
@@ -53,12 +38,6 @@ export abstract class BaseDynamodbRepository<EntityType>
     return this.toEntity(value)
   }
 
-  /**
-   * Finds an entity by its ID.
-   *
-   * @param {string} id - The ID of the entity.
-   * @returns {Promise<EntityType | undefined>} - The entity or undefined if not found.
-   */
   async findById(id: string): Promise<EntityType | null> {
     const queryCommandParams: QueryCommandInput = {
       TableName: this.tableName,
@@ -72,12 +51,6 @@ export abstract class BaseDynamodbRepository<EntityType>
     return this.runQuery(queryCommandParams)
   }
 
-  /**
-   * Saves an entity to the DynamoDB table.
-   *
-   * @param {EntityType & BaseEntity} entity - The entity to save.
-   * @returns {Promise<void>}
-   */
   async save(entity: EntityType & BaseEntity): Promise<void> {
     await entity.validateState()
     entity.updatedAt = new Date().toISOString()
