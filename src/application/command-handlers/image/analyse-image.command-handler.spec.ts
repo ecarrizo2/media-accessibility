@@ -18,7 +18,7 @@ describe('AnalyseImageCommandHandler', () => {
       imageAnalyserService.analyseImage.mockResolvedValue(imageAnalysisResult)
 
       const command = await AnalyseImageCommand.from({
-        url: 'http://localhost:8080',
+        url: 'https://www.google.com/1',
         prompt: 'Describe this image in 5 words',
       })
 
