@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer'
-import { JobEntity, JobProps } from '../../src/domain/entities/job/job.entity'
+import { JobEntity, JobProps } from '@domain/entities/job/job.entity'
 
 export const createJobEntityMock = (params?: Partial<JobProps>): JobEntity => {
   return plainToInstance(JobEntity, {
