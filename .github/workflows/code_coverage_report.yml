@@ -1,0 +1,24 @@
+name: CodeClimate
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  report:
+    name: Code Climate Coverage Report.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Sending Coverage Report to Code Climate
+        run: |
+          npm install
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > code-coverage-report
+          chmod +x ./code-coverage-report
+          ./code-coverage-report before-build
+          npm run test:cov
+          ./code-coverage-report after-build -t lcov -r ${{ secrets.CODE_CLIMATE_API_KEY }} --exit-code 0

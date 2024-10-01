@@ -13,7 +13,7 @@ defaults:
 jobs:
   format:
     runs-on: ubuntu-latest
-    name: Format and Lint Code
+    name: PR Verification
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,23 +23,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Linting
+      - name: Lint Code
         run: npm run lint
 
-      - name: Format check
+      - name: Run Prettier and check style.
         run: npm run prettier:check
-
-  test:
-    runs-on: ubuntu-latest
-    name: Run Tests
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Dependencies
-        run: npm install
-
+      
       - name: Run tests
         run: npm run test:cov
