@@ -4,3 +4,4 @@
 /.idea/media-accessibility-ia-converter.iml
 /.idea/modules.xml
 ./node_modules/*
+./coverage/*
