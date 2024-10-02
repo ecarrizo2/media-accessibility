@@ -41,7 +41,7 @@ export class CreateImageCommandHandler {
       this.logger.debug('Creating new Image from plain', imageData)
       return await ImageEntity.from(imageData)
     } catch (error) {
-      this.logger.error('Image initialization failed.', error)
+      this.logger.error('Image initialization failed', { error })
       throw error
     }
   }
