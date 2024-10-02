@@ -16,10 +16,10 @@ export class AnalyseImageCommand {
   @Expose()
   readonly prompt: string
 
-  constructor(url: string, prompt: string) {
-    this.url = url
-    this.prompt = prompt
-  }
+export class AnalyseImageCommand {
+  url: string;
+  prompt: string;
+}
 
   static async from(init: AnalyseImageCommandProps) {
     const command = plainToInstance(AnalyseImageCommand, init)
