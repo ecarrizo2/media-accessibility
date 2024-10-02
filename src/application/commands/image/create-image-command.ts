@@ -1,6 +1,6 @@
 import { ImageAnalysisResult } from '@domain/value-objects/image/image-analysis-result.vo'
 import { Exclude, Expose, plainToInstance, Type } from 'class-transformer'
-import { IsUrl, ValidateNested, validateOrReject } from 'class-validator'
+import { IsString, IsUrl, ValidateNested, validateOrReject } from 'class-validator'
 
 export interface CreateImageCommandProps {
   url: string
@@ -14,7 +14,7 @@ export class CreateImageCommand {
   @Expose()
   readonly url!: string
 
-  @IsUrl()
+  @IsString()
   @Expose()
   readonly prompt!: string
 
