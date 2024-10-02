@@ -18,6 +18,6 @@ export const myValidateOrReject = async (instance: object) => {
     }
 
     logger.error('Validation error', error)
-    throw new ClassValidatorError('Validation failed', error)
+    throw new ClassValidatorError('Validation failed', error as ValidationError[])
   }
 }
