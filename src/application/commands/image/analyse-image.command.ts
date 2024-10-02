@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsUrl, validateOrReject } from 'class-validator'
+import { IsNotEmpty, IsUrl } from 'class-validator'
 import { Exclude, Expose, plainToInstance } from 'class-transformer'
+import { myValidateOrReject } from '@shared/class-validator/validator.helper'
 
 export interface AnalyseImageCommandProps {
   url: string
@@ -18,7 +19,7 @@ export class AnalyseImageCommand {
 
   static async from(init: AnalyseImageCommandProps) {
     const command = plainToInstance(AnalyseImageCommand, init)
-    await validateOrReject(command)
+    await myValidateOrReject(command)
 
     return command
   }

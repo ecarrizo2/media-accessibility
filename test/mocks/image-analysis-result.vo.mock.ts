@@ -1,6 +1,6 @@
 import { ImageAnalysisResult, ImageAnalysisResultProps } from '@domain/value-objects/image/image-analysis-result.vo'
 
-export const createImageAnalysisResultMock = (
+export const createImageAnalysisResultMock = async (
   imageAnalysisResultProps?: Partial<ImageAnalysisResultProps>
 ): Promise<ImageAnalysisResult> => {
   const props = {
@@ -10,5 +10,5 @@ export const createImageAnalysisResultMock = (
     ...imageAnalysisResultProps,
   }
 
-  return ImageAnalysisResult.from(props)
+  return await ImageAnalysisResult.from(props)
 }

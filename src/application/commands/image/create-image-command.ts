@@ -1,6 +1,7 @@
-import { ImageAnalysisResult } from '@domain/value-objects/image/image-analysis-result.vo'
+import { ImageAnalysisResult, ImageAnalysisResultProps } from '@domain/value-objects/image/image-analysis-result.vo'
 import { Exclude, Expose, plainToInstance, Type } from 'class-transformer'
-import { IsString, IsUrl, ValidateNested, validateOrReject } from 'class-validator'
+import { IsString, IsUrl, ValidateNested } from 'class-validator'
+import { myValidateOrReject } from '@shared/class-validator/validator.helper'
 
 export interface CreateImageCommandProps {
   url: string
@@ -21,11 +22,11 @@ export class CreateImageCommand {
   @ValidateNested()
   @Type(() => ImageAnalysisResult)
   @Expose()
-  readonly imageAnalysisResult!: ImageAnalysisResult
+  readonly imageAnalysisResult!: ImageAnalysisResultProps
 
   static async from(init: CreateImageCommandProps) {
     const command = plainToInstance(CreateImageCommand, init, { excludeExtraneousValues: true })
-    await validateOrReject(command)
+    await myValidateOrReject(command)
 
     return command
   }

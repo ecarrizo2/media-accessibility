@@ -1,13 +1,22 @@
 import { JobEntity } from '@domain/entities/job/job.entity'
+import { Exclude, Expose, plainToInstance } from 'class-transformer'
+import { ValidateNested } from 'class-validator'
+import { myValidateOrReject } from '@shared/class-validator/validator.helper'
 
 export interface CompleteJobCommandProps {
   job: JobEntity
 }
 
+@Exclude()
 export class CompleteJobCommand implements CompleteJobCommandProps {
-  private constructor(readonly job: JobEntity) {}
+  @ValidateNested()
+  @Expose()
+  readonly job!: JobEntity
 
-  static from(props: CompleteJobCommandProps) {
-    return new CompleteJobCommand(props.job)
+  static async from(props: CompleteJobCommandProps) {
+    const command = plainToInstance(CompleteJobCommand, props, { excludeExtraneousValues: true })
+    await myValidateOrReject(command)
+
+    return command
   }
 }

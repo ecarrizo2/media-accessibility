@@ -10,7 +10,9 @@ export const createImageCommandExampleProps = {
   },
 }
 
-export const createCreateImageCommandMock = (props?: Partial<CreateImageCommandProps>): Promise<CreateImageCommand> => {
+export const createCreateImageCommandMock = async (
+  props?: Partial<CreateImageCommandProps>
+): Promise<CreateImageCommand> => {
   return CreateImageCommand.from({
     ...createImageCommandExampleProps,
     ...props,
