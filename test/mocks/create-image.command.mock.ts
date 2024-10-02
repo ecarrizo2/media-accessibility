@@ -1,4 +1,4 @@
-import { CreateImageCommand, CreateImageCommandProps } from '../../src/application/commands/image/create-image-command'
+import { CreateImageCommand, CreateImageCommandProps } from '@application/commands/image/create-image-command'
 
 export const createImageCommandExampleProps = {
   url: 'http://localhost:8080',
@@ -10,7 +10,7 @@ export const createImageCommandExampleProps = {
   },
 }
 
-export const createCreateImageCommandMock = (props?: Partial<CreateImageCommandProps>): CreateImageCommand => {
+export const createCreateImageCommandMock = (props?: Partial<CreateImageCommandProps>): Promise<CreateImageCommand> => {
   return CreateImageCommand.from({
     ...createImageCommandExampleProps,
     ...props,

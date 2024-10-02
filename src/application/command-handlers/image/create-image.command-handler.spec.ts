@@ -16,7 +16,7 @@ describe('AnalyseImageCommandHandler', () => {
 
   describe('WHEN handling the command', () => {
     it('THEN it should invoke the image analyser and return the result', async () => {
-      const command = createCreateImageCommandMock({
+      const command = await createCreateImageCommandMock({
         url: 'http://example.com/image.jpg',
         prompt: 'Describe the image',
         imageAnalysisResult: {

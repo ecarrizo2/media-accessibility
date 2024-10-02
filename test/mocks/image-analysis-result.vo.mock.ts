@@ -2,7 +2,7 @@ import { ImageAnalysisResult, ImageAnalysisResultProps } from '@domain/value-obj
 
 export const createImageAnalysisResultMock = (
   imageAnalysisResultProps?: Partial<ImageAnalysisResultProps>
-): ImageAnalysisResult => {
+): Promise<ImageAnalysisResult> => {
   const props = {
     text: 'This image contains a blue sky with white clouds',
     vendor: 'OpenAI',

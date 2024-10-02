@@ -1,4 +1,5 @@
-import { z } from 'zod'
+import { IsNotEmpty, IsString, validateOrReject } from 'class-validator'
+import { plainToInstance } from 'class-transformer'
 
 /**
  * Interface representing the properties of an image analysis result.
@@ -10,32 +11,25 @@ export interface ImageAnalysisResultProps {
 }
 
 /**
- * Zod schema for validating the ImageAnalysisResultProps.
- */
-const ImageAnalysisResultSchema = z.object({
-  text: z.string().min(1),
-  vendor: z.string().min(1),
-  raw: z.string().min(1),
-})
-
-/**
  * Class representing the result of an image analysis.
  */
-export class ImageAnalysisResult {
-  private constructor(
-    readonly text: string,
-    readonly vendor: string,
-    readonly raw: string
-  ) {}
+export class ImageAnalysisResult implements ImageAnalysisResultProps {
+  @IsString()
+  @IsNotEmpty()
+  readonly text!: string
 
-  /**
-   * Static method to create a new ImageAnalysisResult instance from the given properties.
-   *
-   * @param {ImageAnalysisResultProps} props - The properties of the image analysis result.
-   * @returns {ImageAnalysisResult} - The created ImageAnalysisResult instance.
-   */
-  static from(props: ImageAnalysisResultProps): ImageAnalysisResult {
-    const parsed = ImageAnalysisResultSchema.parse(props)
-    return new ImageAnalysisResult(parsed.text, parsed.vendor, parsed.raw)
+  @IsString()
+  @IsNotEmpty()
+  readonly vendor!: string
+
+  @IsString()
+  @IsNotEmpty()
+  readonly raw!: string
+
+  static async from(init: ImageAnalysisResultProps): Promise<ImageAnalysisResult> {
+    const instance = plainToInstance(ImageAnalysisResult, init)
+    await validateOrReject(instance)
+
+    return instance
   }
 }
