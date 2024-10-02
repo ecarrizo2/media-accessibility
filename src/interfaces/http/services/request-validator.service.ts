@@ -58,7 +58,7 @@ export class RequestParserService<ValueObjectClass, ObjectType> {
     data: ObjectType
   ): ValueObjectClass {
     this.logger.debug('Converting input into Value Object', data)
-    return plainToInstance(valueObjectClass, data)
+    return plainToInstance(valueObjectClass, data, { excludeExtraneousValues: true })
   }
 
   /**

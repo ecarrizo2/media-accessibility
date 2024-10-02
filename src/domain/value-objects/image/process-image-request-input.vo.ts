@@ -1,5 +1,6 @@
-import { IsBoolean, IsOptional, IsString, IsUrl, validateOrReject } from 'class-validator'
+import { IsBoolean, IsOptional, IsString, IsUrl } from 'class-validator'
 import { plainToInstance } from 'class-transformer'
+import { myValidateOrReject } from '@shared/class-validator/validator.helper'
 
 /**
  * Interface representing the parameters for processing an image request.
@@ -31,8 +32,8 @@ export class ProcessImageRequestInputDto implements ProcessImageRequestRequestIn
    * @returns {ProcessImageRequestInputDto} - The created ProcessImageRequestInput instance.
    */
   static async from(input: ProcessImageRequestRequestInput): Promise<ProcessImageRequestInputDto> {
-    const dto = plainToInstance(ProcessImageRequestInputDto, input)
-    await validateOrReject(dto)
+    const dto = plainToInstance(ProcessImageRequestInputDto, input, { excludeExtraneousValues: true })
+    await myValidateOrReject(dto)
 
     return dto
   }

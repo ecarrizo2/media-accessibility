@@ -81,7 +81,7 @@ export class JobFacadeService implements JobFacade {
    */
   async complete(jobId: string): Promise<void> {
     const job = await this.getJob(jobId)
-    const command = CompleteJobCommand.from({ job })
+    const command = await CompleteJobCommand.from({ job })
     this.logger.debug('About to execute Complete Job command', command)
 
     return this.completeJobHandler.handle(command)

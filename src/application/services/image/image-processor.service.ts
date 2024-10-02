@@ -22,12 +22,6 @@ export class ImageProcessorService implements ImageProcessor {
     @inject(CreateImageCommandHandler) private readonly createImageCommandHandler: CreateImageCommandHandler
   ) {}
 
-  /**
-   * Processes an image based on the provided input.
-   *
-   * @param {ProcessImageRequestInputDto} input - The input data for processing the image.
-   * @returns {Promise<ImageEntity>} A promise that resolves with the processed image data.
-   */
   async processImage(input: ProcessImageRequestInputDto): Promise<ImageEntity> {
     const existingProcessedImage = await this.getExistingImage(input)
     const imageAlreadyExists = !!existingProcessedImage
@@ -38,36 +32,18 @@ export class ImageProcessorService implements ImageProcessor {
     return this.processAndCreateImage(input)
   }
 
-  /**
-   * Retrieves an existing processed image based on the input.
-   *
-   * @param {ProcessImageRequestInputDto} input - The input data for querying the image.
-   * @returns {Promise<ImageEntity | null>} A promise that resolves with the existing processed image data or null if not found.
-   */
   private async getExistingImage(input: ProcessImageRequestInputDto): Promise<ImageEntity | null> {
     const query = GetImageByUrlQuery.from({ url: input.url })
 
     return this.getImageByUrlQueryHandler.execute(query)
   }
 
-  /**
-   * Processes and creates a new image based on the input.
-   *
-   * @param {ProcessImageRequestInputDto} input - The input data for processing and creating the image.
-   * @returns {Promise<ImageEntity>} A promise that resolves with the newly processed image data.
-   */
   private async processAndCreateImage(input: ProcessImageRequestInputDto): Promise<ImageEntity> {
     const analysedImageData = await this.analyseImage(input)
 
     return this.storeProcessedImageData(input, analysedImageData)
   }
 
-  /**
-   * Analyzes an image based on the input.
-   *
-   * @param {ProcessImageRequestInputDto} input - The input data for analyzing the image.
-   * @returns {Promise<ImageAnalysisResult>} A promise that resolves with the analyzed image data.
-   */
   private async analyseImage(input: ProcessImageRequestInputDto): Promise<ImageAnalysisResult> {
     const command = await AnalyseImageCommand.from({
       url: input.url,
@@ -77,18 +53,11 @@ export class ImageProcessorService implements ImageProcessor {
     return this.analyzeImageCommandHandler.handle(command)
   }
 
-  /**
-   * Stores the processed image data.
-   *
-   * @param {ProcessImageRequestInputDto} input - The input data for the image.
-   * @param {ImageAnalysisResult} imageAnalysisResult - The result of the image analysis.
-   * @returns {Promise<ImageEntity>} A promise that resolves with the stored image data.
-   */
   private async storeProcessedImageData(
     input: ProcessImageRequestInputDto,
     imageAnalysisResult: ImageAnalysisResult
   ): Promise<ImageEntity> {
-    const command = CreateImageCommand.from({
+    const command = await CreateImageCommand.from({
       url: input.url,
       prompt: input.prompt,
       imageAnalysisResult,

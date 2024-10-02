@@ -1,6 +1,7 @@
 import { BaseEntity } from '@domain/entities/base.entity'
-import { IsDateString, IsObject, IsString, IsUrl, validateOrReject } from 'class-validator'
-import { Transform } from 'class-transformer'
+import { IsDateString, IsObject, IsString, IsUrl } from 'class-validator'
+import { Exclude, Expose, plainToInstance, Transform } from 'class-transformer'
+import { myValidateOrReject } from '@shared/class-validator/validator.helper'
 
 /**
  * Interface representing an Image and its Analysis Metadata.
@@ -33,41 +34,51 @@ export interface Image {
 
 /**
  * Class representing an image entity.
- * Implements the ImageProps and BaseEntity interfaces.
  */
+@Exclude()
 export class ImageEntity implements Image, BaseEntity {
   @IsString()
+  @Expose()
   id!: string
 
   @IsUrl()
+  @Expose()
   url!: string
 
   @IsString()
+  @Expose()
   prompt!: string
 
   @IsString()
+  @Expose()
   analysisText!: string
 
   @IsString()
+  @Expose()
   analysisVendor!: string
 
   @IsObject()
   @Transform(({ value }) => JSON.stringify(value), { toPlainOnly: true })
   @Transform(({ value }) => JSON.parse(value as string) as unknown, { toClassOnly: true })
+  @Expose()
   analysisResultRaw!: unknown
 
   @IsDateString()
+  @Expose()
   createdAt!: string
 
   @IsDateString()
+  @Expose()
   updatedAt!: string
 
-  /**
-   * Validates the current state of the image.
-   *
-   * @throws {Error} If the state is invalid.
-   */
+  static async from(init: Image) {
+    const instance = plainToInstance(ImageEntity, init, { excludeExtraneousValues: true })
+    await myValidateOrReject(instance)
+
+    return instance
+  }
+
   async validateState() {
-    return validateOrReject(this)
+    return myValidateOrReject(this)
   }
 }

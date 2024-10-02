@@ -10,7 +10,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator'
-import { Transform, Type } from 'class-transformer'
+import { Exclude, Expose, Transform, Type } from 'class-transformer'
 import { TransformJsonObject } from '@shared/class-transformer/transformation.helper'
 
 export interface JobErrorProps {
@@ -52,38 +52,47 @@ export class JobError implements JobErrorProps {
 /**
  * Class representing a job entity.
  */
+@Exclude()
 export class JobEntity implements JobProps, BaseEntity {
   @IsString()
   @IsNotEmpty()
+  @Expose()
   id!: string
 
   @IsEnum(JobType)
+  @Expose()
   type!: JobType
 
   @IsEnum(JobStatus)
+  @Expose()
   status!: JobStatus
 
   @IsNumber()
   @IsNotEmpty()
+  @Expose()
   attempts!: number
 
   @IsNotEmpty()
   @Transform(({ value }) => JSON.stringify(value), { toPlainOnly: true })
   @TransformJsonObject()
+  @Expose()
   input!: unknown
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => JobError)
   @IsOptional()
+  @Expose()
   errors?: JobError[] | null
 
   @IsDateString()
   @IsNotEmpty()
+  @Expose()
   createdAt!: string
 
   @IsDateString()
   @IsOptional()
+  @Expose()
   updatedAt?: string
 
   /**

@@ -14,7 +14,7 @@ describe('AnalyseImageCommandHandler', () => {
 
   describe('WHEN handling the command', () => {
     it('THEN it should invoke the image analyser and return the result', async () => {
-      const imageAnalysisResult = createImageAnalysisResultMock()
+      const imageAnalysisResult = await createImageAnalysisResultMock()
       imageAnalyserService.analyseImage.mockResolvedValue(imageAnalysisResult)
 
       const command = await AnalyseImageCommand.from({

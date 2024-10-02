@@ -1,8 +1,8 @@
 import { ImageAnalysisResult, ImageAnalysisResultProps } from '@domain/value-objects/image/image-analysis-result.vo'
 
-export const createImageAnalysisResultMock = (
+export const createImageAnalysisResultMock = async (
   imageAnalysisResultProps?: Partial<ImageAnalysisResultProps>
-): ImageAnalysisResult => {
+): Promise<ImageAnalysisResult> => {
   const props = {
     text: 'This image contains a blue sky with white clouds',
     vendor: 'OpenAI',
@@ -10,5 +10,5 @@ export const createImageAnalysisResultMock = (
     ...imageAnalysisResultProps,
   }
 
-  return ImageAnalysisResult.from(props)
+  return await ImageAnalysisResult.from(props)
 }

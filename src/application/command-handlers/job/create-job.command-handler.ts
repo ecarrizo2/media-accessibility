@@ -29,7 +29,7 @@ export class CreateJobCommandHandler {
       updatedAt: new Date().toISOString(),
     }
 
-    const jobEntity = plainToInstance(JobEntity, jobProps)
+    const jobEntity = plainToInstance(JobEntity, jobProps, { excludeExtraneousValues: true })
 
     await this.jobRepository.save(jobEntity)
 
