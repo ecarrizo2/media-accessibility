@@ -10,16 +10,11 @@ export interface AnalyseImageCommandProps {
 export class AnalyseImageCommand {
   @IsUrl()
   @Expose()
-  readonly url: string
+  readonly url!: string
 
   @IsNotEmpty()
   @Expose()
-  readonly prompt: string
-
-export class AnalyseImageCommand {
-  url: string;
-  prompt: string;
-}
+  readonly prompt!: string
 
   static async from(init: AnalyseImageCommandProps) {
     const command = plainToInstance(AnalyseImageCommand, init)
