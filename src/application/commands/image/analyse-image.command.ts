@@ -1,15 +1,25 @@
+import { IsNotEmpty, IsUrl, validateOrReject } from 'class-validator'
+import { Exclude, Expose, plainToInstance } from 'class-transformer'
+
 export interface AnalyseImageCommandProps {
   url: string
   prompt: string
 }
 
+@Exclude()
 export class AnalyseImageCommand {
-  private constructor(
-    readonly url: string,
-    readonly prompt: string
-  ) {}
+  @IsUrl()
+  @Expose()
+  readonly url!: string
 
-  static from(props: AnalyseImageCommandProps) {
-    return new AnalyseImageCommand(props.url, props.prompt)
+  @IsNotEmpty()
+  @Expose()
+  readonly prompt!: string
+
+  static async from(init: AnalyseImageCommandProps) {
+    const command = plainToInstance(AnalyseImageCommand, init)
+    await validateOrReject(command)
+
+    return command
   }
 }
