@@ -31,7 +31,7 @@ export class ProcessImageRequestInputDto implements ProcessImageRequestRequestIn
    * @returns {ProcessImageRequestInputDto} - The created ProcessImageRequestInput instance.
    */
   static async from(input: ProcessImageRequestRequestInput): Promise<ProcessImageRequestInputDto> {
-    const dto = plainToInstance(ProcessImageRequestInputDto, input)
+    const dto = plainToInstance(ProcessImageRequestInputDto, input, { excludeExtraneousValues: true })
     await validateOrReject(dto)
 
     return dto

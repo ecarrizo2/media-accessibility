@@ -24,7 +24,7 @@ export class CreateImageCommand {
   readonly imageAnalysisResult!: ImageAnalysisResult
 
   static async from(init: CreateImageCommandProps) {
-    const command = plainToInstance(CreateImageCommand, init)
+    const command = plainToInstance(CreateImageCommand, init, { excludeExtraneousValues: true })
     await validateOrReject(command)
 
     return command

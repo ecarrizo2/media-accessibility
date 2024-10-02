@@ -27,7 +27,7 @@ export class ImageAnalysisResult implements ImageAnalysisResultProps {
   readonly raw!: string
 
   static async from(init: ImageAnalysisResultProps): Promise<ImageAnalysisResult> {
-    const instance = plainToInstance(ImageAnalysisResult, init)
+    const instance = plainToInstance(ImageAnalysisResult, init, { excludeExtraneousValues: true })
     await validateOrReject(instance)
 
     return instance

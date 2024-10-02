@@ -35,7 +35,7 @@ export class CreateImageCommandHandler {
       updatedAt: new Date().toISOString(),
     }
 
-    const image = plainToInstance(ImageEntity, imageData)
+    const image = plainToInstance(ImageEntity, imageData, { excludeExtraneousValues: true })
 
     try {
       this.logger.debug('Validating image entity initialization.', image)
