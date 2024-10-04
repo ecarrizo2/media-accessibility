@@ -1,4 +1,4 @@
-# media-accessibility 
+# media-accessibility
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/ed55f20fe3ffd64832af/maintainability)](https://codeclimate.com/github/ecarrizo2/media-accessibility/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ed55f20fe3ffd64832af/test_coverage)](https://codeclimate.com/github/ecarrizo2/media-accessibility/test_coverage)
