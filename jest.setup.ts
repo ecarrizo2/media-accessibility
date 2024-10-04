@@ -15,12 +15,20 @@ jest.mock('sst', () => {
 })
 
 // New Date() always return the same date.
-const mockDate = new Date(2024, 0, 1)
-export const mockedIsoStringDate = mockDate.toISOString()
-jest.spyOn(global, 'Date').mockImplementation(() => mockDate)
+// const mockDate = new Date(2024, 0, 1)
+// export const mockedIsoStringDate = mockDate.toISOString()
+// jest.spyOn(global, 'Date').mockImplementation(() => mockDate)
 
 // V4() always return the same UUID.
-export const mockedUuid = '00000000-0000-0000-0000-000000000000'
+export const mockedUuid = 'ca92fca6-7790-4eac-96ab-29b4b1742228'
 jest.mock('uuid', () => ({
   v4: () => mockedUuid,
 }))
+
+// Deactivating logs
+console.log = jest.fn()
+console.info = jest.fn()
+console.warn = jest.fn()
+console.error = jest.fn()
+console.time = jest.fn()
+console.debug = jest.fn()

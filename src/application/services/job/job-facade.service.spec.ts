@@ -36,7 +36,7 @@ describe('JobFacadeService', () => {
   describe('create()', () => {
     describe('WHEN creating a job', () => {
       describe('AND the job creation succeeds', () => {
-        beforeAll(async () => {
+        beforeAll(() => {
           jest.spyOn(createJobCommandHandler, 'handle').mockResolvedValue(jobEntity)
         })
 
@@ -65,14 +65,16 @@ describe('JobFacadeService', () => {
           await expect(promise).rejects.toThrow(ClassValidatorError)
         })
 
-        it('AND should have not attempted to handle the command', () => {
-          expect(createJobCommandHandler.handle)
+        it('AND should have not attempted to handle the command', async () => {
+          await promise.catch(() => {
+            expect(createJobCommandHandler.handle).not.toHaveBeenCalled()
+          })
         })
       })
 
       describe('AND the CreateJobCommandHandler throws', () => {
-        const error = new Error('Job creation failed')
-        beforeAll(async () => {
+        const error = new Error('CreateJobCommandHandler handle failed')
+        beforeAll(() => {
           jest.spyOn(createJobCommandHandler, 'handle').mockRejectedValue(error)
         })
         afterAll(jest.resetAllMocks)
@@ -80,7 +82,7 @@ describe('JobFacadeService', () => {
         it('THEN it should throw an error', async () => {
           const promise = getInstance().create(JobType.ImageProcessing, { url: 'https://example.com/image.jpg' })
 
-          await expect(promise).rejects.toThrow(ClassValidatorError)
+          await expect(promise).rejects.toThrow(error)
         })
       })
     })

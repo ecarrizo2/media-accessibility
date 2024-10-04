@@ -3,7 +3,6 @@ import { ProcessImageJobSchedulerService } from '@application/services/image/pro
 import { JobFacadeService } from '@application/services/job/job-facade.service'
 import { LoggerService } from '@shared/logger/logger.service'
 import { ProcessImageRequestInputDto } from '@domain/value-objects/image/process-image-request-input.vo'
-import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs'
 import { createJobEntityMock } from '../../../../test/mocks/job.entity.mock'
 import { SQSClientService } from '@infrastructure/services/sqs-client.service'
 import { JobType } from '@domain/enums/job/job.enum'
@@ -35,12 +34,12 @@ describe('ProcessImageJobSchedulerService', () => {
 
       afterAll(jest.resetAllMocks)
 
-      it('THEN it should create a new job', async () => {
+      it('THEN it should create a new job', () => {
         expect(jobService.create).toHaveBeenCalledTimes(1)
         expect(jobService.create).toHaveBeenCalledWith(JobType.ImageProcessing, processImageRequestInput)
       })
 
-      it('AND it should send the job to the queue', async () => {
+      it('AND it should send the job to the queue', () => {
         expect(sqsClientService.send).toHaveBeenCalledTimes(1)
         expect(sqsClientService.send).toHaveBeenCalledWith(
           'https://sqs.us-east-1.amazonaws.com/123456789012/ProcessImageQueue',
@@ -53,7 +52,7 @@ describe('ProcessImageJobSchedulerService', () => {
       const jobCreationError = new Error('Failed to create job')
       let promise: Promise<JobEntity>
 
-      beforeAll(async () => {
+      beforeAll(() => {
         jest.spyOn(jobService, 'create').mockRejectedValue(jobCreationError)
         promise = getInstance().scheduleImageProcessingJob(processImageRequestInput)
       })
@@ -82,7 +81,7 @@ describe('ProcessImageJobSchedulerService', () => {
       const sendJobToQueueError = new Error('Failed to send the job to the queue')
       let promise: Promise<JobEntity>
 
-      beforeAll(async () => {
+      beforeAll(() => {
         jest.spyOn(jobService, 'create').mockResolvedValue(jobEntity)
         jest.spyOn(sqsClientService, 'send').mockRejectedValue(sendJobToQueueError)
         promise = getInstance().scheduleImageProcessingJob(processImageRequestInput)

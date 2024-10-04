@@ -15,8 +15,8 @@ type Log = {
  */
 export class LoggerService implements Logger {
   private readonly logLevel: string
-  private traceId: string = ''
-  private awsRequestId: string = ''
+  #traceId: string = ''
+  #awsRequestId: string = ''
 
   constructor() {
     this.logLevel = process.env.LOG_LEVEL || 'info'
@@ -28,7 +28,7 @@ export class LoggerService implements Logger {
    * @param {string} traceId - The trace ID to set.
    */
   setTraceId(traceId: string) {
-    this.traceId = traceId
+    this.#traceId = traceId
   }
 
   /**
@@ -37,7 +37,7 @@ export class LoggerService implements Logger {
    * @returns {string} The current trace ID.
    */
   getTraceId(): string {
-    return this.traceId
+    return this.#traceId
   }
 
   /**
@@ -46,7 +46,11 @@ export class LoggerService implements Logger {
    * @param {string} awsRequestId - The AWS request ID to set.
    */
   setAwsRequestId(awsRequestId: string) {
-    this.awsRequestId = awsRequestId
+    this.#awsRequestId = awsRequestId
+  }
+
+  getAwsRequestId() {
+    return this.#awsRequestId
   }
 
   /**
@@ -180,12 +184,12 @@ export class LoggerService implements Logger {
       message: message,
     }
 
-    if (this.awsRequestId) {
-      logObject.awsRequestId = this.awsRequestId
+    if (this.#awsRequestId) {
+      logObject.awsRequestId = this.#awsRequestId
     }
 
-    if (this.traceId) {
-      logObject.traceId = this.traceId
+    if (this.#traceId) {
+      logObject.traceId = this.#traceId
     }
 
     if (data) {

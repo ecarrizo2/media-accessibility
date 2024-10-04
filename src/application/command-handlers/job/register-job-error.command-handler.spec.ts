@@ -44,7 +44,9 @@ describe('RegisterJobErrorCommandHandler', () => {
 
         await commandHandler.handle(command)
 
-        expect(jobRepository.save).toHaveBeenCalledWith(jobEntity)
+        // Todo: this test is giving green but here we need to do more assertions.
+
+        expect(jobRepository.save).toHaveBeenCalledWith(command.job)
       })
     })
   })

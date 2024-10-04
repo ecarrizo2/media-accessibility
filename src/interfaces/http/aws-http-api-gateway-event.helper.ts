@@ -1,6 +1,6 @@
 import { container } from 'tsyringe'
 import { LoggerService } from '@shared/logger/logger.service'
-import { RequestParserService } from '@interfaces/http/services/request-validator.service'
+import { RequestParserService } from '@interfaces/http/services/request-parser.service'
 import { ClassConstructor } from 'class-transformer'
 import { BadRequestError } from '@interfaces/http/errors/bad-request.error'
 import { APIGatewayEvent } from 'aws-lambda'

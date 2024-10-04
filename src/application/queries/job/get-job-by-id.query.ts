@@ -1,5 +1,5 @@
 import { Exclude, Expose, plainToInstance } from 'class-transformer'
-import { IsUrl } from 'class-validator'
+import { IsUUID } from 'class-validator'
 import { myValidateOrReject } from '@shared/class-validator/validator.helper'
 
 export interface GetJobByIdQueryProps {
@@ -8,7 +8,7 @@ export interface GetJobByIdQueryProps {
 
 @Exclude()
 export class GetJobByIdQuery {
-  @IsUrl()
+  @IsUUID(4)
   @Expose()
   readonly jobId!: string
 

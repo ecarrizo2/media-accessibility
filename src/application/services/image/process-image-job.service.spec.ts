@@ -33,7 +33,7 @@ describe('ProcessImageJobService', () => {
         expect(jobService.start).toHaveBeenCalledWith(processImageData.jobId)
       })
 
-      it('AND it should process the image', async () => {
+      it('AND it should process the image', () => {
         expect(imageProcessorService.processImage).toHaveBeenCalledTimes(1)
         expect(imageProcessorService.processImage).toHaveBeenCalledWith(processImageInputDto)
       })
@@ -52,7 +52,7 @@ describe('ProcessImageJobService', () => {
       let promise: Promise<void>
       const jobErrorFailedError = new Error('Failed to start job')
 
-      beforeAll(async () => {
+      beforeAll(() => {
         jest.spyOn(jobService, 'start').mockRejectedValue(jobErrorFailedError)
         service = new ProcessImageJobService(jobService, imageProcessorService, logger)
         promise = service.performJobProcessing(processImageData)
@@ -72,7 +72,7 @@ describe('ProcessImageJobService', () => {
       })
 
       it('AND no extra actions were executed', async () => {
-        await promise.catch((error: unknown) => {
+        await promise.catch(() => {
           expect(imageProcessorService.processImage).not.toHaveBeenCalled()
           expect(jobService.complete).not.toHaveBeenCalled()
         })

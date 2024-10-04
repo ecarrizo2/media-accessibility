@@ -9,15 +9,16 @@ import { ImageAnalyserInput } from '@domain/value-objects/image/image-analyser-i
 import { ChatCompletionMessageParam } from 'openai/resources'
 
 const apiKey = Resource.OpenaiApiKey.value
-const openai = new OpenAI({
-  apiKey,
-})
 
 /**
  * Service to analyze images using OpenAI's API.
  */
 @injectable()
 export class OpenAIImageAnalyserService implements ImageAnalyserService {
+  openai = new OpenAI({
+    apiKey,
+  })
+
   constructor(@inject(LoggerService) private readonly logger: Logger) {}
 
   /**
@@ -33,11 +34,14 @@ export class OpenAIImageAnalyserService implements ImageAnalyserService {
     const openaiVisionRequest = { model: 'gpt-4o-mini', messages: [message], max_tokens: 300 }
     this.logger.debug('About to execution vision request: ', openaiVisionRequest)
 
-    const openaiImageAnalysisResult = await openai.chat.completions.create(openaiVisionRequest)
+    const openaiImageAnalysisResult = await this.openai.chat.completions.create(openaiVisionRequest)
     this.logger.debug('Analysed Image Result', openaiImageAnalysisResult)
 
+    const hasChoices = openaiImageAnalysisResult?.choices?.length > 0
+    const text = hasChoices ? (openaiImageAnalysisResult.choices[0]?.message?.content ?? '') : ''
+
     return ImageAnalysisResult.from({
-      text: openaiImageAnalysisResult.choices[0].message.content ?? '',
+      text,
       vendor: 'openai',
       raw: JSON.stringify(openaiImageAnalysisResult),
     })
@@ -69,30 +73,3 @@ export class OpenAIImageAnalyserService implements ImageAnalyserService {
     return message
   }
 }
-
-// Response Example of openIA if you don't want to consume credits while debugging
-// const openaiImageAnalysisResult: ChatCompletion = {
-//   id: 'chatcmpl-9zR3OMLnxfFCYj7Rrhg0LESVxTTXO',
-//   object: 'chat.completion',
-//   created: 1724429030,
-//   model: 'gpt-4o-mini-2024-07-18',
-//   choices: [
-//     {
-//       index: 0,
-//       message: {
-//         role: 'assistant',
-//         content:
-//           "The image showcases the vibrant Googleplex, the headquarters of Google, set against a bright blue sky. In the foreground, a large, cheerful green Android mascot stands prominently on a decorative base, symbolizing Google's popular mobile operating system. Behind the mascot is the Google logo, displayed in its iconic multicolored letters—blue, red, yellow, and green—spanning the glass façade of the building. Surrounding the area are lush plants and flowers, adding a touch of nature, while bicycles are lined up in the background, hinting at a bike-friendly environment. This lively scene reflects Google’s innovative spirit and commitment to creating an inviting workspace.",
-//         refusal: null,
-//       },
-//       logprobs: null,
-//       finish_reason: 'stop',
-//     },
-//   ],
-//   usage: {
-//     prompt_tokens: 36878,
-//     completion_tokens: 130,
-//     total_tokens: 37008,
-//   },
-//   system_fingerprint: 'fp_507c9469a1',
-// }

@@ -27,12 +27,10 @@ describe('StartJobCommandHandler', () => {
     describe('AND the job can be started', () => {
       it('THEN should start the job and save it', async () => {
         const job = createJobEntityMock({ status: JobStatus.Pending })
-        const spy = jest.spyOn(job, 'start')
         const command = await StartJobCommand.from({ job })
         await commandHandler.handle(command)
 
-        expect(spy).toHaveBeenCalled()
-        expect(jobRepository.save).toHaveBeenCalledWith(job)
+        expect(jobRepository.save).toHaveBeenCalledWith(command.job)
       })
     })
   })

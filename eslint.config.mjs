@@ -112,6 +112,7 @@ export default [
       '@typescript-eslint/consistent-type-definitions': 'off',
       '@typescript-eslint/prefer-ts-expect-error': 'off',
       '@typescript-eslint/unified-signatures': 'off',
+      'jest/no-conditional-expect': 'off',
     },
   },
   {
