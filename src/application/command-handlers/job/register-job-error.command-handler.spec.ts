@@ -1,4 +1,3 @@
-import { JobEntity } from '@domain/entities/job/job.entity'
 import { createMock } from '@golevelup/ts-jest'
 import { RegisterJobErrorCommand } from '@application/commands/job/register-job-error.command'
 import { JobRepository } from '@domain/repositories/job/job-repository.interface'
