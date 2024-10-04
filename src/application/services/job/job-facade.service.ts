@@ -14,7 +14,7 @@ import { GetJobByIdQueryHandler } from '@application/query-handlers/job/get-job-
 import { GetJobByIdQuery } from '@application/queries/job/get-job-by-id.query'
 import { JobNotFoundError } from '@domain/errors/job/job-not-found.error'
 import { JobEntity } from '@domain/entities/job/job.entity'
-import { JobFacade } from '@application/types/job/job-facade.interface'
+import { JobFacade } from '@application/services/job/job-facade.interface'
 
 /**
  * Service responsible for handling job-related operations.
@@ -31,54 +31,28 @@ export class JobFacadeService implements JobFacade {
     @inject(LoggerService) private readonly logger: Logger
   ) {}
 
-  /**
-   * Creates a new job by executing the CreateJobCommand.
-   *
-   * @param {JobType} type - The type of the job to create.
-   * @param {unknown} input - The input data for the job.
-   * @returns {Promise<JobEntity>} A promise that resolves when the job has been created.
-   */
   async create(type: JobType, input: unknown): Promise<JobEntity> {
-    const command = CreateJobCommand.from({ type, input })
+    const command = await CreateJobCommand.from({ type, input })
     this.logger.debug('About to execute Create Job command', command)
 
     return this.createJobCommandHandler.handle(command)
   }
 
-  /**
-   * Starts a job by executing the StartJobCommand.
-   *
-   * @param {string} jobId - The ID of the job to start.
-   * @returns {Promise<void>} A promise that resolves when the job has been started.
-   */
   async start(jobId: string): Promise<void> {
     const job = await this.getJob(jobId)
-    const command = StartJobCommand.from({ job })
+    const command = await StartJobCommand.from({ job })
     this.logger.debug('About to execute Start Job command', command)
 
     return this.startJobCommandHandler.handle(command)
   }
 
-  /**
-   * Registers a job failure by executing the RegisterJobErrorCommand.
-   *
-   * @param {string} jobId - The ID of the job that failed.
-   * @param {unknown} error - The error that caused the job to fail.
-   * @returns {Promise<void>} A promise that resolves when the job error has been registered.
-   */
   async failed(jobId: string, error: unknown): Promise<void> {
     const job = await this.getJob(jobId)
-    const command = RegisterJobErrorCommand.from({ job, error })
+    const command = await RegisterJobErrorCommand.from({ job, error })
 
     return this.registerJobErrorHandler.handle(command)
   }
 
-  /**
-   * Completes a job by executing the CompleteJobCommand.
-   *
-   * @param {string} jobId - The ID of the job to complete.
-   * @returns {Promise<void>} A promise that resolves when the job has been completed.
-   */
   async complete(jobId: string): Promise<void> {
     const job = await this.getJob(jobId)
     const command = await CompleteJobCommand.from({ job })
@@ -87,15 +61,8 @@ export class JobFacadeService implements JobFacade {
     return this.completeJobHandler.handle(command)
   }
 
-  /**
-   * Get a Job Entity by id.
-   *
-   * @param {string} jobId - The ID of the job entity to fetch.
-   * @returns {Promise<JobEntity>} A promise that resolves with the found JobEntity.
-   * @throws {JobNotFoundError} - when query results is undefined.
-   */
   private async getJob(jobId: string): Promise<JobEntity> {
-    const query = GetJobByIdQuery.from({ jobId })
+    const query = await GetJobByIdQuery.from({ jobId })
     const job = await this.getJobByIdQueryHandler.execute(query)
     if (!job) {
       throw new JobNotFoundError()

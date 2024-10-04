@@ -16,7 +16,7 @@ export class AnalyseImageCommandHandler {
    * @returns {Promise<any>} - The result of the image analysis.
    */
   async handle(command: AnalyseImageCommand): Promise<ImageAnalysisResult> {
-    const imageAnalysisData = ImageAnalyserInput.from({
+    const imageAnalysisData = await ImageAnalyserInput.from({
       url: command.url,
       prompt: command.prompt,
     })

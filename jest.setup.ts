@@ -7,6 +7,9 @@ jest.mock('sst', () => {
       OpenaiApiKey: {
         value: 'mocked-api-key',
       },
+      ProcessImageQueue: {
+        url: 'https://sqs.us-east-1.amazonaws.com/123456789012/ProcessImageQueue',
+      },
     },
   }
 })

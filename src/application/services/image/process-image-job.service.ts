@@ -4,8 +4,8 @@ import { LoggerService } from '@shared/logger/logger.service'
 import { JobFacadeService } from '@application/services/job/job-facade.service'
 import { ImageProcessorService } from '@application/services/image/image-processor.service'
 import { Logger } from '@shared/logger/logger.interface'
-import { ImageProcessor } from '@application/types/image/image-processor.interface'
-import { JobFacade } from '@application/types/job/job-facade.interface'
+import { ImageProcessor } from '@application/services/image/image-processor.interface'
+import { JobFacade } from '@application/services/job/job-facade.interface'
 import { ProcessImageRequestInputDto } from '@domain/value-objects/image/process-image-request-input.vo'
 
 @injectable()

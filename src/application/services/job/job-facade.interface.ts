@@ -5,6 +5,7 @@ import { JobEntity } from '@domain/entities/job/job.entity'
  * Interface representing a facade for managing jobs.
  */
 export interface JobFacade {
+
   /**
    * Creates a new job.
    *

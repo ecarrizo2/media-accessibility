@@ -5,7 +5,7 @@ import { initializeRequestContainer } from '@interfaces/shared/container-initial
 import { getValidatedRequestInputValueObject } from '@interfaces/http/aws-http-api-gateway-event.helper'
 import { ProcessImageJobSchedulerService } from '@application/services/image/process-image-job-scheduler.service'
 import { ProcessImageRequestInputDto } from '@domain/value-objects/image/process-image-request-input.vo'
-import { ResponseHandlerService } from '@interfaces/http/services/response-handler.service'
+import { RequestHandlerService } from '@interfaces/http/services/request-handler.service'
 import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda'
 
 /**
@@ -29,6 +29,6 @@ const handleProcessImageAsyncRequest = async (event: APIGatewayEvent) => {
 
 export async function handle(event: AWSLambda.APIGatewayEvent): Promise<APIGatewayProxyResult> {
   initializeRequestContainer(event)
-  const responseHandler = container.resolve(ResponseHandlerService)
+  const responseHandler = container.resolve(RequestHandlerService)
   return await responseHandler.handle(handleProcessImageAsyncRequest(event))
 }

@@ -7,7 +7,7 @@ import { ImageAnalysisResult } from '@domain/value-objects/image/image-analysis-
 import { CreateImageCommand } from '@application/commands/image/create-image-command'
 import { CreateImageCommandHandler } from '@application/command-handlers/image/create-image.command-handler'
 import { ImageEntity } from '@domain/entities/image/image.entity'
-import { ImageProcessor } from '@application/types/image/image-processor.interface'
+import { ImageProcessor } from '@application/services/image/image-processor.interface'
 import { ProcessImageRequestInputDto } from '@domain/value-objects/image/process-image-request-input.vo'
 
 /**
@@ -33,7 +33,7 @@ export class ImageProcessorService implements ImageProcessor {
   }
 
   private async getExistingImage(input: ProcessImageRequestInputDto): Promise<ImageEntity | null> {
-    const query = GetImageByUrlQuery.from({ url: input.url })
+    const query = await GetImageByUrlQuery.from({ url: input.url })
 
     return this.getImageByUrlQueryHandler.execute(query)
   }
