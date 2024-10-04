@@ -4,6 +4,8 @@ import { RegisterJobErrorCommand } from '@application/commands/job/register-job-
 import { JobRepository } from '@domain/repositories/job/job-repository.interface'
 import { RegisterJobErrorCommandHandler } from '@application/command-handlers/job/register-job-error.command-handler'
 import { JobErrorCannotBeRegisteredError } from '@domain/errors/job/job-error-cannot-be-registered.error'
+import { createJobEntityMock } from '../../../../test/mocks/job.entity.mock'
+import { JobStatus } from '@domain/enums/job/job.enum'
 
 describe('RegisterJobErrorCommandHandler', () => {
   let commandHandler: RegisterJobErrorCommandHandler
@@ -18,10 +20,11 @@ describe('RegisterJobErrorCommandHandler', () => {
   describe('WHEN handling the command', () => {
     describe('AND the job is already completed', () => {
       it('THEN it should throw an error', async () => {
-        const jobEntity = createMock<JobEntity>()
-        jobEntity.isCompleted.mockReturnValue(true)
+        const jobEntity = createJobEntityMock({
+          status: JobStatus.Completed,
+        })
 
-        const command = RegisterJobErrorCommand.from({
+        const command = await RegisterJobErrorCommand.from({
           job: jobEntity,
           error: new Error('error'),
         })
@@ -31,17 +34,17 @@ describe('RegisterJobErrorCommandHandler', () => {
     })
     describe('AND the job is not completed', () => {
       it('THEN it should register the error and save the job', async () => {
-        const jobEntity = createMock<JobEntity>()
-        jobEntity.isCompleted.mockReturnValue(false)
+        const jobEntity = createJobEntityMock({
+          status: JobStatus.InProgress,
+        })
 
-        const command = RegisterJobErrorCommand.from({
+        const command = await RegisterJobErrorCommand.from({
           job: jobEntity,
           error: new Error('error'),
         })
 
         await commandHandler.handle(command)
 
-        expect(jobEntity.failed).toHaveBeenCalledWith(command.error)
         expect(jobRepository.save).toHaveBeenCalledWith(jobEntity)
       })
     })

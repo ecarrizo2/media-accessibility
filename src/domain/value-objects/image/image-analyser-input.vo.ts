@@ -1,4 +1,6 @@
-import { z } from 'zod'
+import { Exclude, Expose, plainToInstance } from 'class-transformer'
+import { IsNotEmpty, IsString, IsUrl } from 'class-validator'
+import { myValidateOrReject } from '@shared/class-validator/validator.helper'
 
 /**
  * Interface representing the properties required for image analysis input.
@@ -9,30 +11,23 @@ export interface ImageAnalyserInputProps {
 }
 
 /**
- * Zod schema for validating the ImageAnalyserInputProps.
- */
-const ImageAnalyserInputSchema = z.object({
-  url: z.string().url(),
-  prompt: z.string(),
-})
-
-/**
  * Class representing the input for image analysis.
  */
+@Exclude()
 export class ImageAnalyserInput {
-  private constructor(
-    readonly url: string,
-    readonly prompt: string
-  ) {}
+  @IsUrl()
+  @Expose()
+  readonly url!: string
 
-  /**
-   * Static method to factory a new ImageAnalyserInput instance from the given data.
-   *
-   * @param {ImageAnalyserInputProps} data - The properties required for image analysis input.
-   * @returns {ImageAnalyserInput} - The created ImageAnalyserInput instance.
-   */
-  static from(data: ImageAnalyserInputProps): ImageAnalyserInput {
-    const parsed = ImageAnalyserInputSchema.parse(data)
-    return new ImageAnalyserInput(parsed.url, parsed.prompt)
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  readonly prompt!: string
+
+  static async from(init: ImageAnalyserInputProps): Promise<ImageAnalyserInput> {
+    const instance = plainToInstance(ImageAnalyserInput, init)
+    await myValidateOrReject(instance)
+
+    return instance
   }
 }

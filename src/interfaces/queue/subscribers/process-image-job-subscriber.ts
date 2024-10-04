@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import { container } from 'tsyringe'
 import { initializeQueueContainer } from '@interfaces/shared/container-initialization.helper'
 import { BaseError } from '@shared/errors/base.error'
-import { ProcessImageJobService } from '@interfaces/queue/services/process-image-job.service'
+import { ProcessImageJobService } from '@application/services/image/process-image-job.service'
 import { LoggerService } from '@shared/logger/logger.service'
 import { ProcessImageJobRecordData } from '@interfaces/queue/sqs-event.interface'
 

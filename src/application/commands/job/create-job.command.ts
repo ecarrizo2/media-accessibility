@@ -1,17 +1,27 @@
 import { JobType } from '@domain/enums/job/job.enum'
+import { Exclude, Expose, plainToInstance } from 'class-transformer'
+import { IsEnum, IsNotEmptyObject } from 'class-validator'
+import { myValidateOrReject } from '@shared/class-validator/validator.helper'
 
 export interface CreateJobCommandProps {
   type: JobType
   input: unknown
 }
 
+@Exclude()
 export class CreateJobCommand implements CreateJobCommandProps {
-  private constructor(
-    readonly type: JobType,
-    readonly input: unknown
-  ) {}
+  @IsEnum(JobType)
+  @Expose()
+  readonly type!: JobType
 
-  static from(props: CreateJobCommandProps) {
-    return new CreateJobCommand(props.type, props.input)
+  @IsNotEmptyObject()
+  @Expose()
+  readonly input: unknown
+
+  static async from(init: CreateJobCommandProps) {
+    const command = plainToInstance(CreateJobCommand, init, { excludeExtraneousValues: true })
+    await myValidateOrReject(command)
+
+    return command
   }
 }

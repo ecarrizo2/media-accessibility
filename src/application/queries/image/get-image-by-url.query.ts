@@ -1,11 +1,21 @@
+import { Exclude, Expose, plainToInstance } from 'class-transformer'
+import { myValidateOrReject } from '@shared/class-validator/validator.helper'
+import { IsUrl } from 'class-validator'
+
 export interface getImageByUrlQueryProps {
   url: string
 }
 
+@Exclude()
 export class GetImageByUrlQuery {
-  private constructor(readonly url: string) {}
+  @IsUrl()
+  @Expose()
+  readonly url!: string
 
-  static from(props: getImageByUrlQueryProps) {
-    return new GetImageByUrlQuery(props.url)
+  static async from(init: getImageByUrlQueryProps) {
+    const query = plainToInstance(GetImageByUrlQuery, init, { excludeExtraneousValues: true })
+    await myValidateOrReject(query)
+
+    return query
   }
 }

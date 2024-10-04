@@ -4,7 +4,7 @@ import { BaseEntity } from '@domain/entities/base.entity'
 import { Logger } from '@shared/logger/logger.interface'
 import { PutCommandInput } from '@aws-sdk/lib-dynamodb/dist-types/commands/PutCommand'
 import { QueryCommandInput } from '@aws-sdk/lib-dynamodb/dist-types/commands/QueryCommand'
-import { EntityTransformableRepository } from '@domain/repositories/base.repository'
+import { EntityTransformableRepository } from '@domain/repositories/entity-transformable.repository'
 import { Repository } from '@domain/repositories/repository.interface'
 
 /**

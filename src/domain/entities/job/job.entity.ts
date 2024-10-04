@@ -10,8 +10,10 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator'
-import { Exclude, Expose, Transform, Type } from 'class-transformer'
+import { Exclude, Expose, plainToInstance, Transform, Type } from 'class-transformer'
 import { TransformJsonObject } from '@shared/class-transformer/transformation.helper'
+import { myValidateOrReject } from '@shared/class-validator/validator.helper'
+import { Image } from '@domain/entities/image/image.entity'
 
 export interface JobErrorProps {
   message: string
@@ -95,57 +97,39 @@ export class JobEntity implements JobProps, BaseEntity {
   @Expose()
   updatedAt?: string
 
-  /**
-   * Validates the current state of the job.
-   * @throws {Error} If the state is invalid.
-   */
-  async validateState() {}
+  static async from(init: Image) {
+    const instance = plainToInstance(JobEntity, init, { excludeExtraneousValues: true })
+    await myValidateOrReject(instance)
 
-  /**
-   * Checks if the job can be started.
-   * @returns {boolean} - True if the job can be started, otherwise false.
-   */
+    return instance
+  }
+
+  async validateState() {
+    await myValidateOrReject(this)
+  }
+
   canStart(): boolean {
     return this.status === JobStatus.Pending || this.status === JobStatus.Failed
   }
 
-  /**
-   * Starts the job by setting its status to InProgress and incrementing attempts.
-   */
   start() {
     this.status = JobStatus.InProgress
     this.attempts++
   }
 
-  /**
-   * Checks if the job is completed.
-   * @returns {boolean} - True if the job is completed, otherwise false.
-   */
   isCompleted() {
     return this.status === JobStatus.Completed
   }
 
-  /**
-   * Completes the job by setting its status to Completed.
-   */
   complete() {
     this.status = JobStatus.Completed
   }
 
-  /**
-   * Marks the job as failed and adds an error.
-   * @param {Error} error - The error to be registered.
-   */
   failed(error: Error) {
     this.status = JobStatus.Failed
     this.registerError(error)
   }
 
-  /**
-   * Registers an error that occurred during the job.
-   * @param {Error} error - The error to register.
-   * @private
-   */
   private registerError(error: Error) {
     const errorInfo = {
       message: error.message,

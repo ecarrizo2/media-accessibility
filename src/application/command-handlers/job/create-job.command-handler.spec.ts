@@ -15,9 +15,9 @@ describe('CompleteJobCommandHandler', () => {
 
   describe('WHEN handling the command', () => {
     it('THEN it should complete the job and save it', async () => {
-      const command = CreateJobCommand.from({
+      const command = await CreateJobCommand.from({
         type: JobType.ImageProcessing,
-        input: { url: 'http://localhost:8080', prompt: 'string' },
+        input: { url: 'https://google.com/1', prompt: 'string' },
       })
 
       const unitResult = await commandHandler.handle(command)

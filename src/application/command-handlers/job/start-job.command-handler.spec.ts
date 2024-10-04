@@ -18,7 +18,7 @@ describe('StartJobCommandHandler', () => {
     describe('AND the job cannot be started', () => {
       it('THEN should throw an error', async () => {
         const job = createJobEntityMock({ status: JobStatus.Completed })
-        const command = StartJobCommand.from({ job })
+        const command = await StartJobCommand.from({ job })
 
         await expect(commandHandler.handle(command)).rejects.toThrow(JobCannotBeStartedError)
       })
@@ -28,7 +28,7 @@ describe('StartJobCommandHandler', () => {
       it('THEN should start the job and save it', async () => {
         const job = createJobEntityMock({ status: JobStatus.Pending })
         const spy = jest.spyOn(job, 'start')
-        const command = StartJobCommand.from({ job })
+        const command = await StartJobCommand.from({ job })
         await commandHandler.handle(command)
 
         expect(spy).toHaveBeenCalled()

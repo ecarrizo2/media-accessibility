@@ -1,5 +1,5 @@
 import { APIGatewayProxyResult } from 'aws-lambda'
-import { RequestHandler } from '@interfaces/http/types/request-handler.interface'
+import { RequestHandler } from '@interfaces/http/services/request-handler.interface'
 import { Logger } from '@shared/logger/logger.interface'
 import { LoggerService } from '@shared/logger/logger.service'
 import { inject, injectable } from 'tsyringe'
@@ -8,7 +8,7 @@ import { BadRequestResponse, InternalServerErrorResponse, Response } from '@inte
 import { HttpStatusCode } from '@interfaces/http/types/http-status-code.enum'
 
 @injectable()
-export class ResponseHandlerService implements RequestHandler {
+export class RequestHandlerService implements RequestHandler {
   constructor(@inject(LoggerService) private readonly logger: Logger) {}
 
   async handle(resolvingPromise: Promise<unknown>) {
