@@ -14,6 +14,7 @@ export class RequestParserService<ValueObjectClass, ObjectType> {
 
   async parse(data: ObjectType, valueObjectClass: ClassConstructor<ValueObjectClass>): Promise<ValueObjectClass> {
     const valueObject = this.convertToValueObject(valueObjectClass, data)
+    console.log(valueObject)
     await this.validate(valueObject)
 
     return valueObject
@@ -33,6 +34,8 @@ export class RequestParserService<ValueObjectClass, ObjectType> {
     valueObjectClass: ClassConstructor<ValueObjectClass>,
     data: ObjectType
   ): ValueObjectClass {
+    console.log('DAT', data)
+
     this.logger.debug('Converting input into Value Object', data)
     return plainToInstance(valueObjectClass, data, { excludeExtraneousValues: true })
   }
