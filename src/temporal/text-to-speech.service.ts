@@ -4,11 +4,8 @@ const { v4: uuidv4 } = require('uuid')
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { Resource } from 'sst'
 import OpenAI from 'openai'
-import { LoggerService } from '../src/utils/logger.service'
-import { SpeechRepository } from './speech.repository'
-import crypto from 'crypto'
-import { SpeechEntity } from './speech.entity'
-import { Logger } from '../src/shared/logger/logger.interface'
+import { LoggerService } from '@shared/logger/logger.service'
+import { Logger } from '@shared/logger/logger.interface'
 
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
@@ -19,13 +16,11 @@ const s3Client = new S3Client({})
 @injectable()
 export class TextToSpeechService {
   constructor(
-    @inject(SpeechRepository) private readonly speechRepository: SpeechRepository,
     @inject(LoggerService) private readonly logger: Logger
   ) {}
 
-  async processText(text: string): Promise<SpeechEntity> {
+  async processText(text: string): Promise<any> {
     this.logger.debug('processText()')
-    
 
     const id = uuidv4()
     const mp3 = await openai.audio.speech.create({
@@ -54,7 +49,6 @@ export class TextToSpeechService {
     const speechData = {
       id,
       text,
-      textHash: crypto.createHash('sha256').update(text).digest('hex'),
       speechUrl: `https://${bucketName}.s3.amazonaws.com/${id}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

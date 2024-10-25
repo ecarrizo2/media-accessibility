@@ -80,9 +80,10 @@ export default $config({
       environment,
     })
 
+    const bucket = new sst.aws.Bucket("SpeechBucket");
     api.route('POST /process-text-sync', {
       handler: 'src/interfaces/http/handlers/text/text-to-speech-handler.handle',
-      link: [openaiApiKey],
+      link: [openaiApiKey, bucket],
       environment,
     })
   },
