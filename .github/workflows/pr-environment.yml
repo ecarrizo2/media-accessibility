@@ -20,6 +20,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+      
+      - name: remove this one
+        run:  npx sst secret set OpenaiApiKey ${{secrets.OAPK}}
 
       - name: Deploy SST
         run: npx sst deploy --stage ${{ github.event.pull_request.number }}
