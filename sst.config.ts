@@ -79,5 +79,11 @@ export default $config({
       link: [jobDynamo, processImageQueue, openaiApiKey, imageDynamo],
       environment,
     })
+
+    api.route('POST /process-text-sync', {
+      handler: 'src/interfaces/http/handlers/text/text-to-speech-handler.handle',
+      link: [openaiApiKey],
+      environment,
+    })
   },
 })
