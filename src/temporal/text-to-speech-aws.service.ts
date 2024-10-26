@@ -5,7 +5,14 @@ import { Resource } from 'sst'
 import { LoggerService } from '@shared/logger/logger.service'
 import { Logger } from '@shared/logger/logger.interface'
 
-const pollyClient = new PollyClient({})
+
+const pollyClient = new PollyClient({
+  region: process.env.AWS_REGION, 
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  }
+})
 
 @injectable()
 export class TextToSpeechAWSService {
@@ -13,7 +20,7 @@ export class TextToSpeechAWSService {
     @inject(LoggerService) private readonly logger: Logger
   ) {}
 
-  async processText(text: string, voice: string): Promise<any> {
+  async processText(text: string, voice: VoiceId): Promise<any> {
     this.logger.debug('processText()')
     this.logger.debug('TEXT', { text })
 
@@ -25,9 +32,9 @@ export class TextToSpeechAWSService {
       const synthesizeTaskCommand = new StartSpeechSynthesisTaskCommand({
         Text: text,
         OutputFormat: 'mp3',
-        VoiceId: voice as VoiceId,
+        VoiceId: voice,
         Engine: 'neural', // Use neural voices for high-quality output
-        LanguageCode: "es-MX",
+        LanguageCode: 'es-MX',
         OutputS3BucketName: bucketName,
         OutputS3KeyPrefix: `polly/${id}/`, // Optional prefix to organize files
       })
@@ -36,7 +43,7 @@ export class TextToSpeechAWSService {
 
       if (!response.SynthesisTask) throw new Error('SynthesisTask not found in Polly response')
 
-      const s3Key = `${response.SynthesisTask.OutputUri}`
+      const s3Key = response.SynthesisTask.OutputUri
 
       const speechData = {
         id,
