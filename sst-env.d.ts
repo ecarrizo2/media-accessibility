@@ -28,7 +28,7 @@ declare module "sst" {
       "url": string
     }
     "SpeechBucket": {
-      "type": "sst.aws.SpeechBucket"
+      "type": "sst.aws.Bucket"
       "name": string
     }
   }
