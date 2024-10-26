@@ -20,14 +20,16 @@ export class TextToSpeechService {
     @inject(LoggerService) private readonly logger: Logger
   ) {}
 
-  async processText(text: string): Promise<any> {
+  async processText(text: string, voice:  'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'): Promise<any> {
     this.logger.debug('processText()')
     this.logger.debug('TEXT', { text })
 
     const id = uuidv4()
+
+    //alloy, echo, fable, onyx, nova, and shimmer
     const mp3 = await openai.audio.speech.create({
       model: 'tts-1',
-      voice: 'alloy',
+      voice: voice ?? 'alloy',
       input: text,
     })
 

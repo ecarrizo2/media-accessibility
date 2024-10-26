@@ -16,8 +16,9 @@ const handleProcessTextToSpeechSyncRequest = async (event: APIGatewayEvent) => {
   const service = container.resolve(TextToSpeechService)  
   const body = getEventBody(event)
   const text = body.text as string
+  const voice = body.voice as 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
 
-  return service.processText(text)
+  return service.processText(text, voice)
 }
 
 export async function handle(event: APIGatewayEvent): Promise<APIGatewayProxyResult> {
