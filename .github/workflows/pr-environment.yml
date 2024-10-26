@@ -21,14 +21,19 @@ jobs:
       - name: Install dependencies
         run: npm install
       
-      - name: remove this one
-        run:  npx sst secret set OpenaiApiKey ${{secrets.OAPK}}
+      - name: Remove this one
+        run: npx sst secret set OpenaiApiKey ${{ secrets.OAPK }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-east-1"
 
       - name: Deploy SST
         run: npx sst deploy --stage ${{ github.event.pull_request.number }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-east-1"
 
   remove:
     if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[no-depl]') == false && github.event.action == 'closed' }}
@@ -51,3 +56,4 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-east-1" 
