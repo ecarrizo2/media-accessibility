@@ -5,7 +5,6 @@ import { Resource } from 'sst'
 import { LoggerService } from '@shared/logger/logger.service'
 import { Logger } from '@shared/logger/logger.interface'
 
-
 const pollyClient = new PollyClient({
   region: process.env.AWS_REGION, 
   credentials: {
@@ -23,6 +22,10 @@ export class TextToSpeechAWSService {
   async processText(text: string, voice: VoiceId): Promise<any> {
     this.logger.debug('processText()')
     this.logger.debug('TEXT', { text })
+    this.logger.debug('Credentials', {credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+      }})
 
     const id = uuidv4()
     const bucketName = Resource.SpeechBucket.name
