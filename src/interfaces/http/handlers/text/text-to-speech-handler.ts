@@ -4,6 +4,7 @@ import { initializeRequestContainer } from '@interfaces/shared/container-initial
 import { RequestHandlerService } from '@interfaces/http/services/request-handler.service'
 import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { TextToSpeechService } from 'src/temporal/text-to-speech.service'
+import { getEventBody } from '@interfaces/http/aws-http-api-gateway-event.helper'
 
 /**
  * The main handler function for processing image requests.
@@ -13,7 +14,7 @@ import { TextToSpeechService } from 'src/temporal/text-to-speech.service'
  */
 const handleProcessTextToSpeechSyncRequest = async (event: APIGatewayEvent) => {
   const service = container.resolve(TextToSpeechService)  
-  const body = JSON.stringify(event.body)
+  const body = getEventBody(event)
   const text = body.text as string
 
   return service.processText(text)
