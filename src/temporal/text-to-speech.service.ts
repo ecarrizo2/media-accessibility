@@ -7,8 +7,9 @@ import OpenAI from 'openai'
 import { LoggerService } from '@shared/logger/logger.service'
 import { Logger } from '@shared/logger/logger.interface'
 
+const apiKey = Resource.OpenaiApiKey.value
 const openai = new OpenAI({
-  apiKey: process.env.OPEN_AI_API_KEY,
+  apiKey
 })
 
 const s3Client = new S3Client({})
