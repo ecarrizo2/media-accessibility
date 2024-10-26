@@ -22,6 +22,7 @@ export class TextToSpeechService {
 
   async processText(text: string): Promise<any> {
     this.logger.debug('processText()')
+    this.logger.debug('TEXT', { text })
 
     const id = uuidv4()
     const mp3 = await openai.audio.speech.create({
