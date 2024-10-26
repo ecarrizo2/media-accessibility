@@ -3,8 +3,8 @@ import { container } from 'tsyringe'
 import { initializeRequestContainer } from '@interfaces/shared/container-initialization.helper'
 import { RequestHandlerService } from '@interfaces/http/services/request-handler.service'
 import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda'
-import { TextToSpeechService } from 'src/temporal/text-to-speech.service'
 import { getEventBody } from '@interfaces/http/aws-http-api-gateway-event.helper'
+import { TextToSpeechAWSService } from 'src/temporal/text-to-speech-aws.service'
 
 /**
  * The main handler function for processing image requests.
@@ -13,10 +13,10 @@ import { getEventBody } from '@interfaces/http/aws-http-api-gateway-event.helper
  * @returns {Promise<APIGatewayProxyResult>} - The API Gateway proxy result.
  */
 const handleProcessTextToSpeechSyncRequest = async (event: APIGatewayEvent) => {
-  const service = container.resolve(TextToSpeechService)  
+  const service = container.resolve(TextToSpeechAWSService)  
   const body = getEventBody(event)
   const text = body.text as string
-  const voice = body.voice as 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
+  const voice = body.voice as string
 
   return service.processText(text, voice)
 }
