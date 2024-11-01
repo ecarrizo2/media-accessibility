@@ -6,7 +6,7 @@ import { JobFacadeService } from '@application/services/job/job-facade.service'
 import { Logger } from '@shared/logger/logger.interface'
 import { Resource } from 'sst'
 import { ProcessImageRequestInputDto } from '@domain/value-objects/image/process-image-request-input.vo'
-import { SQSClientService } from '@infrastructure/services/sqs-client.service'
+import { SQSClientService } from '@infrastructure/services/aws/sqs-client.service'
 
 /**
  * Service to handle image processing requests.

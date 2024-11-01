@@ -5,3 +5,4 @@
 /.idea/modules.xml
 ./node_modules/*
 ./coverage/*
+node_modules

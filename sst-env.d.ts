@@ -27,6 +27,10 @@ declare module "sst" {
       "type": "sst.aws.Queue"
       "url": string
     }
+    "SpeechBucket": {
+      "type": "sst.aws.Bucket"
+      "name": string
+    }
   }
 }
 export {}
