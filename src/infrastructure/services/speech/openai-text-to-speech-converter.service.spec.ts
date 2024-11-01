@@ -5,7 +5,6 @@ import { S3ClientService } from '@infrastructure/services/aws/s3-client.service'
 import { Speech } from '@infrastructure/services/speech/text-to-speech-converter.interface'
 import { SpeechVO } from '@domain/value-objects/speech/speech.vo'
 import OpenAI from 'openai'
-import { PutObjectCommand } from '@aws-sdk/client-s3'
 import { mockedUuid } from '../../../../jest.setup'
 import { instanceToPlain } from 'class-transformer'
 
@@ -49,21 +48,27 @@ describe('OpenaiTextToSpeechConverterService', () => {
 
     it('AND should have called the S3 Client to get the speech uploaded', () => {
       expect(s3Client.send).toHaveBeenCalledTimes(1)
-      expect(s3Client.send).toHaveBeenCalledWith(expect.objectContaining({ input: {
-        Bucket: 'mocked-bucket-name',
-        Key: mockedUuid,
-        Body: buffer,
-        ContentType: 'audio/mpeg',
-      }}))
+      expect(s3Client.send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          input: {
+            Bucket: 'mocked-bucket-name',
+            Key: mockedUuid,
+            Body: buffer,
+            ContentType: 'audio/mpeg',
+          },
+        })
+      )
     })
 
     it('AND Should have returned a Speech object', () => {
       expect(result).toBeInstanceOf(SpeechVO)
-      expect(instanceToPlain(result)).toEqual(expect.objectContaining({
-        id: mockedUuid,
-        text: textInput,
-        speechUrl: `https://mocked-bucket-name.s3.amazonaws.com/${mockedUuid}`,
-      }))
+      expect(instanceToPlain(result)).toEqual(
+        expect.objectContaining({
+          id: mockedUuid,
+          text: textInput,
+          speechUrl: `https://mocked-bucket-name.s3.amazonaws.com/${mockedUuid}`,
+        })
+      )
     })
   })
 })

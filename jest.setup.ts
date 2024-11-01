@@ -12,7 +12,7 @@ jest.mock('sst', () => {
       },
       SpeechBucket: {
         name: 'mocked-bucket-name',
-      }
+      },
     },
   }
 })
