@@ -12,6 +12,7 @@ export const myValidateOrReject = async (instance: object) => {
     const isArray = Array.isArray(error)
     const isValidationError = isArray && error.length > 0 && error[0] instanceof ValidationError
 
+    /* istanbul ignore next */
     if (!isValidationError) {
       logger.error('Unknown Error during Class Validation', error)
       throw error
