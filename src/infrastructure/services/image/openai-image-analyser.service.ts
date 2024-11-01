@@ -10,9 +10,6 @@ import { ChatCompletionMessageParam } from 'openai/resources'
 
 const apiKey = Resource.OpenaiApiKey.value
 
-/**
- * Service to analyze images using OpenAI's API.
- */
 @injectable()
 export class OpenAIImageAnalyserService implements ImageAnalyserService {
   openai = new OpenAI({
@@ -21,12 +18,6 @@ export class OpenAIImageAnalyserService implements ImageAnalyserService {
 
   constructor(@inject(LoggerService) private readonly logger: Logger) {}
 
-  /**
-   * Analyzes the provided image data and returns the analysis result.
-   *
-   * @param {ImageAnalyserInput} imageData - The data of the image to analyze.
-   * @returns {Promise<ImageAnalysisResult>} - The result of the image analysis.
-   */
   async analyseImage(imageData: ImageAnalyserInput): Promise<ImageAnalysisResult> {
     this.logger.debug('getAnalyzedImageResult()')
     const message = this.createImageAnalysisRequest(imageData)
@@ -47,12 +38,6 @@ export class OpenAIImageAnalyserService implements ImageAnalyserService {
     })
   }
 
-  /**
-   * Creates an image analysis request message for OpenAI.
-   *
-   * @param {ImageAnalyserInput} imageData - The data of the image to analyze.
-   * @returns {object} - The message object for the image analysis request.
-   */
   private createImageAnalysisRequest(imageData: ImageAnalyserInput): ChatCompletionMessageParam {
     const message: ChatCompletionMessageParam = {
       role: 'user',

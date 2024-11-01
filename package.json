@@ -2,7 +2,6 @@
   "name": "media-accessibility-ia-converter",
   "version": "0.0.0",
   "scripts": {
-    "prepare": "cp -r git-hooks/* .git/hooks/",
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
     "test": "jest --verbose",
@@ -17,6 +16,7 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.637.0",
+    "@aws-sdk/client-polly": "^3.679.0",
     "@aws-sdk/client-s3": "^3.637.0",
     "@aws-sdk/client-sqs": "^3.637.0",
     "@aws-sdk/lib-dynamodb": "^3.637.0",
@@ -24,7 +24,7 @@
     "class-validator": "^0.14.1",
     "openai": "^4.56.0",
     "reflect-metadata": "^0.2.2",
-    "sst": "ion",
+    "sst": "^3.2.60",
     "tsyringe": "^4.8.0",
     "uuid": "^10.0.0"
   },
