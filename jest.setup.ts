@@ -10,6 +10,9 @@ jest.mock('sst', () => {
       ProcessImageQueue: {
         url: 'https://sqs.us-east-1.amazonaws.com/123456789012/ProcessImageQueue',
       },
+      SpeechBucket: {
+        name: 'mocked-bucket-name',
+      }
     },
   }
 })
