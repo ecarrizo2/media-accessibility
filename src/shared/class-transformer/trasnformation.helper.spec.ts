@@ -5,7 +5,7 @@ describe('TransformJsonObject', () => {
   it('parses JSON string to object', () => {
     class TestClass {
       @TransformJsonObject()
-      data: any
+      data: unknown
     }
 
     const instance = plainToInstance(TestClass, { data: '{"key": "value"}' })
@@ -15,7 +15,7 @@ describe('TransformJsonObject', () => {
   it('returns object as is if value is already an object', () => {
     class TestClass {
       @TransformJsonObject()
-      data: any
+      data: unknown
     }
 
     const instance = plainToInstance(TestClass, { data: { key: 'value' } })
@@ -25,7 +25,7 @@ describe('TransformJsonObject', () => {
   it('throws error if JSON string is invalid', () => {
     class TestClass {
       @TransformJsonObject()
-      data: any
+      data: unknown
     }
 
     expect(() => plainToInstance(TestClass, { data: '{"key": "value"' })).toThrow(SyntaxError)
@@ -34,7 +34,7 @@ describe('TransformJsonObject', () => {
   it('returns null if value is null', () => {
     class TestClass {
       @TransformJsonObject()
-      data: any
+      data: unknown
     }
 
     const instance = plainToInstance(TestClass, { data: null })
@@ -44,7 +44,7 @@ describe('TransformJsonObject', () => {
   it('returns undefined if value is undefined', () => {
     class TestClass {
       @TransformJsonObject()
-      data: any
+      data: unknown
     }
 
     const instance = plainToInstance(TestClass, { data: undefined })

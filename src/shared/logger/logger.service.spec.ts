@@ -87,29 +87,6 @@ describe('LoggerService', () => {
     )
     consoleSpy.mockRestore()
   })
-  //
-  // it('logs error messages', () => {
-  //   const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
-  //   getInstance().error('Error message')
-  //   expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Error message'))
-  //   consoleSpy.mockRestore()
-  // })
-  //
-  // it('logs debug messages when log level is debug', () => {
-  //   process.env.LOG_LEVEL = 'debug'
-  //   const consoleSpy = jest.spyOn(console, 'debug').mockImplementation()
-  //   getInstance().debug('Debug message')
-  //   expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Debug message'))
-  //   consoleSpy.mockRestore()
-  // })
-  //
-  // it('does not log debug messages when log level is info', () => {
-  //   process.env.LOG_LEVEL = 'info'
-  //   const consoleSpy = jest.spyOn(console, 'debug').mockImplementation()
-  //   getInstance().debug('Debug message')
-  //   expect(consoleSpy).not.toHaveBeenCalled()
-  //   consoleSpy.mockRestore()
-  // })
 
   it('sets and gets trace ID', () => {
     const loggerService = getInstance()
