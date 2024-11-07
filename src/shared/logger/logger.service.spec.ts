@@ -9,7 +9,12 @@ describe('LoggerService', () => {
   type ConsoleString = 'debug' | 'info' | 'warn' | 'error'
 
   describe('Logs to the console when the level is valid', () => {
-    const dataProvider = [
+    type TestData = {
+      level: string
+      environmentLevel: string
+    }
+
+    const dataProvider: TestData[] = [
       {
         level: 'debug',
         environmentLevel: 'debug',
@@ -40,7 +45,13 @@ describe('LoggerService', () => {
   })
 
   describe('Does not log to the console when the level is invalid', () => {
-    const dataProvider = [
+    type TestData = {
+      level: string
+      environmentLevel: string
+      data: Record<string, unknown>
+    }
+
+    const dataProvider: TestData[] = [
       {
         level: 'debug',
         environmentLevel: 'error',
