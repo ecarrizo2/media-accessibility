@@ -50,6 +50,5 @@ jobs:
         with:
           tag_name: "v${{ env.new_version }}"
           release_name: "Release v${{ env.new_version }}"
-          generate_release_notes: true  # Automatically generate release notes based on commits
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
