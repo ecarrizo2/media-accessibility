@@ -30,14 +30,14 @@ jobs:
       - name: Determine new version
         id: version
         run: |
-          # Run the version bump tool with the Angular preset
-          bump_type=$(npx conventional-recommended-bump -p conventional-changelog-angular)
-
-          # Get the current version from the last Git tag, e.g., v1.2.3
-          current_version=$(git describe --tags --abbrev=0)
+          # Check if there is at least one tag in the repository
+          current_version=$(git describe --tags --abbrev=0 || echo "v0.0.0")
 
           # Strip the "v" prefix if present
           current_version=${current_version#v}
+
+          # Run the version bump tool with the Angular preset
+          bump_type=$(npx conventional-recommended-bump -p conventional-changelog-angular)
 
           # Use npm's semver tool to calculate the new version based on the bump type
           new_version=$(npx semver "$current_version" -i "$bump_type")
