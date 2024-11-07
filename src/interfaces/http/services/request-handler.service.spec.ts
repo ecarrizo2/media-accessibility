@@ -31,6 +31,29 @@ describe('RequestHandlerService', () => {
     expect(result.body).toBe(JSON.stringify({ message: 'Invalid request', errors: undefined }))
   })
 
+  // TODO: This test can be more robust adding additional handling for the ValidationErrors objects
+  it('returns bad request with errors response when promise rejects with BadRequestError', async () => {
+    const error = new BadRequestError('Invalid request', [
+      { property: 'field', constraints: { isNotEmpty: 'Field is required' } },
+    ])
+    const resolvingPromise = Promise.reject(error)
+    const result = await requestHandlerService.handle(resolvingPromise)
+    expect(logger.warn).toHaveBeenCalledWith('Bad request error', error)
+    expect(result.statusCode).toBe(HttpStatusCode.BAD_REQUEST)
+    expect(result.body).toBe(
+      JSON.stringify({ message: 'Invalid request', errors: [{ field: 'field', message: 'Field is required' }] })
+    )
+  })
+
+  it('returns bad request with errors response when promise rejects with BadRequestError and empty constraints', async () => {
+    const error = new BadRequestError('Invalid request', [{ property: 'field' }])
+    const resolvingPromise = Promise.reject(error)
+    const result = await requestHandlerService.handle(resolvingPromise)
+    expect(logger.warn).toHaveBeenCalledWith('Bad request error', error)
+    expect(result.statusCode).toBe(HttpStatusCode.BAD_REQUEST)
+    expect(result.body).toBe(JSON.stringify({ message: 'Invalid request', errors: [{ field: 'field', message: '' }] }))
+  })
+
   it('returns internal server error response when promise rejects with other errors', async () => {
     const error = new Error('Internal error')
     const resolvingPromise = Promise.reject(error)

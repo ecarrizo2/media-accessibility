@@ -6,34 +6,91 @@ describe('LoggerService', () => {
   }
 
   afterEach(jest.resetAllMocks)
+  type ConsoleString = 'debug' | 'info' | 'warn' | 'error'
 
-  it('logs info messages', () => {
-    const consoleSpy = jest.spyOn(console, 'info').mockImplementation()
-    getInstance().info('Info message')
-    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Info message'))
-    consoleSpy.mockRestore()
+  describe('Logs to the console when the level is valid', () => {
+    type TestData = {
+      level: string
+      environmentLevel: string
+    }
+
+    const dataProvider: TestData[] = [
+      {
+        level: 'debug',
+        environmentLevel: 'debug',
+      },
+      {
+        level: 'info',
+        environmentLevel: 'info',
+      },
+      {
+        level: 'log',
+        environmentLevel: 'log',
+      },
+      {
+        level: 'warn',
+        environmentLevel: 'warn',
+      },
+      {
+        level: 'error',
+        environmentLevel: 'error',
+      },
+    ]
+    it.each(dataProvider)('log to the console when the level is valid', (data) => {
+      process.env.LOG_LEVEL = data.environmentLevel
+      const consoleSpy = jest.spyOn(console, data.level as ConsoleString).mockImplementation()
+      getInstance()[data.level as ConsoleString]('Message')
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Message'))
+    })
   })
 
-  it('logs error messages', () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
-    getInstance().error('Error message')
-    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Error message'))
-    consoleSpy.mockRestore()
+  describe('Does not log to the console when the level is invalid', () => {
+    type TestData = {
+      level: string
+      environmentLevel: string
+      data: Record<string, unknown>
+    }
+
+    const dataProvider: TestData[] = [
+      {
+        level: 'debug',
+        environmentLevel: 'error',
+        data: { key: 'value' },
+      },
+      {
+        level: 'info',
+        environmentLevel: 'error',
+        data: { key: 'value' },
+      },
+      {
+        level: 'warn',
+        environmentLevel: 'error',
+        data: { key: 'value' },
+      },
+    ]
+    it.each(dataProvider)('Does not log to the console when the level is invalid', (data) => {
+      process.env.LOG_LEVEL = data.environmentLevel
+      const consoleSpy = jest.spyOn(console, data.level as ConsoleString).mockImplementation()
+      getInstance()[data.level as ConsoleString]('Message')
+      expect(consoleSpy).not.toHaveBeenCalled()
+    })
   })
 
-  it('logs debug messages when log level is debug', () => {
-    process.env.LOG_LEVEL = 'debug'
-    const consoleSpy = jest.spyOn(console, 'debug').mockImplementation()
-    getInstance().debug('Debug message')
-    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Debug message'))
-    consoleSpy.mockRestore()
-  })
-
-  it('does not log debug messages when log level is info', () => {
+  it('logs info messages using log alias', () => {
     process.env.LOG_LEVEL = 'info'
-    const consoleSpy = jest.spyOn(console, 'debug').mockImplementation()
-    getInstance().debug('Debug message')
-    expect(consoleSpy).not.toHaveBeenCalled()
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation()
+    getInstance().log({ key: 'value' })
+    expect(consoleSpy).toHaveBeenCalledWith(
+      JSON.stringify(
+        {
+          level: 'INFO',
+          message: '',
+          data: { key: 'value' },
+        },
+        null,
+        2
+      )
+    )
     consoleSpy.mockRestore()
   })
 

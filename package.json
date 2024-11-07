@@ -1,10 +1,10 @@
 {
   "name": "media-accessibility-ia-converter",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "scripts": {
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
-    "test": "jest",
+    "test": "jest --verbose",
     "test:cov": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "eslint ./src",
@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": "",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.637.0",
@@ -22,13 +22,11 @@
     "@aws-sdk/lib-dynamodb": "^3.637.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
-    "crypto": "^1.0.1",
     "openai": "^4.56.0",
     "reflect-metadata": "^0.2.2",
     "sst": "^3.2.60",
     "tsyringe": "^4.8.0",
-    "uuid": "^10.0.0",
-    "zod": "^3.23.8"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.25.4",

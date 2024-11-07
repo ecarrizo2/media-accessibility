@@ -29,7 +29,7 @@ jest.mock('uuid', () => ({
 }))
 
 // Deactivating logs
-console.log = jest.fn()
+// console.log = jest.fn()
 console.info = jest.fn()
 console.warn = jest.fn()
 console.error = jest.fn()
