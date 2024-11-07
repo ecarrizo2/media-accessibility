@@ -36,7 +36,7 @@ describe('LoggerService', () => {
         environmentLevel: 'error',
       },
     ]
-    it.each(dataProvider)('Does not log to the console when the level is invalid', (data) => {
+    it.each(dataProvider)('log to the console when the level is valid', (data) => {
       process.env.LOG_LEVEL = data.environmentLevel
       const consoleSpy = jest.spyOn(console, data.level as ConsoleString).mockImplementation()
       getInstance()[data.level as ConsoleString]('Message')
