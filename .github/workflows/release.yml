@@ -1,0 +1,52 @@
+name: Release on Merge to Main
+
+on:
+  push:
+    branches:
+      - main  # Trigger only on pushes (merges) to the main branch
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Determine new version
+        id: version
+        run: |
+          # Install conventional-changelog-cli for versioning
+          npm install -g conventional-changelog-cli
+
+          # Get the recommended version bump based on Conventional Commits
+          bump_type=$(conventional-recommended-bump -p angular)
+
+          # Get the current version from the last Git tag, e.g., v1.2.3
+          current_version=$(git describe --tags --abbrev=0)
+
+          # Strip the "v" prefix if present
+          current_version=${current_version#v}
+
+          # Use npm's semver tool to calculate the new version based on the bump type
+          new_version=$(npx semver "$current_version" -i "$bump_type")
+
+          echo "new_version=$new_version" >> $GITHUB_ENV
+
+
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        with:
+          tag_name: "v${{ env.new_version }}"
+          release_name: "Release v${{ env.new_version }}"
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
