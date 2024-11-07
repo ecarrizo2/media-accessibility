@@ -21,8 +21,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install Conventional Changelog Angular Preset
-        run: npm install --save-dev conventional-changelog-angular
+      - name: Install Conventional Changelog Angular and Tools
+        run: |
+          npm install --save-dev conventional-changelog-angular
+          npm install --save-dev conventional-recommended-bump
+          npm install --save-dev conventional-changelog-cli
 
       - name: Determine new version
         id: version
