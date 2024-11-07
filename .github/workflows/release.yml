@@ -24,11 +24,8 @@ jobs:
       - name: Determine new version
         id: version
         run: |
-          # Install conventional-changelog-cli and conventional-recommended-bump locally
-          npm install --save-dev conventional-changelog-cli conventional-recommended-bump
-
-          # Get the recommended version bump without specifying a preset
-          bump_type=$(npx conventional-recommended-bump)
+          # Run the version bump tool with the Angular preset
+          bump_type=$(npx conventional-recommended-bump -p conventional-changelog-angular)
 
           # Get the current version from the last Git tag, e.g., v1.2.3
           current_version=$(git describe --tags --abbrev=0)
@@ -39,14 +36,14 @@ jobs:
           # Use npm's semver tool to calculate the new version based on the bump type
           new_version=$(npx semver "$current_version" -i "$bump_type")
 
+          # Set the new version as an environment variable
           echo "new_version=$new_version" >> $GITHUB_ENV
-
 
       - name: Create GitHub release
         uses: actions/create-release@v1
         with:
           tag_name: "v${{ env.new_version }}"
           release_name: "Release v${{ env.new_version }}"
-          generate_release_notes: true  # Automatically generate the release notes with commits and PRs
+          generate_release_notes: true  # Automatically generate release notes based on commits
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
