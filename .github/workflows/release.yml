@@ -24,11 +24,11 @@ jobs:
       - name: Determine new version
         id: version
         run: |
-          # Install conventional-changelog-cli and the angular preset
-          npm install --save-dev conventional-changelog-cli conventional-changelog-angular
+          # Install conventional-changelog-cli and conventional-recommended-bump locally
+          npm install --save-dev conventional-changelog-cli conventional-recommended-bump
 
-          # Get the recommended version bump based on Conventional Commits
-          bump_type=$(npx conventional-recommended-bump -p angular)
+          # Get the recommended version bump without specifying a preset
+          bump_type=$(npx conventional-recommended-bump)
 
           # Get the current version from the last Git tag, e.g., v1.2.3
           current_version=$(git describe --tags --abbrev=0)
