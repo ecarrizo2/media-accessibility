@@ -13,30 +13,25 @@ describe('LoggerService', () => {
       {
         level: 'debug',
         environmentLevel: 'debug',
-        data: { key: 'value' },
       },
       {
         level: 'info',
         environmentLevel: 'info',
-        data: { key: 'value' },
       },
       {
         level: 'log',
         environmentLevel: 'log',
-        data: { key: 'value' },
       },
       {
         level: 'warn',
         environmentLevel: 'warn',
-        data: { key: 'value' },
       },
       {
         level: 'error',
         environmentLevel: 'error',
-        data: { key: 'value' },
       },
     ]
-    it.each(dataProvider)('Logs to the console when the level is valid', (data) => {
+    it.each(dataProvider)('Does not log to the console when the level is invalid', (data) => {
       process.env.LOG_LEVEL = data.environmentLevel
       const consoleSpy = jest.spyOn(console, data.level as ConsoleString).mockImplementation()
       getInstance()[data.level as ConsoleString]('Message')
@@ -62,7 +57,7 @@ describe('LoggerService', () => {
         data: { key: 'value' },
       },
     ]
-    it.each(dataProvider)('Logs to the console when the level is valid', (data) => {
+    it.each(dataProvider)('Does not log to the console when the level is invalid', (data) => {
       process.env.LOG_LEVEL = data.environmentLevel
       const consoleSpy = jest.spyOn(console, data.level as ConsoleString).mockImplementation()
       getInstance()[data.level as ConsoleString]('Message')
