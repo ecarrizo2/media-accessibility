@@ -56,7 +56,7 @@ jobs:
       - name: Generate release notes using conventional-changelog-cli
         id: changelog
         run: |
-          # Generate release notes using conventional-changelog-cli
+          # Generate release notes without the --same-file flag
           release_notes=$(npx conventional-changelog -p angular -s -r 0)
 
           # Format the release notes to include PR links and contributors
