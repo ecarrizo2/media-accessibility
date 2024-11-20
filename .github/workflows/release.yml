@@ -69,7 +69,6 @@ jobs:
               "tag_name": "v'${{ env.new_version }}'",
               "target_commitish": "main",
               "name": "Release v'${{ env.new_version }}'",
-              "body": "Auto-generated release notes",
               "draft": false,
               "prerelease": false,
               "generate_release_notes": true
