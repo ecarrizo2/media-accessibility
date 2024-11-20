@@ -48,25 +48,18 @@ jobs:
           # Set the new version as an environment variable
           echo "new_version=$new_version" >> $GITHUB_ENV
 
-      - name: Create GitHub release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: "v${{ env.new_version }}"
-          release_name: "Release v${{ env.new_version }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate release notes
-        id: generate_notes
-        uses: Softonic/github-release-notes@v1.9
-        with:
-          tag_name: "v${{ env.new_version }}"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish release notes to the created GitHub release
+      - name: Create GitHub release with API
         run: |
-          # Use the GitHub API to update the release with the generated notes
-          curl -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-               -d "{\"body\": \"${{ steps.generate_notes.outputs.notes }}\"}" \
-               https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "tag_name": "v'${{ env.new_version }}'",
+              "target_commitish": "main",
+              "name": "Release v'${{ env.new_version }}'",
+              "body": "Auto-generated release notes",
+              "draft": false,
+              "prerelease": false,
+              "generate_release_notes": true
+            }' \
+            https://api.github.com/repos/${{ github.repository }}/releases
