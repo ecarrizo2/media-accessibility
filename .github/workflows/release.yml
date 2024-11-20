@@ -32,13 +32,6 @@ jobs:
           npm install --save-dev conventional-recommended-bump
           npm install --save-dev conventional-changelog-cli
 
-      - name: Debug Git state
-        run: |
-          echo "Tags in the repository:"
-          git tag
-          echo "Latest tag:"
-          git describe --tags --abbrev=0 || echo "No tags found"
-
       - name: Determine new version
         id: version
         run: |
@@ -60,7 +53,19 @@ jobs:
           # Set the new version as an environment variable
           echo "new_version=$new_version" >> $GITHUB_ENV
 
-      - name: Create GitHub release with API
+      - name: Generate release notes
+        id: changelog
+        run: |
+          # Generate release notes using conventional-changelog
+          npx conventional-changelog -p angular -r 1 > release-notes.md
+
+          # Set the release notes content as an output variable
+          notes=$(cat release-notes.md)
+          echo "release_notes<<EOF" >> $GITHUB_ENV
+          echo "$notes" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create GitHub release with generated notes
         run: |
           curl -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
@@ -69,8 +74,8 @@ jobs:
               "tag_name": "v'${{ env.new_version }}'",
               "target_commitish": "main",
               "name": "Release v'${{ env.new_version }}'",
+              "body": "'"${{ env.release_notes }}"'",
               "draft": false,
-              "prerelease": false,
-              "generate_release_notes": true
+              "prerelease": false
             }' \
             https://api.github.com/repos/${{ github.repository }}/releases
