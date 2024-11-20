@@ -16,7 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Ensure all tags and commits are fetched
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -53,29 +53,20 @@ jobs:
           # Set the new version as an environment variable
           echo "new_version=$new_version" >> $GITHUB_ENV
 
-      - name: Generate release notes
+      - name: Generate release notes using conventional-changelog-cli
         id: changelog
         run: |
-          # Generate release notes using conventional-changelog
-          npx conventional-changelog -p angular -r 1 > release-notes.md
+          # Generate release notes using conventional-changelog-cli
+          release_notes=$(npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0)
 
-          # Set the release notes content as an output variable
-          notes=$(cat release-notes.md)
-          echo "release_notes<<EOF" >> $GITHUB_ENV
-          echo "$notes" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          # Output the release notes to be used in the next step
+          echo "release_notes=$release_notes" >> $GITHUB_ENV
 
-      - name: Create GitHub release with generated notes
-        run: |
-          curl -X POST \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "tag_name": "v'${{ env.new_version }}'",
-              "target_commitish": "main",
-              "name": "Release v'${{ env.new_version }}'",
-              "body": "'"${{ env.release_notes }}"'",
-              "draft": false,
-              "prerelease": false
-            }' \
-            https://api.github.com/repos/${{ github.repository }}/releases
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        with:
+          tag_name: "v${{ env.new_version }}"
+          release_name: "Release v${{ env.new_version }}"
+          body: ${{ env.release_notes }}  # Use the generated release notes here
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
