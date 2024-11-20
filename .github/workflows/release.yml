@@ -57,16 +57,35 @@ jobs:
         id: changelog
         run: |
           # Generate release notes using conventional-changelog-cli
-          release_notes=$(npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0)
+          release_notes=$(npx conventional-changelog -p angular -s -r 0)
 
-          # Output the release notes to be used in the next step
-          echo "release_notes=$release_notes" >> $GITHUB_ENV
+          # Format the release notes to include PR links and contributors
+          formatted_release_notes="## What's Changed\n\n"
+
+          # Loop through the commits and add them to the release notes
+          for commit in $(echo "$release_notes" | grep -oE ".*\([^)]+\):.*"); do
+            # Extract commit hash (assuming commit hashes are included in the changelog)
+            pr_link=$(git log --grep="$commit" --format='%s' | grep -oP '(?<=#)\d+')
+            if [ "$pr_link" ]; then
+              pr_url="https://github.com/${{ github.repository }}/pull/$pr_link"
+              formatted_release_notes+="* $commit by $pr_url\n"
+            else
+              formatted_release_notes+="* $commit\n"
+            fi
+          done
+
+          # Append contributor section at the end
+          contributors=$(git log --pretty=format:"%aN" | sort -u | tr '\n' ', ' | sed 's/, $//')
+          formatted_release_notes+="\n## Contributors\n\n$contributors"
+
+          # Output the formatted release notes
+          echo "release_notes=$formatted_release_notes" >> $GITHUB_ENV
 
       - name: Create GitHub release
         uses: actions/create-release@v1
         with:
           tag_name: "v${{ env.new_version }}"
           release_name: "Release v${{ env.new_version }}"
-          body: ${{ env.release_notes }}  # Use the generated release notes here
+          body: ${{ env.release_notes }}  # Use the formatted release notes here
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
