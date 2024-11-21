@@ -3,7 +3,7 @@ name: Release on Merge to Main
 on:
   push:
     branches:
-      - main  # Trigger only on merges to the main branch
+      - main  # Trigger only on merges to the main branch test
 
 jobs:
   release:
