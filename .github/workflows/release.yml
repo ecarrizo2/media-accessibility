@@ -51,11 +51,26 @@ jobs:
           # Use npm's semver tool to calculate the new version based on the bump type
           new_version=$(npx semver "$current_version" -i "$bump_type")
 
-          # Set the new version as an output
+          # Set the new version as an environment variable
           echo "new_version=$new_version" >> $GITHUB_ENV
           echo "::set-output name=new_version::$new_version"
 
-      - name: Generate release notes using GitHub API
+      - name: Create Git Tag
+        run: |
+          git tag "v${{ env.new_version }}"
+          git push origin "v${{ env.new_version }}"
+
+      - name: Create Draft GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: "v${{ env.new_version }}"
+          release_name: "Release v${{ env.new_version }}"
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate Release Notes
         id: changelog
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -65,18 +80,19 @@ jobs:
             /repos/${{ github.repository }}/releases/generate-notes \
             -f tag_name="v${{ env.new_version }}" \
             -f target_commitish="main" \
-            -f previous_tag_name="$(git describe --tags --abbrev=0 || echo "")" \
             | jq -r '.body')
 
           # Set release notes as an output
           echo "release_notes=$release_notes" >> $GITHUB_ENV
           echo "::set-output name=release_notes::$release_notes"
 
-      - name: Create GitHub release
-        uses: actions/create-release@v1
-        with:
-          tag_name: "v${{ env.new_version }}"
-          release_name: "Release v${{ env.new_version }}"
-          body: ${{ env.release_notes }}
+      - name: Update GitHub Release with Notes
+        run: |
+          gh api \
+            -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            /repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }} \
+            -f body="${{ env.release_notes }}" \
+            -f draft=false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
