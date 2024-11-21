@@ -3,7 +3,7 @@ name: Release on Merge to Main
 on:
   push:
     branches:
-      - main  # Trigger only on merges to the main branch test
+      - main
 
 jobs:
   release:
@@ -30,30 +30,25 @@ jobs:
         run: |
           npm install --save-dev conventional-changelog-angular
           npm install --save-dev conventional-recommended-bump
-          npm install --save-dev conventional-changelog-cli
           npm install --save-dev semver
 
       - name: Determine new version
         id: version
         run: |
-          # Fetch all tags to ensure git describe works
           git fetch --tags
 
-          # Get the current version from the last Git tag (v1.2.3)
+          # Get the current version
           current_version=$(git describe --tags --abbrev=0 || echo "v0.0.0")
-
-          # Strip the "v" prefix if present
           current_version=${current_version#v}
 
-          # Run the version bump tool with the Angular preset
+          # Determine the bump type
           bump_type=$(npx conventional-recommended-bump -p conventional-changelog-angular)
 
-          # Use npm's semver tool to calculate the new version based on the bump type
+          # Calculate the new version
           new_version=$(npx semver "$current_version" -i "$bump_type")
 
           # Set the new version as an environment variable
           echo "new_version=$new_version" >> $GITHUB_ENV
-          echo "::set-output name=new_version::$new_version"
 
       - name: Create Git Tag
         run: |
@@ -70,29 +65,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate Release Notes
-        id: changelog
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          release_notes=$(gh api -X POST \
-            -H "Accept: application/vnd.github+json" \
-            /repos/${{ github.repository }}/releases/generate-notes \
-            -f tag_name="v${{ env.new_version }}" \
-            -f target_commitish="main" \
-            | jq -r '.body')
+      - name: Generate and Add Release Notes
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: releaseNotes } = await github.rest.repos.generateReleaseNotes({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `v${process.env.new_version}`,
+              target_commitish: "main"
+            });
 
-          # Set release notes as an output
-          echo "release_notes=$release_notes" >> $GITHUB_ENV
-          echo "::set-output name=release_notes::$release_notes"
-
-      - name: Update GitHub Release with Notes
-        run: |
-          gh api \
-            -X PATCH \
-            -H "Accept: application/vnd.github+json" \
-            /repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }} \
-            -f body="${{ env.release_notes }}" \
-            -f draft=false
+            // Update the release with generated notes and mark it as latest
+            const releaseId = "${{ steps.create_release.outputs.id }}";
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: releaseId,
+              body: releaseNotes.body,
+              draft: false,
+              make_latest: true // Ensure release is marked as the latest
+            });
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
