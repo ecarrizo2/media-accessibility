@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  # Allow creating releases and tagging
+      contents: write # Allow creating releases and tagging
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensure all tags and commits are fetched
+          fetch-depth: 0 # Ensure all tags and commits are fetched
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -49,6 +49,7 @@ jobs:
 
           # Set the new version as an environment variable
           echo "new_version=$new_version" >> $GITHUB_ENV
+          echo "current_version=$current_version" >> $GITHUB_ENV
 
       - name: Create Git Tag
         run: |
@@ -59,8 +60,8 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: "v${{ env.new_version }}"
-          release_name: "Release v${{ env.new_version }}"
+          tag_name: 'v${{ env.new_version }}'
+          release_name: 'Release v${{ env.new_version }}'
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,6 +74,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: `v${process.env.new_version}`,
+              previous_tag_name: `v${process.env.current_version}`,
               target_commitish: "main"
             });
 
