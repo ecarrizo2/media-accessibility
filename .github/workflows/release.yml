@@ -49,7 +49,7 @@ jobs:
 
           # Set the new version as an environment variable
           echo "new_version=$new_version" >> $GITHUB_ENV
-          echo "current_version=current_version" >> $GITHUB_ENV
+          echo "current_version=$current_version" >> $GITHUB_ENV
 
       - name: Create Git Tag
         run: |
