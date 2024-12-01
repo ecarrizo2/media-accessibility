@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  # Allow creating releases and tagging
+      contents: write # Allow creating releases and tagging
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensure all tags and commits are fetched
+          fetch-depth: 0 # Ensure all tags and commits are fetched
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -59,8 +59,8 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: "v${{ env.new_version }}"
-          release_name: "Release v${{ env.new_version }}"
+          tag_name: 'v${{ env.new_version }}'
+          release_name: 'Release v${{ env.new_version }}'
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
