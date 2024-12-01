@@ -160,12 +160,12 @@ describe('JobFacadeService', () => {
   describe('complete()', () => {
     describe('WHEN job complete succeeds', () => {
       beforeAll(() => {
-        jest.spyOn(completeJobHandler, 'handle').mockResolvedValue(void 8)
+        jest.spyOn(completeJobHandler, 'handle').mockResolvedValue(undefined)
       })
 
       afterAll(jest.resetAllMocks)
 
-      it('THEN it should register the job handling failure', async () => {
+      it('THEN it should complete the job successfully', async () => {
         const jobId = mockedUuid
         const job = createJobEntityMock()
 
