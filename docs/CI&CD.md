@@ -37,11 +37,7 @@ These workflows are configured in GitHub Actions and triggered by specific event
 
 **Purpose**:  
 Automates the deployment of temporary staging environments for pull requests. These environments allow isolated testing of changes before merging.
-
-#### Trigger
-
-Triggered by the following pull request events:
-
+Activated by the following pull request events:
 - `opened`
 - `synchronize`
 - `reopened`
@@ -72,8 +68,7 @@ Uses AWS credentials and a secret API key (`OAPK`) for deployment.
 
 **Purpose**:  
 Validates code quality and style in pull requests targeting the `main` branch. Ensures all changes meet the project's standards before merging.
-
-#### Trigger
+Activated by the following events:
 
 - Pull requests targeting `main`.
 - Manual trigger via `workflow_dispatch`.
@@ -98,10 +93,7 @@ Validates code quality and style in pull requests targeting the `main` branch. E
 
 **Purpose**:  
 Reports code coverage metrics to Code Climate for monitoring over time and maintaining quality standards.
-
-#### Trigger
-
-Triggered by `push` events to the `main` branch.
+Activated by `push` events to the `main` branch.
 
 #### Jobs
 
@@ -121,10 +113,7 @@ Triggered by `push` events to the `main` branch.
 
 **Purpose**:  
 Automates the release process by tagging the repository, creating GitHub releases, and generating release notes based on conventional commits.
-
-#### Trigger
-
-Triggered by `push` events to the `main` branch.
+Activated by `push` events to the `main` branch.
 
 #### Jobs
 
@@ -145,6 +134,11 @@ Triggered by `push` events to the `main` branch.
 ## Secrets
 
 The following secrets must be configured in your GitHub repository:
+
+> ⚠️ **Security Note**:
+> - Never commit these secrets to the repository
+> - Rotate secrets periodically
+> - Use GitHub's environment protection rules for production secrets
 
 | Secret Name             | Purpose                                                                   |
 | ----------------------- | ------------------------------------------------------------------------- |

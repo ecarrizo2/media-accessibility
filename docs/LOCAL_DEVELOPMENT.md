@@ -33,7 +33,8 @@ Ensure you have the following installed on your machine
 4. **Set up AWS Secrets**:
    Ensure you have the necessary secrets set up in AWS Parameter Store,
    currently there is only one secret used in the project to connect with OpenAPI,
-   if you do not have an account, you can use mocked responses in the service instead the Appropriate service class
+   if you do not have an account, you can use mocked responses in the service instead of implementing the service class
+
    ```
    sst secret set OpenaiApiKey "your-openai-api-key"
    ```
@@ -54,7 +55,7 @@ Ensure you have the following installed on your machine
    be able to see the logs in your cli and update your dev deployment as files changes in your project.
 
    Additionally, if you want to use the sst console `https://console.sst.dev` it will
-   provide you with a visual representation of your local environment, and a lot of great features
+   provide you with a visual representation of your local environment and comprehensive features
    to debug your project deployed in the cloud.
 
 ## Project Structure
