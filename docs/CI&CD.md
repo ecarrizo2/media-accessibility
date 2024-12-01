@@ -38,6 +38,7 @@ These workflows are configured in GitHub Actions and triggered by specific event
 **Purpose**:  
 Automates the deployment of temporary staging environments for pull requests. These environments allow isolated testing of changes before merging.
 Activated by the following pull request events:
+
 - `opened`
 - `synchronize`
 - `reopened`
@@ -136,6 +137,7 @@ Activated by `push` events to the `main` branch.
 The following secrets must be configured in your GitHub repository:
 
 > ⚠️ **Security Note**:
+>
 > - Never commit these secrets to the repository
 > - Rotate secrets periodically
 > - Use GitHub's environment protection rules for production secrets
