@@ -32,7 +32,7 @@ jobs:
           npm install --save-dev conventional-recommended-bump
           npm install --save-dev semver
 
-      - name: Determine new version
+      - name: Determine new version based on conventional commits.
         id: version
         run: |
           git fetch --tags
@@ -65,7 +65,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate and Add Release Notes
+      - name: Generate Release notes, update release and mark as latest
         uses: actions/github-script@v6
         with:
           script: |
@@ -84,7 +84,7 @@ jobs:
               release_id: releaseId,
               body: releaseNotes.body,
               draft: false,
-              make_latest: true // Ensure release is marked as the latest
+              make_latest: true
             });
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
