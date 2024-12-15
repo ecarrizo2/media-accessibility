@@ -5,3 +5,8 @@ export interface Speech {
   createdAt: string
   updatedAt: string
 }
+
+export interface VoiceParameters {
+  voice?: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
+  model?: 'ts-1'
+}

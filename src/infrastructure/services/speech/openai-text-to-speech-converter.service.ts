@@ -5,18 +5,15 @@ import { Resource } from 'sst'
 import OpenAI from 'openai'
 import { LoggerService } from '@shared/logger/logger.service'
 import { Logger } from '@shared/logger/logger.interface'
-import {
-  OpenAIVoiceParameters,
-  TextToSpeechConverter,
-} from '@infrastructure/services/speech/text-to-speech-converter.interface'
+import { TextToSpeechConverter } from '@infrastructure/services/speech/text-to-speech-converter.interface'
 import { S3ClientService } from '@infrastructure/services/aws/s3-client.service'
 import { SpeechVO } from '@domain/value-objects/speech/speech.vo'
-import { Speech } from '@domain/types/speech/speech.interface'
+import { Speech, VoiceParameters } from '@domain/types/speech/speech.interface'
 
 const apiKey = Resource.OpenaiApiKey.value
 
 @injectable()
-export class OpenaiTextToSpeechConverterService implements TextToSpeechConverter<OpenAIVoiceParameters> {
+export class OpenaiTextToSpeechConverterService implements TextToSpeechConverter<VoiceParameters> {
   openai = new OpenAI({
     apiKey,
   })
@@ -26,7 +23,7 @@ export class OpenaiTextToSpeechConverterService implements TextToSpeechConverter
     @inject(S3ClientService) private readonly s3ClientService: S3ClientService
   ) {}
 
-  async convertTextToSpeech(text: string, parameters: OpenAIVoiceParameters): Promise<Speech> {
+  async convertTextToSpeech(text: string, parameters: VoiceParameters): Promise<Speech> {
     this.logger.debug('processText()')
     this.logger.debug('TEXT', { text })
 
@@ -38,7 +35,7 @@ export class OpenaiTextToSpeechConverterService implements TextToSpeechConverter
     return this.createSpeechValueObject(id, text)
   }
 
-  private async createSpeech(text: string, parameters: OpenAIVoiceParameters) {
+  private async createSpeech(text: string, parameters: VoiceParameters) {
     return this.openai.audio.speech.create({
       model: parameters.model ?? 'tts-1',
       voice: parameters.voice ?? 'alloy',

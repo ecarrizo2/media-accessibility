@@ -1,15 +1,23 @@
 import { IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { Exclude, Expose, plainToInstance, Type } from 'class-transformer'
 import { myValidateOrReject } from '@shared/class-validator/validator.helper'
-import {
-  OpenAIVoiceParameters,
-  OpenAIVoiceParametersDto,
-} from '@infrastructure/services/speech/text-to-speech-converter.interface'
+import { VoiceParameters } from '@domain/types/speech/speech.interface'
+
+export class VoiceParametersDto implements VoiceParameters {
+  @IsOptional()
+  @IsString()
+  voice?: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
+
+  @IsOptional()
+  @IsString()
+  model?: 'ts-1'
+}
 
 export interface ConvertTextToSpeechRequestRequestInput {
   text: string
   voice?: string
   model?: string
+  parameters?: VoiceParameters
 }
 
 @Exclude()
@@ -20,10 +28,10 @@ export class ConvertTextToSpeechRequestInputDto implements ConvertTextToSpeechRe
   readonly text!: string
 
   @IsOptional()
-  @Type(() => OpenAIVoiceParametersDto)
+  @Type(() => VoiceParametersDto)
   @ValidateNested()
   @Expose()
-  readonly parameters?: OpenAIVoiceParameters
+  readonly parameters?: VoiceParameters
 
   static async from(input: ConvertTextToSpeechRequestRequestInput): Promise<ConvertTextToSpeechRequestInputDto> {
     const instance = plainToInstance(ConvertTextToSpeechRequestInputDto, input, {
