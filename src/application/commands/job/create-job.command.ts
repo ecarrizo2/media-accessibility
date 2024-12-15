@@ -10,11 +10,11 @@ export interface CreateJobCommandProps {
 
 @Exclude()
 export class CreateJobCommand implements CreateJobCommandProps {
-  @IsEnum(JobType)
-  @Expose()
+  @IsEnum(JobType )
+  @Expose( )
   readonly type!: JobType
 
-  @IsNotEmptyObject()
+  @IsNotEmptyObject( )
   @Expose()
   readonly input: unknown
 
