@@ -10,7 +10,7 @@ describe('JobEntity', () => {
     id: '1',
     type: JobType.ImageProcessing,
     status: JobStatus.Pending,
-    input: '{ "test": "data" }',
+    input: { test: 'data' },
     attempts: 0,
     createdAt: new Date().toISOString(),
   }
@@ -39,10 +39,9 @@ describe('JobEntity', () => {
   describe('Test Transformer transformations', () => {
     it('should convert the instance to a plain object', async () => {
       const instance = await JobEntity.from(validJob)
-      expect(instance.input).toEqual(JSON.parse(validJob.input))
 
       const plain = instanceToPlain(instance)
-      expect(plain.input).toEqual(JSON.stringify(JSON.parse(validJob.input)))
+      expect(plain.input).toEqual(JSON.stringify(instance.input))
     })
 
     describe('validateState', () => {

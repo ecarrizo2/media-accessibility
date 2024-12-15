@@ -76,7 +76,6 @@ export class JobEntity implements JobProps, BaseEntity {
 
   @IsNotEmpty()
   @Transform(({ value }) => JSON.stringify(value), { toPlainOnly: true })
-  @Transform(({ value }) => JSON.parse(value as string) as unknown, { toClassOnly: true })
   @TransformJsonObject()
   @Expose()
   input!: unknown
