@@ -101,7 +101,7 @@ describe('JobEntity', () => {
       })
 
       describe('canStart', () => {
-        it('WHEN the job is not pending, THEN it can be started because never executed', () => {
+        it('WHEN the job is pending, THEN it can be started as it was never executed', () => {
           job.status = JobStatus.Pending
           expect(job.canStart()).toBe(true)
         })
