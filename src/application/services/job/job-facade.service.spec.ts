@@ -9,6 +9,10 @@ import { JobType } from '@domain/enums/job/job.enum'
 import { JobEntity } from '@domain/entities/job/job.entity'
 import { CompleteJobCommandHandler } from '@application/command-handlers/job/complete-job.command.handler'
 import { ClassValidatorError } from '@shared/errors/class-validator.error'
+import { createJobEntityMock } from '../../../../test/mocks/job.entity.mock'
+import { mockedUuid } from '../../../../jest.setup'
+import { RegisterJobErrorCommand } from '@application/commands/job/register-job-error.command'
+import { JobNotFoundError } from '@domain/errors/job/job-not-found.error'
 
 describe('JobFacadeService', () => {
   const createJobCommandHandler = createMock<CreateJobCommandHandler>()
@@ -84,6 +88,97 @@ describe('JobFacadeService', () => {
 
           await expect(promise).rejects.toThrow(error)
         })
+      })
+    })
+  })
+
+  describe('start()', () => {
+    describe('WHEN starting a job', () => {
+      afterEach(jest.resetAllMocks)
+      describe('AND the job is not found', () => {
+        it('THEN should throw a JobNotFound Error', async () => {
+          const jobId = mockedUuid
+          const job = null
+          jest.spyOn(getJobByIdQueryHandler, 'execute').mockResolvedValue(job)
+
+          const service = getInstance()
+          await expect(service.start(jobId)).rejects.toThrow(JobNotFoundError)
+        })
+      })
+
+      describe('AND the job start succeeds', () => {
+        beforeAll(() => {
+          jest.spyOn(startJobCommandHandler, 'handle').mockResolvedValue(void 8)
+        })
+
+        it('THEN it should start the job', async () => {
+          const jobId = mockedUuid
+          const job = createJobEntityMock()
+          jest.spyOn(getJobByIdQueryHandler, 'execute').mockResolvedValue(job)
+
+          const service = getInstance()
+          const result = await service.start(jobId)
+
+          expect(startJobCommandHandler.handle).toHaveBeenCalledTimes(1)
+          expect(getJobByIdQueryHandler.execute).toHaveBeenCalledTimes(1)
+          expect(getJobByIdQueryHandler.execute).toHaveBeenCalledWith({ jobId })
+          expect(startJobCommandHandler.handle).toHaveBeenCalledWith({ job })
+          expect(result).toBe(void 8)
+        })
+      })
+    })
+  })
+
+  describe('failed()', () => {
+    describe('WHEN job processing failed', () => {
+      beforeAll(() => {
+        jest.spyOn(registerJobErrorHandler, 'handle').mockResolvedValue(void 8)
+      })
+
+      afterAll(jest.resetAllMocks)
+
+      it('THEN it should register the job handling failure', async () => {
+        const jobId = mockedUuid
+        const job = createJobEntityMock()
+        const error = new Error('Error')
+        const registerJobErrorCommand = await RegisterJobErrorCommand.from({ job, error })
+
+        jest.spyOn(getJobByIdQueryHandler, 'execute').mockResolvedValue(job)
+
+        const service = getInstance()
+        const result = await service.failed(jobId, error)
+
+        expect(registerJobErrorHandler.handle).toHaveBeenCalledTimes(1)
+        expect(getJobByIdQueryHandler.execute).toHaveBeenCalledTimes(1)
+        expect(getJobByIdQueryHandler.execute).toHaveBeenCalledWith({ jobId })
+        expect(registerJobErrorHandler.handle).toHaveBeenCalledWith(registerJobErrorCommand)
+        expect(result).toBe(void 8)
+      })
+    })
+  })
+
+  describe('complete()', () => {
+    describe('WHEN job complete succeeds', () => {
+      beforeAll(() => {
+        jest.spyOn(completeJobHandler, 'handle').mockResolvedValue(undefined)
+      })
+
+      afterAll(jest.resetAllMocks)
+
+      it('THEN it should complete the job successfully', async () => {
+        const jobId = mockedUuid
+        const job = createJobEntityMock()
+
+        jest.spyOn(getJobByIdQueryHandler, 'execute').mockResolvedValue(job)
+
+        const service = getInstance()
+        const result = await service.complete(jobId)
+
+        expect(getJobByIdQueryHandler.execute).toHaveBeenCalledTimes(1)
+        expect(getJobByIdQueryHandler.execute).toHaveBeenCalledWith({ jobId })
+        expect(completeJobHandler.handle).toHaveBeenCalledTimes(1)
+        expect(completeJobHandler.handle).toHaveBeenCalledWith({ job })
+        expect(result).toBe(void 8)
       })
     })
   })
