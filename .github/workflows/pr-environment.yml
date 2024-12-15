@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[no-depl]') == false && github.event.action != 'closed' }}
+    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[pr-env]') == true && github.event.action != 'closed' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +36,7 @@ jobs:
           AWS_REGION: 'us-east-1'
 
   remove:
-    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[no-depl]') == false && github.event.action == 'closed' }}
+    if: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.title, '[pr-env]') == true && github.event.action == 'closed' }}
     runs-on: ubuntu-latest
 
     steps:
