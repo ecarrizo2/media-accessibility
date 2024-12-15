@@ -13,7 +13,6 @@ import {
 import { Exclude, Expose, plainToInstance, Transform, Type } from 'class-transformer'
 import { TransformJsonObject } from '@shared/class-transformer/transformation.helper'
 import { myValidateOrReject } from '@shared/class-validator/validator.helper'
-import { Image } from '@domain/entities/image/image.entity'
 
 export interface JobErrorProps {
   message: string
