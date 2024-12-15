@@ -76,6 +76,7 @@ export class JobEntity implements JobProps, BaseEntity {
 
   @IsNotEmpty()
   @Transform(({ value }) => JSON.stringify(value), { toPlainOnly: true })
+  @Transform(({ value }) => JSON.parse(value as string) as unknown, { toClassOnly: true })
   @TransformJsonObject()
   @Expose()
   input!: unknown
@@ -97,7 +98,7 @@ export class JobEntity implements JobProps, BaseEntity {
   @Expose()
   updatedAt?: string
 
-  static async from(init: Image) {
+  static async from(init: JobProps) {
     const instance = plainToInstance(JobEntity, init, { excludeExtraneousValues: true })
     await myValidateOrReject(instance)
 
