@@ -1,7 +1,5 @@
 import { myValidateOrReject } from '@shared/class-validator/validator.helper'
-import {
-  ConvertTextToSpeechRequestInputDto
-} from '@domain/value-objects/speech/convert-text-to-speech-request-input.dto'
+import { ConvertTextToSpeechRequestInputDto } from '@domain/value-objects/speech/convert-text-to-speech-request-input.dto'
 
 jest.mock('@shared/class-validator/validator.helper')
 

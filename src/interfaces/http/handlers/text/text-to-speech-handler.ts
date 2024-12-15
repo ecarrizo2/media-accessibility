@@ -5,10 +5,7 @@ import { RequestHandlerService } from '@interfaces/http/services/request-handler
 import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { getValidatedRequestInputValueObject } from '@interfaces/http/aws-http-api-gateway-event.helper'
 import { OpenaiTextToSpeechConverterService } from '@infrastructure/services/speech/openai-text-to-speech-converter.service'
-import {
-  ConvertTextToSpeechRequestInputDto
-} from '@domain/value-objects/speech/convert-text-to-speech-request-input.dto'
-
+import { ConvertTextToSpeechRequestInputDto } from '@domain/value-objects/speech/convert-text-to-speech-request-input.dto'
 
 /**
  * The main handler function for processing image requests.
