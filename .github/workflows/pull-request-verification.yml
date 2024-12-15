@@ -11,7 +11,7 @@ defaults:
     working-directory: ./
 
 permissions:
-  contents: write  # Grants the necessary write permissions to push changes
+  contents: write # Grants the necessary write permissions to push changes
 
 jobs:
   verify:
