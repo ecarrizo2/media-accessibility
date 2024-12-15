@@ -1,8 +1,4 @@
-# sst
 .sst
-/.idea/.gitignore
-/.idea/media-accessibility-ia-converter.iml
-/.idea/modules.xml
-./node_modules/*
-./coverage/*
+.idea
 node_modules
+coverage
