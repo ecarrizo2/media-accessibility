@@ -21,7 +21,6 @@ export class VoiceParametersDto implements VoiceParameters {
   model?: 'ts-1'
 }
 
-
 @Exclude()
 export class ConvertTextToSpeechRequestInputDto implements ConvertTextToSpeechRequestRequestInput {
   @IsString()
