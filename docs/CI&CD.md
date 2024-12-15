@@ -1,6 +1,6 @@
 # CI/CD Workflows Documentation
 
-This document provides an overview and detailed descriptions of the CI/CD workflows used in this project. Each workflow is designed to streamline development, testing, deployment, and release processes.
+This document provides an overview and detailed descriptions of the CI/CD workflows contained in the project. Each workflow is designed to streamline development, testing, deployment, and release processes.
 
 ---
 
@@ -33,7 +33,7 @@ These workflows are configured in GitHub Actions and triggered by specific event
 
 ## Workflows
 
-### 1. Deploy and Remove SST on PR Environment
+### Deploy and Remove SST on PR Environment
 
 **Purpose**:  
 Automates the deployment of temporary staging environments for pull requests. These environments allow isolated testing of changes before merging.
@@ -47,10 +47,11 @@ Activated by the following pull request events:
 #### Jobs
 
 - **Deploy**:  
-  Deploys an SST application for the pull request stage. Skips deployment if `[no-depl]` is in the PR title.
+  Skipped by default, it Deploys an SST application for the pull request stage. Deployment executes if `[pr-env]` tag is in the PR title.
 
 - **Remove**:  
-  Deletes the SST staging environment when the PR is closed.
+  Skipped by default, it Deletes an SST application for the pull request stage. It executes if `[pr-env]` tag is in the PR title after a PR is closed .
+
 
 #### Key Steps
 
@@ -65,7 +66,7 @@ Uses AWS credentials and a secret API key (`OAPK`) for deployment.
 
 ---
 
-### 2. PR Verification
+### PR Verification
 
 **Purpose**:  
 Validates code quality and style in pull requests targeting the `main` branch. Ensures all changes meet the project's standards before merging.
@@ -76,7 +77,7 @@ Activated by the following events:
 
 #### Jobs
 
-- **Format**:
+- **Verify**:
   - Lint the code using `npm run lint`.
   - Check code style with `npm run prettier:check`.
   - Run unit tests and generate coverage reports (`npm run test:cov`).
@@ -90,27 +91,9 @@ Activated by the following events:
 
 ---
 
-### 3. CodeClimate
 
-**Purpose**:  
-Reports code coverage metrics to Code Climate for monitoring over time and maintaining quality standards.
-Activated by `push` events to the `main` branch.
 
-#### Jobs
-
-- **Report**:
-  - Checkout code and set up Node.js.
-  - Run tests and generate coverage reports.
-  - Upload coverage data to Code Climate using the Test Reporter.
-
-#### Key Steps
-
-- Install the Code Climate Test Reporter.
-- Generate and upload test coverage (`npm run test:cov`).
-
----
-
-### 4. Release on Merge to Main
+### Release on Merge to Main
 
 **Purpose**:  
 Automates the release process by tagging the repository, creating GitHub releases, and generating release notes based on conventional commits.
@@ -150,6 +133,26 @@ The following secrets must be configured in your GitHub repository:
 | `GITHUB_TOKEN`          | Token for GitHub Actions to create releases.                              |
 | `CODE_CLIMATE_API_KEY`  | API key for sending coverage reports to Code Climate.                     |
 | `OAPK`                  | OpenAI API key for using OpenAI Connection secret configuration with SST. |
+
+### CodeClimate
+
+**Purpose**:  
+Reports code coverage metrics to Code Climate for monitoring over time and maintaining quality standards.
+Activated by `push` events to the `main` branch.
+
+#### Jobs
+
+- **Report**:
+  - Checkout code and set up Node.js.
+  - Run tests and generate coverage reports.
+  - Upload coverage data to Code Climate using the Test Reporter.
+
+#### Key Steps
+
+- Install the Code Climate Test Reporter.
+- Generate and upload test coverage.
+
+---
 
 ---
 
