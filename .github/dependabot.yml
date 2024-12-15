@@ -1,29 +1,20 @@
 version: 2
-registries:
-  npm-github:
-    type: npm-registry
-    url: https://npm.pkg.github.com
-    username: x-access-token
-    password: ${{secrets.NPM_TOKEN}}
 updates:
   - package-ecosystem: npm
-    directory: "/"
+    directory: '/'
     schedule:
-      interval: daily
-    open-pull-requests-limit: 5
-    registries:
-      - npm-github
-
+      interval: weekly
+    open-pull-requests-limit: 10
   - package-ecosystem: github-actions
-    directory: "/"
+    directory: '/'
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
     labels:
-      - "dependencies"
-      - "github-actions"
+      - 'dependencies'
+      - 'github-actions'
     assignees:
-      - "ecarrizo2"
+      - 'ecarrizo2'
     commit-message:
-      prefix: "chore"
-      include: "scope"
+      prefix: 'chore'
+      include: 'scope'
