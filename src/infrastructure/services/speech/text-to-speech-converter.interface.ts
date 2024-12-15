@@ -1,12 +1,5 @@
 import { IsOptional, IsString } from 'class-validator'
-
-export interface Speech {
-  id: string
-  text: string
-  speechUrl: string
-  createdAt: string
-  updatedAt: string
-}
+import { Speech } from '@domain/types/speech/speech.interface'
 
 export interface OpenAIVoiceParameters {
   voice?: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'

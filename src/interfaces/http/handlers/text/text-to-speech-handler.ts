@@ -5,7 +5,10 @@ import { RequestHandlerService } from '@interfaces/http/services/request-handler
 import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda'
 import { getValidatedRequestInputValueObject } from '@interfaces/http/aws-http-api-gateway-event.helper'
 import { OpenaiTextToSpeechConverterService } from '@infrastructure/services/speech/openai-text-to-speech-converter.service'
-import { ConvertTextToSpeechRequestRequestInputDto } from '@domain/value-objects/speech/convert-text-to-speech-input.dto'
+import {
+  ConvertTextToSpeechRequestInputDto
+} from '@domain/value-objects/speech/convert-text-to-speech-request-input.dto'
+
 
 /**
  * The main handler function for processing image requests.
@@ -15,7 +18,7 @@ import { ConvertTextToSpeechRequestRequestInputDto } from '@domain/value-objects
  */
 const handleProcessTextToSpeechSyncRequest = async (event: APIGatewayEvent) => {
   const service = container.resolve(OpenaiTextToSpeechConverterService)
-  const input = await getValidatedRequestInputValueObject(event, ConvertTextToSpeechRequestRequestInputDto)
+  const input = await getValidatedRequestInputValueObject(event, ConvertTextToSpeechRequestInputDto)
 
   return service.convertTextToSpeech(input.text, input.parameters ?? {})
 }

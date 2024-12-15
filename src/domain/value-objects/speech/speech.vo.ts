@@ -1,7 +1,7 @@
-import { Speech } from '@infrastructure/services/speech/text-to-speech-converter.interface'
 import { IsString } from 'class-validator'
 import { Exclude, Expose, plainToInstance } from 'class-transformer'
 import { myValidateOrReject } from '@shared/class-validator/validator.helper'
+import { Speech } from '@domain/types/speech/speech.interface'
 
 @Exclude()
 export class SpeechVO implements Speech {

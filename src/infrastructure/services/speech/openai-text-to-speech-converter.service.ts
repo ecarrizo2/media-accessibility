@@ -7,11 +7,11 @@ import { LoggerService } from '@shared/logger/logger.service'
 import { Logger } from '@shared/logger/logger.interface'
 import {
   OpenAIVoiceParameters,
-  Speech,
   TextToSpeechConverter,
 } from '@infrastructure/services/speech/text-to-speech-converter.interface'
 import { S3ClientService } from '@infrastructure/services/aws/s3-client.service'
 import { SpeechVO } from '@domain/value-objects/speech/speech.vo'
+import { Speech } from '@domain/types/speech/speech.interface'
 
 const apiKey = Resource.OpenaiApiKey.value
 

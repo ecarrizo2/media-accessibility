@@ -13,7 +13,7 @@ export interface ConvertTextToSpeechRequestRequestInput {
 }
 
 @Exclude()
-export class ConvertTextToSpeechRequestRequestInputDto implements ConvertTextToSpeechRequestRequestInput {
+export class ConvertTextToSpeechRequestInputDto implements ConvertTextToSpeechRequestRequestInput {
   @IsString()
   @IsNotEmpty()
   @Expose()
@@ -25,10 +25,11 @@ export class ConvertTextToSpeechRequestRequestInputDto implements ConvertTextToS
   @Expose()
   readonly parameters?: OpenAIVoiceParameters
 
-  static async from(input: ConvertTextToSpeechRequestRequestInput): Promise<ConvertTextToSpeechRequestRequestInputDto> {
-    const instance = plainToInstance(ConvertTextToSpeechRequestRequestInputDto, input, {
+  static async from(input: ConvertTextToSpeechRequestRequestInput): Promise<ConvertTextToSpeechRequestInputDto> {
+    const instance = plainToInstance(ConvertTextToSpeechRequestInputDto, input, {
       excludeExtraneousValues: true,
     })
+
     await myValidateOrReject(instance)
 
     return instance
