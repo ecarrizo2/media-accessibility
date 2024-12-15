@@ -3,22 +3,24 @@ import { Exclude, Expose, plainToInstance, Type } from 'class-transformer'
 import { myValidateOrReject } from '@shared/class-validator/validator.helper'
 import { VoiceParameters } from '@domain/types/speech/speech.interface'
 
+export interface ConvertTextToSpeechRequestRequestInput {
+  text: string
+  parameters?: VoiceParameters
+}
+
+@Exclude()
 export class VoiceParametersDto implements VoiceParameters {
   @IsOptional()
   @IsString()
+  @Expose()
   voice?: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'
 
   @IsOptional()
   @IsString()
+  @Expose()
   model?: 'ts-1'
 }
 
-export interface ConvertTextToSpeechRequestRequestInput {
-  text: string
-  voice?: string
-  model?: string
-  parameters?: VoiceParameters
-}
 
 @Exclude()
 export class ConvertTextToSpeechRequestInputDto implements ConvertTextToSpeechRequestRequestInput {
