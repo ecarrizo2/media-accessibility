@@ -2,11 +2,11 @@ import { OpenaiTextToSpeechConverterService } from '@infrastructure/services/spe
 import { createMock } from '@golevelup/ts-jest'
 import { LoggerService } from '@shared/logger/logger.service'
 import { S3ClientService } from '@infrastructure/services/aws/s3-client.service'
-import { Speech } from '@infrastructure/services/speech/text-to-speech-converter.interface'
 import { SpeechVO } from '@domain/value-objects/speech/speech.vo'
 import OpenAI from 'openai'
 import { mockedUuid } from '../../../../jest.setup'
 import { instanceToPlain } from 'class-transformer'
+import { Speech } from '@domain/types/speech/speech.interface'
 
 describe('OpenaiTextToSpeechConverterService', () => {
   it('should be defined', () => {
