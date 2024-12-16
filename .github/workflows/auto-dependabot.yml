@@ -1,10 +1,11 @@
-name: Auto-Approve and Handle Merge
+name: "Dependabot Auto-Approve and Handle Merge for Minor Bumps"
 
 on:
   pull_request:
     types:
       - opened
     branches:
+      - qa
       - main
 
 jobs:
@@ -31,9 +32,8 @@ jobs:
             const hasMergeQueue = protectionRules.required_pull_request_reviews?.dismiss_stale_reviews ?? false;
 
             return hasMergeQueue;  // This will return true or false based on the merge queue configuration
-
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TKWW_GITHUB_TOKEN }}
 
       - name: Check Dependabot PR and Approve
         uses: actions/github-script@v6
@@ -114,4 +114,4 @@ jobs:
               console.log('Auto-merge enabled.');
             }
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TKWW_GITHUB_TOKEN }}
