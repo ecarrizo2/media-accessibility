@@ -6,7 +6,8 @@ updates:
       interval: weekly
     open-pull-requests-limit: 10
     commit-message:
-      prefix: 'chore'
+      prefix: '[no-depl] chore'
+      include: 'scope'
 
   - package-ecosystem: github-actions
     directory: '/'
@@ -19,5 +20,5 @@ updates:
     assignees:
       - 'ecarrizo2'
     commit-message:
-      prefix: 'chore'
+      prefix: '[no-depl] chore'
       include: 'scope'
