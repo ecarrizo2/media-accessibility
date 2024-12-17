@@ -11,29 +11,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
       - name: Check Branch Protection Rules for Merge Queue
         id: check_merge_queue
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
+            const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+
             const { data: protectionRules } = await octokit.repos.getBranchProtection({
               owner: context.repo.owner,
               repo: context.repo.repo,
               branch: 'main'
             });
 
-            // Check if the merge queue is configured in the protection rules
             const hasMergeQueue = protectionRules.required_pull_request_reviews?.dismiss_stale_reviews ?? false;
             console.log(`Merge queue configured: ${hasMergeQueue}`);
-            return hasMergeQueue; // This will return true or false based on the merge queue configuration
+            core.setOutput('result', hasMergeQueue);
 
       - name: Check Dependabot PR and Approve
         uses: actions/github-script@v7
         with:
           script: |
+            const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+
             const prNumber = context.payload.pull_request.number;
 
-            // Get the pull request details
             const { data: pullRequest } = await octokit.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -45,7 +52,6 @@ jobs:
               return;
             }
 
-            // Check if the PR title contains 'deps-dev' to confirm it's a dev-dependency update
             const isDevDependencyChange = pullRequest.title.includes('deps-dev');
 
             if (!isDevDependencyChange) {
@@ -53,7 +59,6 @@ jobs:
               return;
             }
 
-            // Extract version numbers from the PR title
             const versionRegex = /from (\d+\.\d+\.\d+) to (\d+\.\d+\.\d+)/;
             const match = pullRequest.title.match(versionRegex);
 
@@ -61,18 +66,15 @@ jobs:
               const oldVersion = match[1];
               const newVersion = match[2];
 
-              // Split version numbers into major, minor, and patch parts
               const [oldMajor] = oldVersion.split('.');
               const [newMajor] = newVersion.split('.');
 
-              // If the major version changes, it's a breaking change
               if (oldMajor !== newMajor) {
                 console.log('Major version change detected. Skipping auto-merge...');
                 return;
               }
             }
 
-            // Approve the PR
             await octokit.pulls.createReview({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -81,10 +83,9 @@ jobs:
               body: 'Auto-approved by workflow for Dependabot PRs affecting devDependencies.',
             });
 
-            const isMergeQueueConfigured = ${{ steps.check_merge_queue.outputs.result }} === 'true';
+            const isMergeQueueConfigured = core.getInput('result') === 'true';
 
             if (isMergeQueueConfigured) {
-              // Add to the merge queue if configured
               await octokit.issues.addLabels({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -93,12 +94,11 @@ jobs:
               });
               console.log('Added to merge queue.');
             } else {
-              // If merge queue is not configured, enable auto-merge
               await octokit.pulls.enableAutoMerge({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: prNumber,
-                merge_method: 'squash', // or 'merge' / 'rebase'
+                merge_method: 'squash',
               });
               console.log('Auto-merge enabled.');
             }
