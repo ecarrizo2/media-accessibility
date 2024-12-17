@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Check Branch Protection Rules for Merge Queue
         id: check_merge_queue
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const { data: protectionRules } = await octokit.repos.getBranchProtection({
