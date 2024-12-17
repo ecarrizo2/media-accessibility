@@ -1,5 +1,4 @@
-import OpenAI from 'openai'
-import ChatCompletion = OpenAI.ChatCompletion
+import { ChatCompletion } from 'openai/src/resources/chat/completions'
 
 export const openaiImageAnalysisResultMock = {
   id: 'chatcmpl-9zR3OMLnxfFCYj7Rrhg0LESVxTTXO',
