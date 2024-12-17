@@ -2,9 +2,9 @@ name: Auto-Approve and Merge Dependabot PRs
 
 on:
   pull_request:
+    types: [opened]
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   approve_and_merge:
@@ -50,7 +50,7 @@ jobs:
         with:
           script: |
             const prNumber = context.issue.number;
-            await github.pulls.createReview({
+            await github.rest.pulls.createReview({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber,
@@ -81,13 +81,13 @@ jobs:
               console.log('Adding PR to merge queue');
             } else {
               const prNumber = context.issue.number;
-              await github.pulls.merge({
+              await github.rest.pulls.merge({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: prNumber,
                 merge_method: 'merge'
               });
-              await github.pulls.updateBranch({
+              await github.rest.pulls.updateBranch({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: prNumber,
