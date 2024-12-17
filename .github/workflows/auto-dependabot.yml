@@ -2,9 +2,11 @@ name: "Dependabot Auto-Approve and Handle Merge for Minor Bumps"
 
 on:
   pull_request:
+    types:
+      - opened
     branches:
+      - qa
       - main
-  workflow_dispatch:
 
 jobs:
   auto-approve-and-merge-queue:
@@ -16,10 +18,6 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { GITHUB_TOKEN } = process.env;
-            const octokit = github.getOctokit(GITHUB_TOKEN);
-
-            // Get the repository branch protection rules
             const { data: protectionRules } = await octokit.repos.getBranchProtection({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -30,18 +28,11 @@ jobs:
             const hasMergeQueue = protectionRules.required_pull_request_reviews?.dismiss_stale_reviews ?? false;
             console.log(`Merge queue configured: ${hasMergeQueue}`);
             return hasMergeQueue; // This will return true or false based on the merge queue configuration
-        env:
-          GITHUB_TOKEN: ${{ secrets.TKWW_GITHUB_TOKEN }}
 
       - name: Check Dependabot PR and Approve
         uses: actions/github-script@v7
-        env:
-          GITHUB_TOKEN: ${{ secrets.TKWW_GITHUB_TOKEN }}
-          MERGE_QUEUE_CONFIGURED: ${{ steps.check_merge_queue.outputs.result }}
         with:
           script: |
-            const { GITHUB_TOKEN, MERGE_QUEUE_CONFIGURED } = process.env;
-            const octokit = github.getOctokit(GITHUB_TOKEN);
             const prNumber = context.payload.pull_request.number;
 
             // Get the pull request details
@@ -92,7 +83,7 @@ jobs:
               body: 'Auto-approved by workflow for Dependabot PRs affecting devDependencies.',
             });
 
-            const isMergeQueueConfigured = MERGE_QUEUE_CONFIGURED === 'true';
+            const isMergeQueueConfigured = ${{ steps.check_merge_queue.outputs.result }} === 'true';
 
             if (isMergeQueueConfigured) {
               // Add to the merge queue if configured
@@ -113,3 +104,5 @@ jobs:
               });
               console.log('Auto-merge enabled.');
             }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
