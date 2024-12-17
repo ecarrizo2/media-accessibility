@@ -15,101 +15,51 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Check Dependabot PR and Approve
-        id: check_and_approve
-        uses: actions/github-script@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          script: |
-            const prNumber = context.payload.pull_request.number;
-            const prTitle = context.payload.pull_request.title;
-            const prAuthor = context.payload.pull_request.user.login;
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
 
-            // Check if the PR comes from Dependabot
-            if (prAuthor !== "dependabot[bot]") {
-              console.log("Not a Dependabot PR. Skipping...");
-              return;
-            }
+          # Check if the PR comes from Dependabot
+          if [[ "$PR_AUTHOR" != "dependabot[bot]" ]]; then
+            echo "Not a Dependabot PR. Skipping..."
+            exit 0
+          fi
 
-            // Check for devDependencies update in title
-            if (!prTitle.includes("deps-dev")) {
-              console.log("PR does not affect devDependencies. Skipping...");
-              return;
-            }
+          # Check for devDependencies update in title
+          if [[ ! "$PR_TITLE" =~ "deps-dev" ]]; then
+            echo "PR does not affect devDependencies. Skipping..."
+            exit 0
+          fi
 
-            // Extract version numbers from PR title
-            const oldVersionMatch = prTitle.match(/from (\d+\.\d+\.\d+)/);
-            const newVersionMatch = prTitle.match(/to (\d+\.\d+\.\d+)/);
+          # Extract version numbers from PR title
+          OLD_VERSION=$(echo "$PR_TITLE" | grep -oP 'from \K[0-9]+\.[0-9]+\.[0-9]+')
+          NEW_VERSION=$(echo "$PR_TITLE" | grep -oP 'to \K[0-9]+\.[0-9]+\.[0-9]+')
 
-            if (!oldVersionMatch || !newVersionMatch) {
-              console.log("Version numbers not found in PR title. Skipping...");
-              return;
-            }
+          # Compare major versions
+          OLD_MAJOR=${OLD_VERSION%%.*}
+          NEW_MAJOR=${NEW_VERSION%%.*}
 
-            const oldVersion = oldVersionMatch[1];
-            const newVersion = newVersionMatch[1];
+          if [[ "$OLD_MAJOR" != "$NEW_MAJOR" ]]; then
+            echo "Major version change detected. Skipping auto-merge..."
+            exit 0
+          fi
 
-            // Compare major versions
-            const oldMajor = parseInt(oldVersion.split('.')[0]);
-            const newMajor = parseInt(newVersion.split('.')[0]);
+          # Approve the PR
+          echo "Approving PR #$PR_NUMBER..."
+          gh pr review $PR_NUMBER --approve --body "Auto-approved by workflow for Dependabot PRs affecting devDependencies."
 
-            if (oldMajor !== newMajor) {
-              console.log("Major version change detected. Skipping auto-merge...");
-              return;
-            }
+          # Add to the merge queue if it's enabled
+          echo "Checking merge queue..."
+          MERGE_QUEUE_ENABLED=$(gh api repos/${{ github.repository }}/branches/main/protection --jq '.required_pull_request_reviews.dismiss_stale_reviews')
 
-            // Approve the PR
-            console.log(`Approving PR #${prNumber}...`);
-            await github.rest.pulls.createReview({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-              event: 'APPROVE',
-              body: 'Auto-approved by workflow for Dependabot PRs affecting devDependencies.'
-            });
-
-      - name: Handle Merge
-        id: handle_merge
-        uses: actions/github-script@v7
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          script: |
-            const prNumber = context.payload.pull_request.number;
-
-            // Check if merge queue is enabled
-            const branchProtection = await github.rest.repos.getBranchProtection({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              branch: 'main'
-            });
-
-            const mergeQueueEnabled = branchProtection.data.required_pull_request_reviews && branchProtection.data.required_pull_request_reviews.dismiss_stale_reviews;
-
-            if (mergeQueueEnabled) {
-              console.log(`Adding PR #${prNumber} to the merge queue...`);
-              await github.rest.pulls.merge({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: prNumber,
-                merge_method: 'merge'
-              });
-            } else {
-              console.log("Merge queue not enabled. Enabling auto-merge instead.");
-              await github.rest.pulls.merge({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: prNumber,
-                merge_method: 'squash'
-              });
-              await github.rest.pulls.updateBranch({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: prNumber,
-                expected_head_sha: context.payload.pull_request.head.sha
-              });
-            }
+          if [[ "$MERGE_QUEUE_ENABLED" == "true" ]]; then
+            echo "Adding PR #$PR_NUMBER to the merge queue..."
+            gh pr merge $PR_NUMBER --merge --auto --queue
+          else
+            echo "Merge queue not enabled. Enabling auto-merge instead."
+            gh pr merge $PR_NUMBER --squash --auto
+          fi
