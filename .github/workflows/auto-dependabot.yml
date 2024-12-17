@@ -1,4 +1,4 @@
-name: Auto-Approve and Merge Dependabot PRs
+name: Dependabot Auto-Approve and Handle Merge for Minor Bumps
 
 on:
   pull_request:
@@ -7,95 +7,46 @@ on:
   workflow_dispatch:
 
 jobs:
-  approve_and_merge:
+  auto-approve-and-merge-queue:
     runs-on: ubuntu-latest
-
     permissions:
-      pull-requests: write  # Ensure the GITHUB_TOKEN has write access to pull requests
+      pull-requests: write
+      contents: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Check if PR is from Dependabot
-        id: check_dependabot
+      - name: Check Dependabot PR and Approve
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          if [[ "${{ github.actor }}" != "dependabot[bot]" ]]; then
-            echo "Not a Dependabot PR. Exiting."
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+
+          if [[ "$PR_AUTHOR" != "dependabot[bot]" ]]; then
+            echo "Not a Dependabot PR. Skipping..."
             exit 0
           fi
 
-      - name: Check PR Title for Major Version or Dev-Dependency
-        id: check_title
-        run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          IS_DEV_DEP=0
-          IS_MAJOR=0
+          # Use more precise regex to extract version information
+          OLD_VERSION=$(echo "$PR_TITLE" | grep -oP 'from \K\d+\.\d+\.\d+')
+          NEW_VERSION=$(echo "$PR_TITLE" | grep -oP 'to \K\d+\.\d+\.\d+')
 
-          if [[ "$PR_TITLE" == *"(deps-dev)"* ]]; then
-            IS_DEV_DEP=1
+          # Check for major version change
+          if [[ ${OLD_VERSION%%.*} != ${NEW_VERSION%%.*} ]]; then
+            echo "Major version change detected. Skipping auto-merge..."
+            exit 0
           fi
 
-          if [[ "$PR_TITLE" =~ bump.*from\ ([0-9]+)\.[0-9]+\.[0-9]+.*to\ ([0-9]+)\.[0-9]+\.[0-9]+ ]]; then
-            OLD_VERSION=${BASH_REMATCH[1]}
-            NEW_VERSION=${BASH_REMATCH[2]}
-            if [[ "$OLD_VERSION" -ne "$NEW_VERSION" ]]; then
-              IS_MAJOR=1
-            fi
-          fi
+          # Check if PR affects devDependencies
 
-          echo "is_dev_dep=$IS_DEV_DEP" >> $GITHUB_ENV
-          echo "is_major=$IS_MAJOR" >> $GITHUB_ENV
-
-      - name: Approve PR
-        if: env.is_dev_dep == '1' || env.is_major == '0'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const prNumber = context.issue.number;
-            await github.rest.pulls.createReview({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-              event: 'APPROVE'
-            });
-
-      - name: Determine Merge Strategy
-        id: merge_strategy
-        if: env.is_dev_dep == '1' || env.is_major == '0'
-        run: |
-          # Simulating a check for branch protection rules requiring a merge queue
-          # Replace this with actual checks if you have a way to determine it
-          MERGE_QUEUE_REQUIRED=true
-
-          if $MERGE_QUEUE_REQUIRED; then
-            echo "merge_strategy=merge_queue" >> $GITHUB_ENV
+          # Check merge queue configuration
+          MERGE_QUEUE_ENABLED=$(gh api repos/${{ github.repository }}/branches/main/protection --jq '.required_pull_request_reviews.dismiss_stale_reviews')
+          if [[ "$MERGE_QUEUE_ENABLED" == "true" ]]; then
+            echo "Adding PR #$PR_NUMBER to the merge queue..."
+            gh pr merge $PR_NUMBER --merge --auto --queue
           else
-            echo "merge_strategy=auto_merge" >> $GITHUB_ENV
+            echo "Merge queue not enabled. Enabling auto-merge instead."
+            gh pr merge $PR_NUMBER --squash --auto
           fi
-
-      - name: Add to Merge Queue or Set Auto-Merge
-        if: env.is_dev_dep == '1' || env.is_major == '0'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            if (process.env.merge_strategy === 'merge_queue') {
-              // Replace with actual logic to add to merge queue if applicable
-              console.log('Adding PR to merge queue');
-            } else {
-              const prNumber = context.issue.number;
-              await github.rest.pulls.merge({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: prNumber,
-                merge_method: 'merge'
-              });
-              await github.rest.pulls.updateBranch({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: prNumber,
-                expected_head_sha: context.payload.pull_request.head.sha
-              });
-            }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
