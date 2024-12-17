@@ -10,97 +10,56 @@ jobs:
   auto-approve-and-merge-queue:
     runs-on: ubuntu-latest
 
+    permissions:
+      pull-requests: write
+      contents: write
+
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Check Branch Protection Rules for Merge Queue
-        id: check_merge_queue
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-
-            const { data: protectionRules } = await octokit.repos.getBranchProtection({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              branch: 'main'
-            });
-
-            const hasMergeQueue = protectionRules.required_pull_request_reviews?.dismiss_stale_reviews ?? false;
-            console.log(`Merge queue configured: ${hasMergeQueue}`);
-            core.setOutput('result', hasMergeQueue);
-
       - name: Check Dependabot PR and Approve
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-
-            const prNumber = context.payload.pull_request.number;
-
-            const { data: pullRequest } = await octokit.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-            });
-
-            if (pullRequest.user.login !== 'dependabot[bot]') {
-              console.log('Not a Dependabot PR. Skipping...');
-              return;
-            }
-
-            const isDevDependencyChange = pullRequest.title.includes('deps-dev');
-
-            if (!isDevDependencyChange) {
-              console.log('PR does not affect devDependencies. Skipping...');
-              return;
-            }
-
-            const versionRegex = /from (\d+\.\d+\.\d+) to (\d+\.\d+\.\d+)/;
-            const match = pullRequest.title.match(versionRegex);
-
-            if (match) {
-              const oldVersion = match[1];
-              const newVersion = match[2];
-
-              const [oldMajor] = oldVersion.split('.');
-              const [newMajor] = newVersion.split('.');
-
-              if (oldMajor !== newMajor) {
-                console.log('Major version change detected. Skipping auto-merge...');
-                return;
-              }
-            }
-
-            await octokit.pulls.createReview({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-              event: 'APPROVE',
-              body: 'Auto-approved by workflow for Dependabot PRs affecting devDependencies.',
-            });
-
-            const isMergeQueueConfigured = core.getInput('result') === 'true';
-
-            if (isMergeQueueConfigured) {
-              await octokit.issues.addLabels({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                labels: ['merge-queue'],
-              });
-              console.log('Added to merge queue.');
-            } else {
-              await octokit.pulls.enableAutoMerge({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: prNumber,
-                merge_method: 'squash',
-              });
-              console.log('Auto-merge enabled.');
-            }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+
+          # Check if the PR comes from Dependabot
+          if [[ "$PR_AUTHOR" != "dependabot[bot]" ]]; then
+            echo "Not a Dependabot PR. Skipping..."
+            exit 0
+          fi
+
+          # Check for devDependencies update in title
+          if [[ ! "$PR_TITLE" =~ "deps-dev" ]]; then
+            echo "PR does not affect devDependencies. Skipping..."
+            exit 0
+          fi
+
+          # Extract version numbers from PR title
+          OLD_VERSION=$(echo "$PR_TITLE" | grep -oP 'from \K[0-9]+\.[0-9]+\.[0-9]+')
+          NEW_VERSION=$(echo "$PR_TITLE" | grep -oP 'to \K[0-9]+\.[0-9]+\.[0-9]+')
+
+          # Compare major versions
+          OLD_MAJOR=${OLD_VERSION%%.*}
+          NEW_MAJOR=${NEW_VERSION%%.*}
+
+          if [[ "$OLD_MAJOR" != "$NEW_MAJOR" ]]; then
+            echo "Major version change detected. Skipping auto-merge..."
+            exit 0
+          fi
+
+          # Approve the PR
+          echo "Approving PR #$PR_NUMBER..."
+          gh pr review $PR_NUMBER --approve --body "Auto-approved by workflow for Dependabot PRs affecting devDependencies."
+
+          # Add to the merge queue if it's enabled
+          echo "Checking merge queue..."
+          MERGE_QUEUE_ENABLED=$(gh api repos/${{ github.repository }}/branches/main/protection --jq '.required_pull_request_reviews.dismiss_stale_reviews')
+
+          if [[ "$MERGE_QUEUE_ENABLED" == "true" ]]; then
+            echo "Adding PR #$PR_NUMBER to the merge queue..."
+            gh pr merge $PR_NUMBER --merge --auto --queue
+          else
+            echo "Merge queue not enabled. Enabling auto-merge instead."
+            gh pr merge $PR_NUMBER --squash --auto
+          fi
