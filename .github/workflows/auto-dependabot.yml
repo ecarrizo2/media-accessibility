@@ -1,4 +1,4 @@
-name: Auto-Approve and Merge Dependabot PRs
+name: "Dependabot Auto-Approve and Handle Merge for Minor Bumps"
 
 on:
   pull_request:
@@ -7,88 +7,104 @@ on:
   workflow_dispatch:
 
 jobs:
-  approve_and_merge:
+  auto-approve-and-merge-queue:
     runs-on: ubuntu-latest
 
     permissions:
-      pull-requests: write  # Ensure the GITHUB_TOKEN has write access to pull requests
+      pull-requests: write
+      contents: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check if PR is from Dependabot
-        id: check_dependabot
-        run: |
-          if [[ "${{ github.actor }}" != "dependabot[bot]" ]]; then
-            echo "Not a Dependabot PR. Exiting."
-            exit 0
-          fi
-
-      - name: Check PR Title for Major Version or Dev-Dependency
-        id: check_title
-        run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          IS_DEV_DEP=0
-          IS_MAJOR=0
-
-          if [[ "$PR_TITLE" == *"(deps-dev)"* ]]; then
-            IS_DEV_DEP=1
-          fi
-
-          if [[ "$PR_TITLE" =~ bump.*from\ ([0-9]+)\.[0-9]+\.[0-9]+.*to\ ([0-9]+)\.[0-9]+\.[0-9]+ ]]; then
-            OLD_VERSION=${BASH_REMATCH[1]}
-            NEW_VERSION=${BASH_REMATCH[2]}
-            if [[ "$OLD_VERSION" -ne "$NEW_VERSION" ]]; then
-              IS_MAJOR=1
-            fi
-          fi
-
-          echo "is_dev_dep=$IS_DEV_DEP" >> $GITHUB_ENV
-          echo "is_major=$IS_MAJOR" >> $GITHUB_ENV
-
-      - name: Approve PR
-        if: env.is_dev_dep == '1' || env.is_major == '0'
+      - name: Check Dependabot PR and Approve
+        id: check_and_approve
         uses: actions/github-script@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
-            const prNumber = context.issue.number;
+            const prNumber = context.payload.pull_request.number;
+            const prTitle = context.payload.pull_request.title;
+            const prAuthor = context.payload.pull_request.user.login;
+
+            // Check if the PR comes from Dependabot
+            if (prAuthor !== "dependabot[bot]") {
+              console.log("Not a Dependabot PR. Skipping...");
+              return;
+            }
+
+            // Check for devDependencies update in title
+            if (!prTitle.includes("deps-dev")) {
+              console.log("PR does not affect devDependencies. Skipping...");
+              return;
+            }
+
+            // Extract version numbers from PR title
+            const oldVersionMatch = prTitle.match(/from (\d+\.\d+\.\d+)/);
+            const newVersionMatch = prTitle.match(/to (\d+\.\d+\.\d+)/);
+
+            if (!oldVersionMatch || !newVersionMatch) {
+              console.log("Version numbers not found in PR title. Skipping...");
+              return;
+            }
+
+            const oldVersion = oldVersionMatch[1];
+            const newVersion = newVersionMatch[1];
+
+            // Compare major versions
+            const oldMajor = parseInt(oldVersion.split('.')[0]);
+            const newMajor = parseInt(newVersion.split('.')[0]);
+
+            if (oldMajor !== newMajor) {
+              console.log("Major version change detected. Skipping auto-merge...");
+              return;
+            }
+
+            // Approve the PR
+            console.log(`Approving PR #${prNumber}...`);
             await github.rest.pulls.createReview({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber,
-              event: 'APPROVE'
+              event: 'APPROVE',
+              body: 'Auto-approved by workflow for Dependabot PRs affecting devDependencies.'
             });
 
-      - name: Determine Merge Strategy
-        id: merge_strategy
-        if: env.is_dev_dep == '1' || env.is_major == '0'
-        run: |
-          # Simulating a check for branch protection rules requiring a merge queue
-          # Replace this with actual checks if you have a way to determine it
-          MERGE_QUEUE_REQUIRED=true
-
-          if $MERGE_QUEUE_REQUIRED; then
-            echo "merge_strategy=merge_queue" >> $GITHUB_ENV
-          else
-            echo "merge_strategy=auto_merge" >> $GITHUB_ENV
-          fi
-
-      - name: Add to Merge Queue or Set Auto-Merge
-        if: env.is_dev_dep == '1' || env.is_major == '0'
+      - name: Handle Merge
+        id: handle_merge
         uses: actions/github-script@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
-            if (process.env.merge_strategy === 'merge_queue') {
-              // Replace with actual logic to add to merge queue if applicable
-              console.log('Adding PR to merge queue');
-            } else {
-              const prNumber = context.issue.number;
+            const prNumber = context.payload.pull_request.number;
+
+            // Check if merge queue is enabled
+            const branchProtection = await github.rest.repos.getBranchProtection({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: 'main'
+            });
+
+            const mergeQueueEnabled = branchProtection.data.required_pull_request_reviews && branchProtection.data.required_pull_request_reviews.dismiss_stale_reviews;
+
+            if (mergeQueueEnabled) {
+              console.log(`Adding PR #${prNumber} to the merge queue...`);
               await github.rest.pulls.merge({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: prNumber,
                 merge_method: 'merge'
+              });
+            } else {
+              console.log("Merge queue not enabled. Enabling auto-merge instead.");
+              await github.rest.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                merge_method: 'squash'
               });
               await github.rest.pulls.updateBranch({
                 owner: context.repo.owner,
@@ -97,5 +113,3 @@ jobs:
                 expected_head_sha: context.payload.pull_request.head.sha
               });
             }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
