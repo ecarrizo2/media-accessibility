@@ -29,12 +29,6 @@ jobs:
             exit 0
           fi
 
-          # Check for devDependencies update in title
-          if [[ ! "$PR_TITLE" =~ "deps-dev" ]]; then
-            echo "PR does not affect devDependencies. Skipping..."
-            exit 0
-          fi
-
           # Extract version numbers from PR title
           OLD_VERSION=$(echo "$PR_TITLE" | grep -oP 'from \K[0-9]+\.[0-9]+\.[0-9]+')
           NEW_VERSION=$(echo "$PR_TITLE" | grep -oP 'to \K[0-9]+\.[0-9]+\.[0-9]+')
