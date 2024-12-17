@@ -1,4 +1,4 @@
-name: "Dependabot Auto-Approve and Handle Merge for Minor Bumps"
+name: Dependabot Auto-Approve and Handle Merge for Minor Bumps
 
 on:
   pull_request:
@@ -9,12 +9,13 @@ on:
 jobs:
   auto-approve-and-merge-queue:
     runs-on: ubuntu-latest
-
     permissions:
       pull-requests: write
       contents: write
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Check Dependabot PR and Approve
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -23,39 +24,25 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
 
-          # Check if the PR comes from Dependabot
           if [[ "$PR_AUTHOR" != "dependabot[bot]" ]]; then
             echo "Not a Dependabot PR. Skipping..."
             exit 0
           fi
 
-          # Check for devDependencies update in title
-          if [[ ! "$PR_TITLE" =~ "deps-dev" ]]; then
-            echo "PR does not affect devDependencies. Skipping..."
-            exit 0
-          fi
+          # Use more precise regex to extract version information
+          OLD_VERSION=$(echo "$PR_TITLE" | grep -oP 'from \K\d+\.\d+\.\d+')
+          NEW_VERSION=$(echo "$PR_TITLE" | grep -oP 'to \K\d+\.\d+\.\d+')
 
-          # Extract version numbers from PR title
-          OLD_VERSION=$(echo "$PR_TITLE" | grep -oP 'from \K[0-9]+\.[0-9]+\.[0-9]+')
-          NEW_VERSION=$(echo "$PR_TITLE" | grep -oP 'to \K[0-9]+\.[0-9]+\.[0-9]+')
-
-          # Compare major versions
-          OLD_MAJOR=${OLD_VERSION%%.*}
-          NEW_MAJOR=${NEW_VERSION%%.*}
-
-          if [[ "$OLD_MAJOR" != "$NEW_MAJOR" ]]; then
+          # Check for major version change
+          if [[ ${OLD_VERSION%%.*} != ${NEW_VERSION%%.*} ]]; then
             echo "Major version change detected. Skipping auto-merge..."
             exit 0
           fi
 
-          # Approve the PR
-          echo "Approving PR #$PR_NUMBER..."
-          gh pr review $PR_NUMBER --approve --body "Auto-approved by workflow for Dependabot PRs affecting devDependencies."
+          # Check if PR affects devDependencies
 
-          # Add to the merge queue if it's enabled
-          echo "Checking merge queue..."
+          # Check merge queue configuration
           MERGE_QUEUE_ENABLED=$(gh api repos/${{ github.repository }}/branches/main/protection --jq '.required_pull_request_reviews.dismiss_stale_reviews')
-
           if [[ "$MERGE_QUEUE_ENABLED" == "true" ]]; then
             echo "Adding PR #$PR_NUMBER to the merge queue..."
             gh pr merge $PR_NUMBER --merge --auto --queue
