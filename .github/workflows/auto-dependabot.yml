@@ -52,5 +52,3 @@ jobs:
             echo "Merge queue not enabled. Enabling auto-merge instead."
             gh pr merge $PR_NUMBER --squash --auto
           fi
-
-

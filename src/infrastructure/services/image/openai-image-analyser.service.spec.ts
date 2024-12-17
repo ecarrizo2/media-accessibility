@@ -5,8 +5,7 @@ import { openaiImageAnalysisResultMock } from '../../../../test/mocks/openai.moc
 import OpenAI from 'openai'
 import { ClassValidatorError } from '@shared/errors/class-validator.error'
 import { ImageAnalysisResult } from '@domain/value-objects/image/image-analysis-result.vo'
-import { Chat } from 'openai/resources'
-import ChatCompletion = Chat.ChatCompletion
+import { ChatCompletion } from 'openai/src/resources/chat/completions'
 
 describe('OpenaiImageAnalyserService', () => {
   let service: OpenAIImageAnalyserService
