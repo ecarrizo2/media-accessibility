@@ -1,92 +1,106 @@
-name: Release on Merge to Main
+name: "Dependabot Auto-Approve and Handle Merge for Minor Bumps"
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  release:
+  auto-approve-and-merge-queue:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write # Allow creating releases and tagging
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Ensure all tags and commits are fetched
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Conventional Changelog Angular and Tools
-        run: |
-          npm install --save-dev conventional-changelog-angular
-          npm install --save-dev conventional-recommended-bump
-          npm install --save-dev semver
-
-      - name: Determine new version based on conventional commits.
-        id: version
-        run: |
-          git fetch --tags
-
-          # Get the current version
-          current_version=$(git describe --tags --abbrev=0 || echo "v0.0.0")
-          current_version=${current_version#v}
-
-          # Determine the bump type
-          bump_type=$(npx conventional-recommended-bump -p conventional-changelog-angular)
-
-          # Calculate the new version
-          new_version=$(npx semver "$current_version" -i "$bump_type")
-
-          # Set the new version as an environment variable
-          echo "new_version=$new_version" >> $GITHUB_ENV
-          echo "current_version=$current_version" >> $GITHUB_ENV
-
-      - name: Create Git Tag
-        run: |
-          git tag "v${{ env.new_version }}"
-          git push origin "v${{ env.new_version }}"
-
-      - name: Create Draft GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: 'v${{ env.new_version }}'
-          release_name: 'Release v${{ env.new_version }}'
-          draft: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Release notes, update release and mark as latest
+      - name: Check Branch Protection Rules for Merge Queue
+        id: check_merge_queue
         uses: actions/github-script@v7
         with:
           script: |
-            const { data: releaseNotes } = await github.rest.repos.generateReleaseNotes({
+            const { data: protectionRules } = await octokit.repos.getBranchProtection({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: `v${process.env.new_version}`,
-              previous_tag_name: `v${process.env.current_version}`,
-              target_commitish: "main"
+              branch: 'main'
             });
 
-            // Update the release with generated notes and mark it as latest
-            const releaseId = "${{ steps.create_release.outputs.id }}";
-            await github.rest.repos.updateRelease({
+            // Check if the merge queue is configured in the protection rules
+            const hasMergeQueue = protectionRules.required_pull_request_reviews?.dismiss_stale_reviews ?? false;
+            console.log(`Merge queue configured: ${hasMergeQueue}`);
+            return hasMergeQueue; // This will return true or false based on the merge queue configuration
+
+      - name: Check Dependabot PR and Approve
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+
+            // Get the pull request details
+            const { data: pullRequest } = await octokit.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              release_id: releaseId,
-              body: releaseNotes.body,
-              draft: false,
-              make_latest: true
+              pull_number: prNumber,
             });
+
+            if (pullRequest.user.login !== 'dependabot[bot]') {
+              console.log('Not a Dependabot PR. Skipping...');
+              return;
+            }
+
+            // Check if the PR title contains 'deps-dev' to confirm it's a dev-dependency update
+            const isDevDependencyChange = pullRequest.title.includes('deps-dev');
+
+            if (!isDevDependencyChange) {
+              console.log('PR does not affect devDependencies. Skipping...');
+              return;
+            }
+
+            // Extract version numbers from the PR title
+            const versionRegex = /from (\d+\.\d+\.\d+) to (\d+\.\d+\.\d+)/;
+            const match = pullRequest.title.match(versionRegex);
+
+            if (match) {
+              const oldVersion = match[1];
+              const newVersion = match[2];
+
+              // Split version numbers into major, minor, and patch parts
+              const [oldMajor] = oldVersion.split('.');
+              const [newMajor] = newVersion.split('.');
+
+              // If the major version changes, it's a breaking change
+              if (oldMajor !== newMajor) {
+                console.log('Major version change detected. Skipping auto-merge...');
+                return;
+              }
+            }
+
+            // Approve the PR
+            await octokit.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              event: 'APPROVE',
+              body: 'Auto-approved by workflow for Dependabot PRs affecting devDependencies.',
+            });
+
+            const isMergeQueueConfigured = `${{ steps.check_merge_queue.outputs.result }}` === 'true';
+
+            if (isMergeQueueConfigured) {
+              // Add to the merge queue if configured
+              await octokit.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: ['merge-queue'],
+              });
+              console.log('Added to merge queue.');
+            } else {
+              // If merge queue is not configured, enable auto-merge
+              await octokit.pulls.enableAutoMerge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                merge_method: 'squash', // or 'merge' / 'rebase'
+              });
+              console.log('Auto-merge enabled.');
+            }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
