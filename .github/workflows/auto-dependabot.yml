@@ -39,16 +39,9 @@ jobs:
           fi
 
           # Auto approve the PR
-          echo "Approving and merging devDependency PR #$PR_NUMBER..."
+          echo "Approving and merging PR #$PR_NUMBER..."
           gh pr review $PR_NUMBER --approve --body "Auto-approved by workflow for Dependabot PRs."
 
-          # Check merge queue configuration
-          MERGE_QUEUE_ENABLED=$(gh api repos/${{ github.repository }}/branches/main/protection --jq '.required_pull_request_reviews.dismiss_stale_reviews')
 
-          if [[ "$MERGE_QUEUE_ENABLED" == "true" ]]; then
-            echo "Adding PR #$PR_NUMBER to the merge queue..."
-            gh pr merge $PR_NUMBER --merge --auto --queue
-          else
-            echo "Merge queue not enabled. Enabling auto-merge instead."
-            gh pr merge $PR_NUMBER --squash --auto
-          fi
+          echo "Enabling auto-merge."
+          gh pr merge $PR_NUMBER --squash --auto
