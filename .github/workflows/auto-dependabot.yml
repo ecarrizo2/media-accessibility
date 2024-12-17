@@ -10,6 +10,9 @@ jobs:
   approve_and_merge:
     runs-on: ubuntu-latest
 
+    permissions:
+      pull-requests: write  # Ensure the GITHUB_TOKEN has write access to pull requests
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
