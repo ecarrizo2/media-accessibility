@@ -2,11 +2,9 @@ name: "Dependabot Auto-Approve and Handle Merge for Minor Bumps"
 
 on:
   pull_request:
-    types:
-      - opened
     branches:
-      - qa
       - main
+  workflow_dispatch:
 
 jobs:
   auto-approve-and-merge-queue:
@@ -25,21 +23,24 @@ jobs:
             const { data: protectionRules } = await octokit.repos.getBranchProtection({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              branch: 'main'  # Replace 'main' with your default branch name
+              branch: 'main'
             });
 
             // Check if the merge queue is configured in the protection rules
             const hasMergeQueue = protectionRules.required_pull_request_reviews?.dismiss_stale_reviews ?? false;
-
-            return hasMergeQueue;  // This will return true or false based on the merge queue configuration
+            console.log(`Merge queue configured: ${hasMergeQueue}`);
+            return hasMergeQueue; // This will return true or false based on the merge queue configuration
         env:
           GITHUB_TOKEN: ${{ secrets.TKWW_GITHUB_TOKEN }}
 
       - name: Check Dependabot PR and Approve
         uses: actions/github-script@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.TKWW_GITHUB_TOKEN }}
+          MERGE_QUEUE_CONFIGURED: ${{ steps.check_merge_queue.outputs.result }}
         with:
           script: |
-            const { GITHUB_TOKEN } = process.env;
+            const { GITHUB_TOKEN, MERGE_QUEUE_CONFIGURED } = process.env;
             const octokit = github.getOctokit(GITHUB_TOKEN);
             const prNumber = context.payload.pull_request.number;
 
@@ -91,8 +92,7 @@ jobs:
               body: 'Auto-approved by workflow for Dependabot PRs affecting devDependencies.',
             });
 
-            // Handle based on whether merge queue is configured or not
-            const isMergeQueueConfigured = steps.check_merge_queue.outputs.result === 'true';
+            const isMergeQueueConfigured = MERGE_QUEUE_CONFIGURED === 'true';
 
             if (isMergeQueueConfigured) {
               // Add to the merge queue if configured
@@ -113,5 +113,3 @@ jobs:
               });
               console.log('Auto-merge enabled.');
             }
-        env:
-          GITHUB_TOKEN: ${{ secrets.TKWW_GITHUB_TOKEN }}
