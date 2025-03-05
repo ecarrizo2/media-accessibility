@@ -2,7 +2,7 @@ name: Dependabot Auto-Approve and Handle Merge for Minor Bumps
 
 on:
   pull_request:
-    branches: [main, qa]
+    branches: [qa]
     types: [opened, synchronize]
 
 jobs:
@@ -23,6 +23,8 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_AUTHOR="${{ github.event.pull_request.user.login }}"
 
+          echo "Processing PR #$PR_NUMBER: $PR_TITLE by $PR_AUTHOR"
+
           if [[ "$PR_AUTHOR" != "dependabot[bot]" ]]; then
             echo "Not a Dependabot PR. Skipping..."
             exit 0
@@ -39,9 +41,12 @@ jobs:
           fi
 
           # Auto approve the PR
-          echo "Approving and merging PR #$PR_NUMBER..."
+          echo "Approving PR #$PR_NUMBER..."
           gh pr review $PR_NUMBER --approve --body "Auto-approved by workflow for Dependabot PRs."
 
-
-          echo "Enabling auto-merge."
-          gh pr merge $PR_NUMBER --squash --auto
+          # Auto merge the PR
+          echo "Merging PR #$PR_NUMBER..."
+          gh pr merge $PR_NUMBER --squash --auto || {
+            echo "Merge failed. Please review manually."
+            exit 1
+          }
