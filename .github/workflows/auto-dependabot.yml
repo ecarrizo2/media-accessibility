@@ -2,7 +2,7 @@ name: Dependabot Auto-Approve and Handle Merge for Minor Bumps
 
 on:
   pull_request:
-    branches: [qa]
+    branches: [main]
     types: [opened, synchronize]
 
 jobs:
