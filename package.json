@@ -24,7 +24,7 @@
     "class-validator": "^0.14.1",
     "openai": "^4.91.0",
     "reflect-metadata": "^0.2.2",
-    "sst": "^3.10.11",
+    "sst": "^3.11.18",
     "tsyringe": "^4.8.0",
     "uuid": "^11.1.0"
   },
