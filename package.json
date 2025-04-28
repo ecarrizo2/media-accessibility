@@ -22,7 +22,7 @@
     "@aws-sdk/lib-dynamodb": "^3.789.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
-    "openai": "^4.95.1",
+    "openai": "^4.96.0",
     "reflect-metadata": "^0.2.2",
     "sst": "^3.13.14",
     "tsyringe": "^4.10.0",
