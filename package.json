@@ -18,7 +18,7 @@
     "@aws-sdk/client-dynamodb": "^3.777.0",
     "@aws-sdk/client-polly": "^3.787.0",
     "@aws-sdk/client-s3": "^3.787.0",
-    "@aws-sdk/client-sqs": "^3.787.0",
+    "@aws-sdk/client-sqs": "^3.797.0",
     "@aws-sdk/lib-dynamodb": "^3.789.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
