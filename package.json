@@ -17,7 +17,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.830.0",
     "@aws-sdk/client-polly": "^3.826.0",
-    "@aws-sdk/client-s3": "^3.826.0",
+    "@aws-sdk/client-s3": "^3.830.0",
     "@aws-sdk/client-sqs": "^3.830.0",
     "@aws-sdk/lib-dynamodb": "^3.826.0",
     "class-transformer": "^0.5.1",
