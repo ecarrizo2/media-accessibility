@@ -1,8 +1,5 @@
 # media-accessibility
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/ed55f20fe3ffd64832af/maintainability)](https://codeclimate.com/github/ecarrizo2/media-accessibility/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/ed55f20fe3ffd64832af/test_coverage)](https://codeclimate.com/github/ecarrizo2/media-accessibility/test_coverage)
-
 This project is meant to be a POC for the following tools:
 
 - Using SST/Ion for Infrastructure as a code and Resource management such as API and Queues Routing, SSL, DNS, etc
